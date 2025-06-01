@@ -30,11 +30,11 @@ export default function NavBar() {
       </div>
 
       <ul className={`${styles.navLinks} ${menuOpen ? styles.showMenu : ''}`}>
-        <li><Link to="/">Home</Link></li>
-        <li><Link to="/cv">CV</Link></li>
-        <li><Link to="/projects">Project</Link></li>
-        <li><Link to="/blog">Blog</Link></li>
-        <li><Link to="/archive">Archive</Link></li>
+        <li><Link to="/my-portfolio/">Home</Link></li>
+        <li><Link to="/my-portfolio/cv/">CV</Link></li>
+        <li><Link to="/my-portfolio/projects/">Project</Link></li>
+        <li><Link to="/my-portfolio/blog/">Blog</Link></li>
+        <li><Link to="/my-portfolio/archive/">Archive</Link></li>
       </ul>
     </nav>
   );
