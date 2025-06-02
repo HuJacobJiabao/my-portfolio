@@ -1,5 +1,3 @@
-/* src/styles/Home.module.css */
-
 .wrapper {
   max-width: 100vw;
   overflow-x: hidden;
@@ -10,7 +8,7 @@
 }
 
 .hero {
-  position: relative;         /* 关键 */
+  position: relative;
   width: 100%;
   height: 100vh;
   background-image: url('/hero.jpg');
@@ -26,7 +24,6 @@
   overflow: hidden;
 }
 
-/* ✅ 遮罩 */
 .hero::before {
   content: "";
   position: absolute;
@@ -34,11 +31,10 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.3); /* 变暗程度 */
+  background: rgba(0, 0, 0, 0.3);
   z-index: 1;
 }
 
-/* ✅ 内容必须显式设置 z-index 高于遮罩 */
 .heroContent {
   position: absolute;
   z-index: 2;
@@ -46,7 +42,6 @@
   color: white;
 }
 
-/* 中间内容文字居中展示 */
 .heroContent h1 {
   font-size: 3.5rem;
   font-weight: bold;
@@ -81,27 +76,344 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-attachment: fixed; /* 👈 可选视差 */
+  background-attachment: fixed;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 80px 20px;
+  align-items: flex-start;
+  padding: 100px 20px;
+  box-sizing: border-box;
 }
 
+.aboutWrapper {
+  color: #222;
+  padding: 20px;
+  text-align: left;
+  max-width: 1400px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.aboutContainer {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 30px;
+  width: 100%;
+}
+
+.leftSidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.profileCard {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 25px;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.photoWrapper {
+  margin-bottom: 15px;
+}
+
+.photo {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 20px;
+  border: 4px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.profileName {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 10px 0 5px 0;
+  background: linear-gradient(135deg, #2c3e50, #3498db);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.profileTitle {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+  margin: 0 0 15px 0;
+  font-weight: 500;
+}
+
+.contactCard {
+  background: transparent;
+  padding: 20px 0;
+  border: none;
+  box-shadow: none;
+}
+
+.contactList {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  justify-content: center;
+}
+
+.contactItem {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  text-decoration: none;
+  color: #34495e;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.contactItem:hover {
+  background: rgba(52, 152, 219, 0.1);
+  color: #3498db;
+  transform: translateX(5px);
+}
+
+.contactItem i {
+  width: 16px;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.navigationCard {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+.navigationCard h4 {
+  font-size: 1rem;
+  color: #2c3e50;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.navList {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 15px;
+  background: none;
+  border: none;
+  text-align: left;
+  color: #34495e;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.navItem:hover {
+  background: rgba(52, 152, 219, 0.1);
+  color: #3498db;
+  transform: translateX(5px);
+}
+
+.navItem.active {
+  background: linear-gradient(135deg, #3498db, #2ecc71);
+  color: white;
+  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+}
+
+.navIcon {
+  font-size: 1.1rem;
+}
+
+.rightContentArea {
+  display: flex;
+  flex-direction: column;
+}
+
+.rightContent {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  animation: fadeIn 0.5s ease-in-out;
+  min-height: 500px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rightContent h2 {
+  font-size: 2rem;
+  color: #2c3e50;
+  margin-bottom: 25px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #2c3e50, #3498db);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.rightContent p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #34495e;
+  margin-bottom: 20px;
+}
+
+.rightContent a {
+  color: #3498db;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+  border-bottom: 2px solid transparent;
+}
+
+.rightContent a:hover {
+  color: #2980b9;
+  border-bottom-color: #3498db;
+}
+
+.introSection {
+  padding: 50px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 50px;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: none;
+}
 
 .aboutContent {
-  background: rgba(255, 255, 255, 0.85);
-  color: #222;
-  padding: 40px;
-  border-radius: 16px;
-  max-width: 800px;
-  text-align: center;
-  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  padding: 20px 0;
 }
 
-/* Footer */
+.aboutContent h2 {
+  margin-bottom: 25px;
+  font-size: 2.2rem;
+  color: #2c3e50;
+  font-weight: 700;
+  background: linear-gradient(135deg, #2c3e50, #3498db);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.aboutContent p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #34495e;
+  margin-bottom: 20px;
+}
+
+.aboutContent a {
+  color: #3498db;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+  border-bottom: 2px solid transparent;
+}
+
+.aboutContent a:hover {
+  color: #2980b9;
+  border-bottom-color: #3498db;
+}
+
+.educationSection {
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  padding: 40px;
+  margin-top: 30px;
+  box-sizing: border-box;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: none;
+}
+
+.educationSection h2 {
+  font-size: 1.8rem;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.educationSection hr {
+  border: none;
+  height: 3px;
+  background: linear-gradient(135deg, #3498db, #2ecc71);
+  border-radius: 2px;
+  margin-bottom: 25px;
+}
+
+.workSection {
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  padding: 40px;
+  margin-top: 30px;
+  box-sizing: border-box;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: none;
+}
+
+.workSection h2 {
+  font-size: 1.8rem;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.workSection hr {
+  border: none;
+  height: 3px;
+  background: linear-gradient(135deg, #e74c3c, #f39c12);
+  border-radius: 2px;
+  margin-bottom: 25px;
+}
+
 .footer {
-  position: relative; /* ✅ 让 ::before 定位生效 */
+  position: relative;
   width: 100%;
   min-height: 100px;
   background-image: url('/hero.jpg');
@@ -117,17 +429,18 @@
   letter-spacing: 1.2px;
   padding: 40px 20px;
   line-height: 1.8;
-  overflow: hidden; /* 防止遮罩层超出 */
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .footer::before {
   content: "";
-  position: absolute; /* ✅ 占据整个footer区域 */
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.3); /* ✅ 遮罩层颜色 */
+  background: rgba(0, 0, 0, 0.3);
   z-index: 1;
 }
 
@@ -138,7 +451,7 @@
   letter-spacing: 1.2px;
   font-size: 0.95rem;
   line-height: 1.8;
-  z-index: 2; /* ✅ 显示在遮罩层之上 */
+  z-index: 2;
   position: relative;
 }
 
@@ -146,4 +459,59 @@
   margin: 4px 0;
 }
 
+@media (max-width: 768px) {
+  .aboutContainer {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
 
+  .leftSidebar {
+    order: 2;
+  }
+
+  .rightContentArea {
+    order: 1;
+  }
+
+  .profileCard {
+    padding: 15px;
+  }
+
+  .rightContent {
+    padding: 20px;
+    min-height: 300px;
+  }
+
+  .photo {
+    width: 100px;
+    height: 100px;
+  }
+
+  .profileName {
+    font-size: 1.1rem;
+  }
+
+  .rightContent h2 {
+    font-size: 1.5rem;
+  }
+
+  .rightContent p {
+    font-size: 1rem;
+  }
+
+  .aboutWrapper {
+    margin: 0 auto;
+    padding: 20px;
+    width: 100%;
+    max-width: 95vw;
+    box-sizing: border-box;
+  }
+
+  .heroContent h1 {
+    font-size: 2rem;
+  }
+
+  .heroContent p {
+    font-size: 1rem;
+  }
+}

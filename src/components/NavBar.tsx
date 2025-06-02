@@ -10,6 +10,7 @@ export default function NavBar() {
 
   useEffect(() => {
     const handleScroll = () => {
+      setMenuOpen(false);
       const currentScrollPos = window.scrollY;
       setVisible(prevScrollPos > currentScrollPos || currentScrollPos < 10);
       setAtTop(currentScrollPos <= 10);
@@ -31,7 +32,7 @@ export default function NavBar() {
 
       <ul className={`${styles.navLinks} ${menuOpen ? styles.showMenu : ''}`}>
         <li><Link to="/my-portfolio/">Home</Link></li>
-        <li><Link to="/my-portfolio/cv/">CV</Link></li>
+        <li><a href={`${import.meta.env.BASE_URL}Jiabao_Resume.pdf`} target="_blank" rel="noopener noreferrer">CV</a></li>
         <li><Link to="/my-portfolio/projects/">Project</Link></li>
         <li><Link to="/my-portfolio/blog/">Blog</Link></li>
         <li><Link to="/my-portfolio/archive/">Archive</Link></li>
