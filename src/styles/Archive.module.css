@@ -1,0 +1,82 @@
+.archiveContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+}
+
+.description {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #34495e;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.comingSoon {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.comingSoon h2 {
+  color: #9b59b6;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.comingSoon p {
+  color: #7f8c8d;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.placeholder {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.archiveCard {
+  background: linear-gradient(135deg, #f3e7f9, #e8d5f0);
+  border-radius: 15px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(155, 89, 182, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 2px dashed #9b59b6;
+}
+
+.archiveCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(155, 89, 182, 0.2);
+}
+
+.archiveCard h3 {
+  color: #2c3e50;
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+}
+
+.archiveCard p {
+  color: #6c757d;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .placeholder {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .archiveCard {
+    padding: 1.5rem;
+  }
+  
+  .comingSoon h2 {
+    font-size: 1.6rem;
+  }
+}

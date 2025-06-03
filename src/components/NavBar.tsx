@@ -51,7 +51,7 @@ export default function NavBar() {
       <ul className={`${styles.navLinks} ${menuOpen ? styles.showMenu : ''}`}>
         <li><Link to="/my-portfolio/">Home</Link></li>
         <li><a href={`${import.meta.env.BASE_URL}${config.site.contact.resume}`} target="_blank" rel="noopener noreferrer">CV</a></li>
-        <li><Link to="/my-portfolio/projects/">Project</Link></li>
+        <li><Link to="/my-portfolio/project/">Project</Link></li>
         <li><Link to="/my-portfolio/blog/">Blog</Link></li>
         <li><Link to="/my-portfolio/archive/">Archive</Link></li>
       </ul>

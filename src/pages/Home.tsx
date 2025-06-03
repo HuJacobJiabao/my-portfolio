@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import styles from "../styles/Home.module.css"
+import NavBar from "../components/NavBar"
 import EducationCard from "../components/EducationCard"
 import WorkCard from "../components/WorkCard"
 import ProjectCard from "../components/ProjectCard"
@@ -316,6 +317,7 @@ const Home = () => {
 
     return (
         <div className={styles.wrapper}>
+            <NavBar />
             {/* Hero Section */}
             <section className={styles.hero}>
                 <div className={styles.heroContent}>
