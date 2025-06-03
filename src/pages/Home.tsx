@@ -2,41 +2,48 @@ import { useState } from 'react'
 import styles from "../styles/Home.module.css"
 import EducationCard from "../components/EducationCard"
 import WorkCard from "../components/WorkCard"
+import ProjectCard from "../components/ProjectCard"
+import Sidebar from "../components/Sidebar"
+import ScrollToTop from "../components/ScrollToTop"
 
 const Home = () => {
     const [activeSection, setActiveSection] = useState('intro')
 
-    const sections = [
-        { id: 'intro', title: 'About Me', icon: '👤' },
-        { id: 'education', title: 'Education', icon: '🎓' },
-        { id: 'experience', title: 'Work Experience', icon: '💼' }
-    ]
+    const handleSectionChange = (sectionId: string) => {
+        setActiveSection(sectionId);
+    };
 
     const renderRightContent = () => {
         switch(activeSection) {
             case 'intro':
                 return (
                     <div className={styles.rightContent}>
-                        <div className={styles.photoWrapper}>
-                            <img src={`${import.meta.env.BASE_URL}seattle.jpg`} alt="Jiabao Hu" className={styles.photo} />
-                        </div>
-                        <div className={styles.aboutContent}>
-                            <h2>Jiabao Hu</h2>
-                            <p>
-                                Hi, I'm Jiabao, currently a Master's student in 
-                                <a href="https://www.cs.usc.edu/academic-programs/masters/">Computer Science</a> at 
-                                <a href="https://www.usc.edu/">University of Southern California (USC)</a>. I'm a passionate developer with a love for front-end design,
-                                interactive experiences, and elegant code. I enjoy transforming creative
-                                ideas into beautiful, functional websites, and I thrive on crafting digital
-                                experiences that feel alive and engaging.
-                            </p>
+                        <div className={styles.introWrapper}>
+                            <div className={styles.introTextSection}>
+                                <div className={styles.aboutContent}>
+                                    <h2>👤 <span>About Me</span></h2>
+                                    <p>
+                                        Hi, I'm Jiabao, currently a Master's student in 
+                                        <a href="https://www.cs.usc.edu/academic-programs/masters/"> Computer Science</a> at 
+                                        <a href="https://www.usc.edu/"> University of Southern California (USC)</a>. I'm a passionate developer with a love for front-end design,
+                                        interactive experiences, and elegant code. I enjoy transforming creative
+                                        ideas into beautiful, functional websites, and I thrive on crafting digital
+                                        experiences that feel alive and engaging.
+                                    </p>
+                                </div>
+                            </div>
+                            <div className={styles.introImageSection}>
+                                <div className={styles.introPhotoWrapper}>
+                                    <img src={`${import.meta.env.BASE_URL}seattle.jpg`} alt="Jiabao Hu" className={styles.introPhoto} />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 )
             case 'education':
                 return (
                     <div className={styles.rightContent}>
-                        <h2>🎓 Education</h2>
+                        <h2>🎓 <span>Education</span></h2>
                         
                         <EducationCard 
                             schoolName="University of Southern California"
@@ -76,7 +83,7 @@ const Home = () => {
             case 'experience':
                 return (
                     <div className={styles.rightContent}>
-                        <h2>💼 Work Experience</h2>
+                        <h2>💼 <span>Work Experience</span></h2>
                         
                         <WorkCard 
                             companyName="Zhejiang University/University of Illinois Urbana-Champaign Institute"
@@ -93,6 +100,42 @@ const Home = () => {
                         />
                     </div>
                 )
+            case 'projects':
+                return (
+                    <div className={styles.rightContent}>
+                        <h2>💻 <span>Projects</span></h2>
+                        
+                        <ProjectCard 
+                            projectName="Portfolio Website"
+                            description="A modern, responsive portfolio website built with React and TypeScript"
+                            technologies={["React", "TypeScript", "CSS Modules", "Vite"]}
+                            duration="Dec 2024 - Jan 2025"
+                            projectUrl="https://github.com/HuJacobJiabao/my-portfolio"
+                            imageSrc={`${import.meta.env.BASE_URL}hero.jpg`}
+                            imageAlt="Portfolio Project"
+                            highlights={[
+                                "Responsive design with mobile-first approach",
+                                "Component-based architecture with reusable cards",
+                                "Modern UI with glass morphism effects and animations"
+                            ]}
+                        />
+
+                        <ProjectCard 
+                            projectName="3D Simulation Platform"
+                            description="A modular 3D simulation platform for computer vision research"
+                            technologies={["Python", "Blender", "PyTorch", "OpenCV"]}
+                            duration="Sep 2022 - Apr 2023"
+                            imageSrc={`${import.meta.env.BASE_URL}about.jpg`}
+                            imageAlt="3D Simulation Project"
+                            highlights={[
+                                "Built scalable data generation pipelines",
+                                "Integrated deep learning training workflows",
+                                "Modular architecture for extensibility"
+                            ]}
+                        />
+                    </div>
+                )
+
             default:
                 return null
         }
@@ -116,48 +159,10 @@ const Home = () => {
                 <div className={styles.aboutWrapper}>
                     <div className={styles.aboutContainer}>
                         {/* Left Sidebar */}
-                        <div className={styles.leftSidebar}>
-                            {/* Profile Card with Integrated Contact Info */}
-                            <div className={styles.profileCard}>
-                                <div className={styles.photoWrapper}>
-                                    <img src={`${import.meta.env.BASE_URL}favicon.png`} alt="Jiabao Hu" className={styles.photo} />
-                                </div>
-                                <h3 className={styles.profileName}>Jiabao Hu</h3>
-                                <p className={styles.profileTitle}>Full-stack Developer</p>
-                                <p className={styles.profileTitle}>MSCS at USC</p>
-                                <div className={styles.contactCard}>
-                                    <div className={styles.contactList}>
-                                        <a href="mailto:hujiabao1224@gmail.com" className={styles.contactItem}>
-                                            <i className="fas fa-envelope"></i>
-                                        </a>
-                                        <a href="https://github.com/HuJacobJiabao" className={styles.contactItem}>
-                                            <i className="fab fa-github"></i>
-                                        </a>
-                                        <a href="https://www.linkedin.com/in/jiabao-hu-920664221/" className={styles.contactItem}>
-                                            <i className="fab fa-linkedin"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            {/* Navigation Card */}
-                            <div className={styles.navigationCard}>
-                                <h4>Navigation</h4>
-                                <nav className={styles.navList}>
-                                    {sections.map(section => (
-                                        <button
-                                            key={section.id}
-                                            className={`${styles.navItem} ${activeSection === section.id ? styles.active : ''}`}
-                                            onClick={() => setActiveSection(section.id)}
-                                        >
-                                            <span className={styles.navIcon}>{section.icon}</span>
-                                            <span>{section.title}</span>
-                                        </button>
-                                    ))}
-                                </nav>
-                            </div>
-                        </div>
+                        <Sidebar 
+                            activeSection={activeSection}
+                            onSectionChange={handleSectionChange}
+                        />
 
                         {/* Right Content Area */}
                         <div className={styles.rightContentArea}>
@@ -174,6 +179,9 @@ const Home = () => {
                     <p>Welcome to my portfolio website!</p>
                 </div>
             </footer>
+
+            {/* Scroll to Top Button */}
+            <ScrollToTop />
         </div>
     )
 }
