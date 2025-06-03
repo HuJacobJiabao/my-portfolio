@@ -1,38 +1,49 @@
 import React from 'react';
 import styles from '../styles/Sidebar.module.css';
+import config from '../config/config';
 
 interface SidebarProps {
   activeSection: string;
   onSectionChange: (sectionId: string) => void;
 }
 
+interface NavigationSection {
+  id: string;
+  title: string;
+  icon: string;
+  type: string;
+  contentType?: string;
+}
+
 const Sidebar: React.FC<SidebarProps> = ({ activeSection, onSectionChange }) => {
-  const sections = [
-    { id: 'intro', title: 'About Me', icon: '👤' },
-    { id: 'education', title: 'Education', icon: '🎓' },
-    { id: 'experience', title: 'Work Experience', icon: '💼' },
-    { id: 'projects', title: 'Projects', icon: '💻' }
-  ];
+  // Get all sections and visible sections from config
+  const allSections = config.site.navigation.sections as NavigationSection[];
+  const visibleSectionIds = config.site.navigation.visibleSections as string[];
+  
+  // Filter sections to only show the ones listed in visibleSections
+  const sections = allSections.filter(section => 
+    visibleSectionIds.includes(section.id)
+  );
 
   return (
     <div className={styles.leftSidebar}>
       {/* Profile Card with Integrated Contact Info */}
       <div className={styles.profileCard}>
         <div className={styles.photoWrapper}>
-          <img src={`${import.meta.env.BASE_URL}favicon.png`} alt="Jiabao Hu" className={styles.photo} />
+          <img src={`${import.meta.env.BASE_URL}favicon.png`} alt={config.site.hero.name} className={styles.photo} />
         </div>
-        <h3 className={styles.profileName}>Jiabao Hu</h3>
-        <p className={styles.profileTitle}>Full-stack Developer</p>
-        <p className={styles.profileTitle}>MSCS at USC</p>
+        <h3 className={styles.profileName}>{config.site.hero.name}</h3>
+        <p className={styles.profileTitle}>{config.site.hero.title}</p>
+        <p className={styles.profileTitle}>{config.site.hero.subtitle}</p>
         <div className={styles.contactCard}>
           <div className={styles.contactList}>
-            <a href="mailto:hujiabao1224@gmail.com" className={styles.contactItem}>
+            <a href={`mailto:${config.site.contactInfo.email}`} className={styles.contactItem}>
               <i className="fas fa-envelope"></i>
             </a>
-            <a href="https://github.com/HuJacobJiabao" className={styles.contactItem}>
+            <a href={config.site.contactInfo.github} className={styles.contactItem}>
               <i className="fab fa-github"></i>
             </a>
-            <a href="https://www.linkedin.com/in/jiabao-hu-920664221/" className={styles.contactItem}>
+            <a href={config.site.contactInfo.linkedin} className={styles.contactItem}>
               <i className="fab fa-linkedin"></i>
             </a>
           </div>

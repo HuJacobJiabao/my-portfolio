@@ -1,0 +1,225 @@
+site:
+  hero:
+    name: "Jiabao Hu"
+    quote: "Let life be beautiful like summer flowers and death like autumn leaves."
+    title: "Full-stack Developer"
+    subtitle: "MSCS at USC"
+  about:
+    title: "About Me"
+    content: >
+      Hi, I'm Jiabao, currently a Master's student in 
+      [Computer Science](https://www.cs.usc.edu/academic-programs/masters/) at 
+      [University of Southern California (USC)](https://www.usc.edu/).
+      I'm a passionate developer with a love for front-end design,
+      interactive experiences, and elegant code. I enjoy transforming creative
+      ideas into beautiful, functional websites, and I thrive on crafting digital
+      experiences that feel alive and engaging.
+    photo: "seattle.jpg"
+
+  contactInfo:
+    email: "hujiabao1224@gmail.com"
+    github: "https://github.com/HuJacobJiabao"
+    linkedin: "https://www.linkedin.com/in/jiabao-hu-920664221/"
+    twitter: "https://twitter.com/yourusername"
+    resume: "Jiabao_Resume.pdf"
+
+  navigation:
+    # Define all the sections that can appear in your portfolio
+    # type can be: 'intro', 'education', 'experience', 'projects', 'custom'
+    # for custom sections, specify contentType: 'project' to use ProjectCard as default
+    sections:
+      - id: 'intro'
+        title: 'About Me'
+        icon: '👤'
+        type: 'intro'
+        
+      - id: 'education' 
+        title: 'Education'
+        icon: '🎓'
+        type: 'education'
+        
+      - id: 'experience'
+        title: 'Work Experience'
+        icon: '💼'
+        type: 'experience'
+        
+      - id: 'projects'
+        title: 'Projects'
+        icon: '💻'
+        type: 'projects'
+
+      - id: 'certificates'
+        title: 'Certificates'
+        icon: '🏆'
+        type: 'custom'
+        contentType: 'project'
+        
+      - id: 'contact'
+        title: 'Contact'
+        icon: '📬'
+        type: 'custom'
+        contentType: 'basic'
+        
+    # This defines which sections appear in the navigation and in what order
+    visibleSections: ['intro', 'education', 'experience', 'projects', 'contact']
+
+  education:
+    - schoolName: "University of Southern California"
+      degree: "Master of Science in Computer Science"
+      duration: "Aug. 2023 - Dec. 2025"
+      location: "Los Angeles, CA"
+      logoSrc: "usc.png"
+      highlights:
+        - "Related Courses: Operating System, Networking, Algorithms, Web Technologies"
+
+    - schoolName: "University of Illinois at Urbana-Champaign"
+      degree: "Bachelor of Science in Civil Engineering with Honors"
+      duration: "Sep. 2019 - Jun. 2023"
+      location: "Urbana, IL"
+      logoSrc: "uiuc.png"
+      highlights:
+        - "Minor in Computer Science"
+
+    - schoolName: "Zhejiang University"
+      degree: "Bachelor of Engineering in Civil Engineering"
+      duration: "Sep. 2019 - Jun. 2023"
+      location: "Hangzhou, China"
+      logoSrc: "zju.png"
+      highlights: []
+
+  experience:
+    - companyName: "ZJU/UIUC Institute"
+      position: "Undergraduate Research Assistant"
+      duration: "Sep 2022 - Apr 2023"
+      location: "Haining, China"
+      logoSrc: "zjui.jpg"
+      highlights:
+        - "Engineered a modular 3D simulation platform in Python/Blender"
+        - "Built scalable data generation pipelines for CV model training"
+        - "Integrated and trained deep learning pipelines (PyTorch)"
+
+  projects:
+    - projectName: "Portfolio Website"
+      description: "A modern, responsive portfolio website built with React and TypeScript"
+      technologies: ["React", "TypeScript", "CSS Modules", "Vite"]
+      duration: "Dec 2024 - Jan 2025"
+      projectUrl: "https://hujacobjiabao.github.io/my-portfolio/"
+      githubUrl: "https://github.com/HuJacobJiabao/my-portfolio"
+      imageSrc: "hero.jpg"
+      highlights:
+        - "Responsive design with mobile-first approach"
+        - "Component-based architecture with reusable cards"
+        - "Modern UI with glass morphism effects and animations"
+        
+    - projectName: "3D Simulation Platform"
+      description: "A modular 3D simulation platform for computer vision research"
+      technologies: ["Python", "Blender", "PyTorch", "OpenCV"]
+      duration: "Sep 2022 - Apr 2023"
+      projectUrl: ""
+      githubUrl: "https://github.com/HuJacobJiabao/3d-simulation"
+      imageSrc: "about.jpg"
+      highlights:
+        - "Built scalable data generation pipelines"
+        - "Integrated deep learning training workflows"
+        - "Modular architecture for extensibility"
+    
+    - projectName: "AI Chatbot Assistant"
+      description: "A conversational AI assistant with natural language understanding capabilities"
+      technologies: ["Python", "TensorFlow", "NLP", "Flask"]
+      duration: "Mar 2023 - Aug 2023"
+      projectUrl: "https://ai-assistant-demo.netlify.app"
+      githubUrl: "https://github.com/HuJacobJiabao/ai-chatbot"
+      imageSrc: "hero.jpg"
+      highlights:
+        - "Implemented intent recognition with 92% accuracy"
+        - "Developed custom entity extraction pipeline"
+        - "Built responsive web interface with real-time responses"
+        
+    - projectName: "E-commerce Platform"
+      description: "A full-stack e-commerce solution with payment integration and inventory management"
+      technologies: ["React", "Node.js", "MongoDB", "Stripe API"]
+      duration: "Nov 2023 - Feb 2024"
+      projectUrl: "https://shop-demo.example.com"
+      githubUrl: "https://github.com/HuJacobJiabao/ecommerce-platform"
+      imageSrc: "about.jpg"
+      highlights:
+        - "Secure payment processing with Stripe integration"
+        - "Real-time inventory management system"
+        - "Responsive design with mobile-first approach"
+        
+    - projectName: "Data Visualization Dashboard"
+      description: "Interactive dashboard for visualizing complex datasets with customizable charts"
+      technologies: ["D3.js", "React", "TypeScript", "Firebase"]
+      duration: "Jul 2023 - Oct 2023"
+      projectUrl: "https://data-viz-dashboard.web.app"
+      githubUrl: "https://github.com/HuJacobJiabao/data-dashboard"
+      imageSrc: "hero.jpg"
+      highlights:
+        - "Created interactive visualizations for complex datasets"
+        - "Implemented real-time data updates with Firebase"
+        - "Built customizable user dashboard with saved preferences"
+        
+    - projectName: "Mobile Fitness App"
+      description: "Cross-platform fitness tracking application with social features"
+      technologies: ["React Native", "Firebase", "Redux", "Health APIs"]
+      duration: "Jan 2024 - Apr 2024"
+      projectUrl: "https://play.google.com/store/apps/example"
+      githubUrl: "https://github.com/HuJacobJiabao/fitness-tracker"
+      imageSrc: "about.jpg"
+      highlights:
+        - "Integrated with health tracking APIs for iOS and Android"
+        - "Implemented social sharing and challenge features"
+        - "Built offline functionality with local data storage"
+        
+    - projectName: "Smart Home IoT System"
+      description: "IoT system for home automation with voice control and mobile app"
+      technologies: ["Python", "MQTT", "React Native", "Raspberry Pi"]
+      duration: "May 2024 - Present"
+      projectUrl: ""
+      githubUrl: "https://github.com/HuJacobJiabao/smart-home"
+      imageSrc: "hero.jpg"
+      highlights:
+        - "Developed custom firmware for ESP32 microcontrollers"
+        - "Created secure MQTT communication protocol"
+        - "Built cross-platform mobile app with voice commands"
+  
+        
+  # Custom section data
+  # certificates:
+  #   title: "Certificates"
+  #   items:
+  #     - projectName: "AWS Certified Solutions Architect"
+  #       description: "Professional certification for AWS cloud architecture"
+  #       technologies: ["AWS", "Cloud Computing"]
+  #       duration: "Feb 2024"
+  #       projectUrl: "https://aws.amazon.com/certification/"
+  #       githubUrl: ""
+  #       imageSrc: "hero.jpg"
+  #       highlights:
+  #         - "Designed scalable, highly available cloud architectures"
+  #         - "Implemented security and cost optimization best practices"
+      
+  #     - projectName: "Google Professional Data Engineer"
+  #       description: "Certification for designing data processing systems"
+  #       technologies: ["Google Cloud", "Big Data", "ML"]
+  #       duration: "Jan 2024"
+  #       projectUrl: "https://cloud.google.com/certification/data-engineer"
+  #       githubUrl: ""
+  #       imageSrc: "about.jpg"
+  #       highlights:
+  #         - "Built and operationalized data processing systems"
+  #         - "Designed for security, reliability, and scalability"
+  
+  contact:
+    title: "Contact Me"
+    content: >
+      I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision.
+      Feel free to reach out to me through any of the channels below.
+    
+    email: "hujiabao1224@gmail.com"
+    github: "https://github.com/HuJacobJiabao"
+    linkedin: "https://www.linkedin.com/in/jiabao-hu-920664221/"
+    
+  footer:
+    copyright: "© 2025 Jiabao Hu. All rights reserved."
+    message: "Welcome to my portfolio website!"

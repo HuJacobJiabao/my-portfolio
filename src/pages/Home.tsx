@@ -5,6 +5,76 @@ import WorkCard from "../components/WorkCard"
 import ProjectCard from "../components/ProjectCard"
 import Sidebar from "../components/Sidebar"
 import ScrollToTop from "../components/ScrollToTop"
+import config from "../config/config"
+
+// Define types for config data
+interface Education {
+    schoolName: string;
+    degree: string;
+    duration: string;
+    location: string;
+    logoSrc: string;
+    highlights: string[];
+}
+
+interface Experience {
+    companyName: string;
+    position: string;
+    duration: string;
+    location: string;
+    logoSrc: string;
+    highlights: string[];
+}
+
+interface Project {
+    projectName: string;
+    description: string;
+    technologies: string[];
+    duration: string;
+    projectUrl?: string;
+    githubUrl?: string;
+    imageSrc: string;
+    highlights: string[];
+}
+
+interface Section {
+    id: string;
+    title: string;
+    icon: string;
+    type: 'intro' | 'education' | 'experience' | 'projects' | 'custom';
+    contentType?: 'project' | 'basic';
+}
+
+interface CustomSection {
+    title: string;
+    content?: string;
+    items?: Project[];
+    // For contact section
+    email?: string;
+    github?: string;
+    linkedin?: string;
+    twitter?: string;
+}
+
+// Helper function to parse markdown links
+const parseMarkdownLinks = (text: string): string => {
+    return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+};
+
+// Helper function to build image paths consistently
+const getImagePath = (type: string, filename: string): string => {
+    if (!filename) return '';
+    
+    const baseUrl = import.meta.env.BASE_URL;
+    switch (type) {
+        case 'schools':
+            return `${baseUrl}/schools/${filename}`;
+        case 'background':
+            return `${baseUrl}/background/${filename}`;
+        default:
+            return `${baseUrl}${filename}`;
+    }
+};
 
 const Home = () => {
     const [activeSection, setActiveSection] = useState('intro')
@@ -14,130 +84,233 @@ const Home = () => {
     };
 
     const renderRightContent = () => {
-        switch(activeSection) {
+        // Find the current active section from config
+        const allSections = config.site.navigation.sections as Section[];
+        const currentSection = allSections.find(section => section.id === activeSection);
+        
+        if (!currentSection) {
+            return null;
+        }
+        
+        // Render based on section type
+        switch(currentSection.type) {
             case 'intro':
                 return (
                     <div className={styles.rightContent}>
                         <div className={styles.introWrapper}>
                             <div className={styles.introTextSection}>
                                 <div className={styles.aboutContent}>
-                                    <h2>👤 <span>About Me</span></h2>
-                                    <p>
-                                        Hi, I'm Jiabao, currently a Master's student in 
-                                        <a href="https://www.cs.usc.edu/academic-programs/masters/"> Computer Science</a> at 
-                                        <a href="https://www.usc.edu/"> University of Southern California (USC)</a>. I'm a passionate developer with a love for front-end design,
-                                        interactive experiences, and elegant code. I enjoy transforming creative
-                                        ideas into beautiful, functional websites, and I thrive on crafting digital
-                                        experiences that feel alive and engaging.
-                                    </p>
+                                    <h2>👤 <span>{config.site.about.title}</span></h2>
+                                    <p dangerouslySetInnerHTML={{ __html: parseMarkdownLinks(config.site.about.content) }} />
                                 </div>
                             </div>
                             <div className={styles.introImageSection}>
                                 <div className={styles.introPhotoWrapper}>
-                                    <img src={`${import.meta.env.BASE_URL}seattle.jpg`} alt="Jiabao Hu" className={styles.introPhoto} />
+                                    <img src={getImagePath('', config.site.about.photo)} alt={config.site.hero.name} className={styles.introPhoto} />
                                 </div>
                             </div>
                         </div>
                     </div>
-                )
+                );
+                
             case 'education':
                 return (
                     <div className={styles.rightContent}>
                         <h2>🎓 <span>Education</span></h2>
                         
-                        <EducationCard 
-                            schoolName="University of Southern California"
-                            degree="Master of Science in Computer Science"
-                            duration="Aug. 2023 - Dec. 2025"
-                            location="Los Angeles, CA"
-                            logoSrc={`${import.meta.env.BASE_URL}usc.png`}
-                            logoAlt="USC Logo"
-                            highlights={[
-                                "Related Courses: Operating System, Computer Networking, Algorithm, Web Technologies, Database System, Information Retrieval"
-                            ]}
-                        />
-
-                        <EducationCard
-                            schoolName="University of Illinois at Urbana-Champaign"
-                            degree="Bachelor of Science in Civil Engineering with Honors"
-                            duration="Sep. 2019 - Jun. 2023"
-                            location="Urbana, IL"
-                            logoSrc={`${import.meta.env.BASE_URL}uiuc.png`}
-                            logoAlt="UIUC Logo"
-                            highlights={[
-                                "Minor in Computer Science"
-                            ]}
-                        />
-
-                        <EducationCard 
-                            schoolName="Zhejiang University"
-                            degree="Bachelor of Engineering in Civil Engineering"
-                            duration="Sep. 2019 - Jun. 2023"
-                            location="Hangzhou, China"
-                            logoSrc={`${import.meta.env.BASE_URL}zju.png`}
-                            logoAlt="ZJU Logo"
-                            highlights={[]}
-                        />
+                        {(config.site.education as Education[]).map((edu: Education, index: number) => (
+                            <EducationCard 
+                                key={index}
+                                schoolName={edu.schoolName}
+                                degree={edu.degree}
+                                duration={edu.duration}
+                                location={edu.location}
+                                logoSrc={getImagePath('schools', edu.logoSrc)}
+                                logoAlt={`${edu.schoolName} Logo`}
+                                highlights={edu.highlights}
+                            />
+                        ))}
                     </div>
-                )
+                );
+                
             case 'experience':
                 return (
                     <div className={styles.rightContent}>
                         <h2>💼 <span>Work Experience</span></h2>
                         
-                        <WorkCard 
-                            companyName="Zhejiang University/University of Illinois Urbana-Champaign Institute"
-                            position="Undergraduate Research Assistant"
-                            duration="Sep 2022 - Apr 2023"
-                            location="Haining, China"
-                            logoSrc={`${import.meta.env.BASE_URL}zjui.jpg`}
-                            logoAlt="ZJU Logo"
-                            highlights={[
-                                "Engineered a modular 3D simulation platform in Python/Blender",
-                                "Built scalable data generation pipelines for CV model training",
-                                "Integrated and trained deep learning pipelines (PyTorch)"
-                            ]}
-                        />
+                        {(config.site.experience as Experience[]).map((exp: Experience, index: number) => (
+                            <WorkCard 
+                                key={index}
+                                companyName={exp.companyName}
+                                position={exp.position}
+                                duration={exp.duration}
+                                location={exp.location}
+                                logoSrc={getImagePath('schools', exp.logoSrc)}
+                                logoAlt={`${exp.companyName} Logo`}
+                                highlights={exp.highlights}
+                            />
+                        ))}
                     </div>
-                )
+                );
+                
             case 'projects':
                 return (
                     <div className={styles.rightContent}>
-                        <h2>💻 <span>Projects</span></h2>
+                        <h2 id="projects-section">💻 <span>Projects</span></h2>
                         
-                        <ProjectCard 
-                            projectName="Portfolio Website"
-                            description="A modern, responsive portfolio website built with React and TypeScript"
-                            technologies={["React", "TypeScript", "CSS Modules", "Vite"]}
-                            duration="Dec 2024 - Jan 2025"
-                            projectUrl="https://github.com/HuJacobJiabao/my-portfolio"
-                            imageSrc={`${import.meta.env.BASE_URL}hero.jpg`}
-                            imageAlt="Portfolio Project"
-                            highlights={[
-                                "Responsive design with mobile-first approach",
-                                "Component-based architecture with reusable cards",
-                                "Modern UI with glass morphism effects and animations"
-                            ]}
-                        />
-
-                        <ProjectCard 
-                            projectName="3D Simulation Platform"
-                            description="A modular 3D simulation platform for computer vision research"
-                            technologies={["Python", "Blender", "PyTorch", "OpenCV"]}
-                            duration="Sep 2022 - Apr 2023"
-                            imageSrc={`${import.meta.env.BASE_URL}about.jpg`}
-                            imageAlt="3D Simulation Project"
-                            highlights={[
-                                "Built scalable data generation pipelines",
-                                "Integrated deep learning training workflows",
-                                "Modular architecture for extensibility"
-                            ]}
-                        />
+                        <div className={styles.projectsContainer}>
+                            {(config.site.projects as Project[]).map((project: Project, index: number) => (
+                                <ProjectCard 
+                                    key={index}
+                                    projectName={project.projectName}
+                                    description={project.description}
+                                    technologies={project.technologies}
+                                    duration={project.duration}
+                                    projectUrl={project.projectUrl}
+                                    githubUrl={project.githubUrl}
+                                    imageSrc={getImagePath('background', project.imageSrc)}
+                                    imageAlt={`${project.projectName} Project`}
+                                    highlights={project.highlights}
+                                />
+                            ))}
+                            
+                            {/* Back to projects top button */}
+                            <button 
+                                className={styles.backToTopButton}
+                                onClick={() => {
+                                    // Detect if device is mobile
+                                    const isMobile = window.innerWidth <= 768;
+                                    
+                                    if (isMobile) {
+                                        // Mobile: scroll to project title
+                                        const projectsSection = document.getElementById('projects-section');
+                                        if (projectsSection) {
+                                            projectsSection.scrollIntoView({ 
+                                                behavior: 'smooth',
+                                                block: 'start'
+                                            });
+                                        }
+                                    } else {
+                                        // Desktop: scroll to #about section
+                                        const aboutSection = document.getElementById('about');
+                                        if (aboutSection) {
+                                            aboutSection.scrollIntoView({ 
+                                                behavior: 'smooth',
+                                                block: 'start'
+                                            });
+                                        }
+                                    }
+                                }}
+                            >
+                                <i className="fas fa-arrow-up"></i>
+                                Back to Projects Top
+                            </button>
+                        </div>
                     </div>
-                )
+                );
+                
+            case 'custom':
+                // Handle custom sections based on contentType
+                const sectionData = config.site[currentSection.id] as CustomSection;
+                
+                if (currentSection.contentType === 'project' && sectionData && sectionData.items) {
+                    return (
+                        <div className={styles.rightContent}>
+                            <h2 id={`${currentSection.id}-section`}>{currentSection.icon} <span>{sectionData.title}</span></h2>
+                            
+                            <div className={styles.projectsContainer}>
+                                {(sectionData.items as Project[]).map((project: Project, index: number) => (
+                                    <ProjectCard 
+                                        key={index}
+                                        projectName={project.projectName}
+                                        description={project.description}
+                                        technologies={project.technologies}
+                                        duration={project.duration}
+                                        projectUrl={project.projectUrl}
+                                        githubUrl={project.githubUrl}
+                                        imageSrc={getImagePath('background', project.imageSrc)}
+                                        imageAlt={`${project.projectName} Project`}
+                                        highlights={project.highlights}
+                                    />
+                                ))}
+                                
+                                {/* Back to section top button */}
+                                <button 
+                                    className={styles.backToTopButton}
+                                    onClick={() => {
+                                        // Detect if device is mobile
+                                        const isMobile = window.innerWidth <= 768;
+                                        
+                                        if (isMobile) {
+                                            // Mobile: scroll to project title
+                                            const section = document.getElementById(`${currentSection.id}-section`);
+                                            if (section) {
+                                                section.scrollIntoView({ 
+                                                    behavior: 'smooth',
+                                                    block: 'start'
+                                                });
+                                            }
+                                        } else {
+                                            // Desktop: scroll to #about section and hide navbar
+                                            const aboutSection = document.getElementById('about');
+                                            const navbar = document.querySelector('nav');
+                                            
+                                            if (aboutSection && navbar instanceof HTMLElement) {
+                                                aboutSection.scrollIntoView({ 
+                                                    behavior: 'smooth',
+                                                    block: 'start'
+                                                });
+                                                
+                                                // Hide navbar temporarily (desktop only)
+                                                setTimeout(() => {
+                                                    navbar.style.transform = 'translateY(-100%)';
+                                                    navbar.style.transition = 'transform 0.3s ease';
+                                                    
+                                                    // Show navbar again after 3 seconds
+                                                    setTimeout(() => {
+                                                        navbar.style.transform = '';
+                                                        navbar.style.transition = '';
+                                                    }, 3000);
+                                                }, 1000); // Wait for scroll animation to complete
+                                            }
+                                        }
+                                    }}
+                                >
+                                    <i className="fas fa-arrow-up"></i>
+                                    Back to {sectionData.title} Top
+                                </button>
+                            </div>
+                        </div>
+                    );
+                } else if (currentSection.contentType === 'basic' && sectionData) {
+                    // Basic content type with text
+                    return (
+                        <div className={styles.rightContent}>
+                            <h2>{currentSection.icon} <span>{sectionData.title}</span></h2>
+                            {sectionData.content && 
+                                <p dangerouslySetInnerHTML={{ __html: parseMarkdownLinks(sectionData.content) }} />
+                            }
+                            <div className={styles.contactSection}>
+                                <div className={styles.contactItem}>
+                                    <i className="fas fa-envelope"></i>
+                                    <a href={`mailto:${sectionData.email}`}>{sectionData.email}</a>
+                                </div>
+                                <div className={styles.contactItem}>
+                                    <i className="fab fa-github"></i>
+                                    <a href={sectionData.github} target="_blank" rel="noopener noreferrer">GitHub</a>
+                                </div>
+                                <div className={styles.contactItem}>
+                                    <i className="fab fa-linkedin"></i>
+                                    <a href={sectionData.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                }
+                return null;
 
             default:
-                return null
+                return null;
         }
     }
 
@@ -146,8 +319,8 @@ const Home = () => {
             {/* Hero Section */}
             <section className={styles.hero}>
                 <div className={styles.heroContent}>
-                    <h1>Jiabao Hu</h1>
-                    <p>Let life be beautiful like summer flowers and death like autumn leaves.</p>
+                    <h1>{config.site.hero.name}</h1>
+                    <p>{config.site.hero.quote}</p>
                 </div>
                 <a href="#about" className={styles.downArrow}>
                     <i className="fas fa-angle-down scroll-down-effects"></i>
@@ -175,8 +348,8 @@ const Home = () => {
             {/* Footer */}
             <footer className={styles.footer}>
                 <div className={styles.footerText}>
-                    <p>© 2025 Jiabao Hu. All rights reserved.</p>
-                    <p>Welcome to my portfolio website!</p>
+                    <p>{config.site.footer.copyright}</p>
+                    <p>{config.site.footer.message}</p>
                 </div>
             </footer>
 

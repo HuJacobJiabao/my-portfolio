@@ -7,6 +7,7 @@ interface ProjectCardProps {
   technologies: string[];
   duration: string;
   projectUrl?: string;
+  githubUrl?: string;
   imageSrc: string;
   imageAlt: string;
   highlights: React.ReactNode[];
@@ -18,6 +19,7 @@ const ProjectCard = ({
   technologies,
   duration,
   projectUrl,
+  githubUrl,
   imageSrc,
   imageAlt,
   highlights,
@@ -28,15 +30,19 @@ const ProjectCard = ({
         <div className={styles.projectImage}>
           <img src={imageSrc} alt={imageAlt} className={styles.image} />
         </div>
-        {projectUrl && (
+        {(projectUrl || githubUrl) && (
           <div className={styles.projectActions}>
-            <a href={projectUrl} target="_blank" rel="noopener noreferrer" className={styles.projectLink}>
-              <span className={styles.linkText}>Click to view project →</span>
-            </a>
-            <a href={projectUrl} target="_blank" rel="noopener noreferrer" className={styles.githubLink}>
-              <i className="fab fa-github" style={{ marginRight: '0.5em' }}></i>
-              <span className={styles.linkText}>GitHub</span>
-            </a>
+            {projectUrl && (
+              <a href={projectUrl} target="_blank" rel="noopener noreferrer" className={styles.projectLink}>
+                <span className={styles.linkText}>Click to view →</span>
+              </a>
+            )}
+            {githubUrl && (
+              <a href={githubUrl} target="_blank" rel="noopener noreferrer" className={styles.githubLink}>
+                <i className="fab fa-github" style={{ marginRight: '0.5em', fontSize: '1.1em' }}></i>
+                <span className={styles.linkText}>View on GitHub</span>
+              </a>
+            )}
           </div>
         )}
       </div>
