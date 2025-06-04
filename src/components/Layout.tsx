@@ -13,6 +13,7 @@ interface LayoutProps {
   sidebarItems?: { title: string; id?: string }[];
   sidebarItemType?: 'project' | 'blog' | 'archive' | 'toc';
   onSidebarItemClick?: (index: number) => void;
+  activeItemId?: string;
 }
 
 export default function Layout({ 
@@ -21,7 +22,8 @@ export default function Layout({
   headerBackground,
   sidebarItems, 
   sidebarItemType, 
-  onSidebarItemClick 
+  onSidebarItemClick,
+  activeItemId
 }: LayoutProps) {
   const [activeSection, setActiveSection] = useState('about');
 
@@ -48,6 +50,7 @@ export default function Layout({
               items={sidebarItems}
               itemType={sidebarItemType}
               onItemClick={onSidebarItemClick}
+              activeItemId={activeItemId}
             />
             
             <div className={styles.rightContentArea}>

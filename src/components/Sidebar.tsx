@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from '../styles/Sidebar.module.css';
 import config from '../config/config';
 
 interface SidebarProps {
   activeSection: string;
   onSectionChange: (sectionId: string) => void;
-  items?: { title: string; id?: string }[];
+  items?: { title: string; id?: string; level?: number }[];
   itemType?: 'project' | 'blog' | 'archive' | 'toc';
   onItemClick?: (index: number) => void;
+  activeItemId?: string; // For tracking which TOC item is currently active
 }
 
 interface NavigationSection {
@@ -23,8 +24,12 @@ const Sidebar: React.FC<SidebarProps> = ({
   onSectionChange, 
   items = [], 
   itemType,
-  onItemClick 
+  onItemClick,
+  activeItemId
 }) => {
+  // State for tracking expanded sections in TOC
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
+
   // Get all sections and visible sections from config (for Home page)
   const allSections = config.site.navigation.sections as NavigationSection[];
   const visibleSectionIds = config.site.navigation.visibleSections as string[];
@@ -34,8 +39,63 @@ const Sidebar: React.FC<SidebarProps> = ({
     visibleSectionIds.includes(section.id)
   );
 
+  // Helper function to prepare TOC items without adding numbers
+  const prepareTocItems = (items: any[]) => {
+    return items.map(item => ({
+      ...item,
+      level: item.level || 1
+    }));
+  };
+
+  // Function to find parent sections of a given item
+  const findParentSections = (items: any[], targetIndex: number): string[] => {
+    const parents: string[] = [];
+    const targetLevel = items[targetIndex]?.level || 1;
+    
+    // Look backwards from the target item to find parents
+    for (let i = targetIndex - 1; i >= 0; i--) {
+      const item = items[i];
+      if (item.level < targetLevel) {
+        parents.unshift(item.id || `item-${i}`);
+        // Continue looking for higher-level parents
+        if (item.level === 1) break;
+      }
+    }
+    
+    return parents;
+  };
+
+  // Auto-expand sections when activeItemId changes
+  useEffect(() => {
+    if (activeItemId && itemType === 'toc' && items.length > 0) {
+      const preparedItems = prepareTocItems(items);
+      const activeIndex = preparedItems.findIndex(item => item.id === activeItemId);
+      
+      if (activeIndex !== -1) {
+        const parents = findParentSections(preparedItems, activeIndex);
+        const newExpanded = new Set([...parents, activeItemId]);
+        setExpandedSections(newExpanded);
+      }
+    }
+  }, [activeItemId, itemType, items]);
+
+  // Function to check if an item should be visible
+  const isItemVisible = (item: any, index: number): boolean => {
+    if (itemType !== 'toc') return true;
+    if (item.level === 1) return true; // Top-level items always visible
+    
+    const preparedItems = prepareTocItems(items);
+    const parents = findParentSections(preparedItems, index);
+    
+    // Item is visible if all its parents are expanded
+    return parents.every(parentId => expandedSections.has(parentId));
+  };
+
   // Determine what to show in navigation based on context
   const showItems = items.length > 0 && itemType;
+
+  // Prepare TOC items without automatic numbering
+  const preparedItems = itemType === 'toc' && items ? prepareTocItems(items) : items;
 
   return (
     <div className={styles.leftSidebar}>
@@ -66,21 +126,47 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div className={styles.navigationCard}>
         {showItems ? (
           <>
-            <h4>{itemType === 'project' ? 'Projects' : itemType === 'blog' ? 'Blog Posts' : itemType === 'toc' ? 'Table of Contents' : 'Archive Items'}</h4>
+            <h4>{itemType === 'project' ? 'Projects' : itemType === 'blog' ? 'Blog Posts' : itemType === 'toc' ? 'Catalog' : 'Archive Items'}</h4>
             <nav className={styles.navList}>
-              {items.map((item, index) => (
-                <button
-                  key={index}
-                  className={`${styles.navItem} ${styles.itemNavItem}`}
-                  onClick={() => onItemClick && onItemClick(index)}
-                  title={item.title}
-                >
-                  <span className={styles.navIcon}>
-                    {itemType === 'project' ? '💻' : itemType === 'blog' ? '📝' : itemType === 'toc' ? '📖' : '📁'}
-                  </span>
-                  <span className={styles.itemTitle}>{item.title}</span>
-                </button>
-              ))}
+              {itemType === 'toc' ? (
+                // Special rendering for TOC with tree structure, nesting and expand/collapse
+                preparedItems?.map((item: any, index: number) => {
+                  const itemId = item.id || `item-${index}`;
+                  const isActive = activeItemId === itemId;
+                  const isVisible = isItemVisible(item, index);
+                  
+                  if (!isVisible) return null;
+                  
+                  return (
+                    <div key={index} className={styles.tocItemContainer}>
+                      <button
+                        className={`${styles.navItem} ${styles.tocItem} ${styles[`tocLevel${item.level}`]} ${isActive ? styles.active : ''}`}
+                        onClick={() => onItemClick && onItemClick(index)}
+                        title={item.title}
+                      >
+                        <div className={styles.tocItemContent}>
+                          <span className={styles.tocTitle}>{item.title}</span>
+                        </div>
+                      </button>
+                    </div>
+                  );
+                })
+              ) : (
+                // Default rendering for other item types
+                items?.map((item, index) => (
+                  <button
+                    key={index}
+                    className={`${styles.navItem} ${styles.itemNavItem}`}
+                    onClick={() => onItemClick && onItemClick(index)}
+                    title={item.title}
+                  >
+                    <span className={styles.navIcon}>
+                      {itemType === 'project' ? '💻' : itemType === 'blog' ? '📝' : '📁'}
+                    </span>
+                    <span className={styles.itemTitle}>{item.title}</span>
+                  </button>
+                ))
+              )}
             </nav>
           </>
         ) : (

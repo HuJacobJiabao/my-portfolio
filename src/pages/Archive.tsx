@@ -37,7 +37,8 @@ export default function Archive() {
         type: 'blog' as const,
         link: post.link,
         category: post.category,
-        year: new Date(post.date).getFullYear()
+        year: new Date(post.date).getFullYear(),
+        id: post.id // Include id for navigation
       })),
       // Add projects
       ...projects.map(project => ({
@@ -149,8 +150,8 @@ export default function Archive() {
                             date={item.date}
                             image={item.image}
                             type={item.type}
-                            link={item.type === 'blog' ? item.link : undefined}
-                            id={item.type === 'project' ? item.id : undefined}
+                            link={item.type === 'blog' && !item.id ? item.link : undefined}
+                            id={item.id}
                             category={item.category}
                           />
                         </div>

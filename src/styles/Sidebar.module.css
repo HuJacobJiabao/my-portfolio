@@ -103,7 +103,7 @@
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.2);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  overflow: hidden;
+  /* Remove overflow: hidden to allow dynamic expansion */
 }
 
 .navigationCard h4 {
@@ -117,28 +117,7 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
-  max-height: 400px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  scrollbar-width: thin;
-  scrollbar-color: #3498db transparent;
-}
-
-.navList::-webkit-scrollbar {
-  width: 6px;
-}
-
-.navList::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.navList::-webkit-scrollbar-thumb {
-  background: #3498db;
-  border-radius: 3px;
-}
-
-.navList::-webkit-scrollbar-thumb:hover {
-  background: #2980b9;
+  /* Remove max-height and overflow to allow dynamic expansion */
 }
 
 .navItem {
@@ -225,4 +204,167 @@
   .profileName {
     font-size: 1.1rem;
   }
+}
+
+/* TOC-specific styles for enhanced catalog display */
+.tocItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  text-align: left;
+  border: none;
+  background: none;
+  color: #4a5568;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin: 2px 0;
+  position: relative;
+}
+
+/* Level-specific hover effects with themed colors */
+.tocLevel1:hover {
+  background: rgba(26, 32, 44, 0.1);
+  color: #1a202c;
+  transform: translateX(2px);
+}
+
+.tocLevel2:hover {
+  background: rgba(49, 130, 206, 0.1);
+  color: #3182ce;
+  transform: translateX(2px);
+}
+
+.tocLevel3:hover {
+  background: rgba(56, 178, 172, 0.1);
+  color: #38b2ac;
+  transform: translateX(2px);
+}
+
+.tocLevel4:hover {
+  background: rgba(104, 211, 145, 0.1);
+  color: #68d391;
+  transform: translateX(2px);
+}
+
+.tocLevel5:hover,
+.tocLevel6:hover {
+  background: rgba(251, 211, 141, 0.1);
+  color: #fbd38d;
+  transform: translateX(2px);
+}
+
+/* Active state colors for different levels */
+.tocLevel1.active {
+  background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+  color: white;
+  font-weight: 600;
+}
+
+.tocLevel1.active .tocTitle {
+  color: white;
+}
+
+.tocLevel2.active {
+  background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+  color: white;
+  font-weight: 600;
+}
+
+.tocLevel2.active .tocTitle {
+  color: white;
+}
+
+.tocLevel3.active {
+  background: linear-gradient(135deg, #38b2ac 0%, #2c7a7b 100%);
+  color: white;
+  font-weight: 600;
+}
+
+.tocLevel3.active .tocTitle {
+  color: white;
+}
+
+.tocLevel4.active {
+  background: linear-gradient(135deg, #68d391 0%, #48bb78 100%);
+  color: white;
+  font-weight: 600;
+}
+
+.tocLevel4.active .tocTitle {
+  color: white;
+}
+
+.tocLevel5.active,
+.tocLevel6.active {
+  background: linear-gradient(135deg, #fbd38d 0%, #f6ad55 100%);
+  color: white;
+  font-weight: 600;
+}
+
+.tocLevel5.active .tocTitle,
+.tocLevel6.active .tocTitle {
+  color: white;
+}
+
+/* TOC item container and content styling */
+.tocItemContainer {
+  position: relative;
+}
+
+.tocItemContent {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.tocTitle {
+  flex: 1;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.3;
+}
+
+/* Update level-specific padding and colors for clear hierarchy */
+.tocLevel1 {
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1a202c; /* Dark blue-gray for top level */
+  margin-left: 0;
+  position: relative;
+}
+
+.tocLevel2 {
+  padding: 6px 12px 6px 24px; /* Simple indentation for level 2 */
+  font-size: 0.85rem;
+  color: #2d3748; /* Medium blue-gray for level 2 */
+  position: relative;
+}
+
+.tocLevel3 {
+  padding: 5px 12px 5px 36px; /* Progressive indentation for level 3 */
+  font-size: 0.8rem;
+  color: #4a5568; /* Lighter blue-gray for level 3 */
+  position: relative;
+}
+
+.tocLevel4 {
+  padding: 4px 12px 4px 48px; /* Progressive indentation for level 4 */
+  font-size: 0.78rem;
+  color: #718096; /* Even lighter for level 4 */
+  position: relative;
+}
+
+.tocLevel5,
+.tocLevel6 {
+  padding: 4px 12px 4px 60px; /* Progressive indentation for deeper levels */
+  font-size: 0.75rem;
+  color: #a0aec0; /* Lightest for deepest levels */
+  position: relative;
 }

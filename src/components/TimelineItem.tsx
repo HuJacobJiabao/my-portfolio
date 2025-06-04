@@ -26,6 +26,9 @@ export default function TimelineItem({
     if (type === 'project' && id) {
       // Navigate to project detail page
       navigate(`/my-portfolio/project/${id}`);
+    } else if (type === 'blog' && id) {
+      // Navigate to blog detail page
+      navigate(`/my-portfolio/blog/${id}`);
     } else if (link) {
       // External link
       window.open(link, '_blank', 'noopener noreferrer');
@@ -40,15 +43,15 @@ export default function TimelineItem({
           alt={title} 
           className={styles.itemImage}
         />
-        <div className={styles.typeIndicator}>
-          <span className={styles.typeIcon}>
-            {type === 'project' ? '💻' : '📝'}
-          </span>
-        </div>
       </div>
       
       <div className={styles.itemInfo}>
-        <h3 className={styles.itemTitle}>{title}</h3>
+        <div className={styles.itemHeader}>
+          <h3 className={styles.itemTitle}>{title}</h3>
+          <span className={`${styles.typeIndicator} ${styles[type]}`}>
+            {type.toUpperCase()}
+          </span>
+        </div>
         <div className={styles.itemMeta}>
           <span className={styles.itemDate}>
             <i className="fas fa-calendar"></i>

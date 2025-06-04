@@ -66,37 +66,6 @@
   transform: scale(1.05);
 }
 
-.typeIndicator {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  backdrop-filter: blur(10px);
-  border-radius: 50%;
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 
-    0 2px 8px rgba(0, 0, 0, 0.1),
-    0 1px 3px rgba(0, 0, 0, 0.06);
-  border: 2px solid rgba(59, 130, 246, 0.2);
-  transition: all 0.3s ease;
-}
-
-.timelineItem:hover .typeIndicator {
-  border-color: rgba(59, 130, 246, 0.4);
-  box-shadow: 
-    0 4px 12px rgba(59, 130, 246, 0.2),
-    0 2px 4px rgba(0, 0, 0, 0.06);
-}
-
-.typeIcon {
-  font-size: 0.9rem;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
-}
-
 .itemInfo {
   flex: 1;
   display: flex;
@@ -105,12 +74,21 @@
   min-width: 0; /* Allow text to wrap */
 }
 
+.itemHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
 .itemTitle {
   font-size: 1.1rem;
   font-weight: 600;
   color: #1e293b;
   margin: 0;
   line-height: 1.4;
+  flex: 1;
+  min-width: 0;
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -121,6 +99,31 @@
 
 .timelineItem:hover .itemTitle {
   color: #3b82f6;
+}
+
+.typeIndicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.typeIndicator.project {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: #ffffff;
+}
+
+.typeIndicator.blog {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: #ffffff;
 }
 
 .itemMeta {

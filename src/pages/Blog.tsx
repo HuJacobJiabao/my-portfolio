@@ -5,6 +5,7 @@ import styles from '../styles/Blog.module.css';
 
 // Blog data - add your real blog posts here
 export const blogPosts: Array<{
+  id: string;
   title: string;
   date: string;
   category: string;
@@ -12,7 +13,38 @@ export const blogPosts: Array<{
   image: string;
   link: string;
   tags: string[];
-}> = [];
+}> = [
+  {
+    id: 'my-journey-into-web-development',
+    title: 'My Journey into Web Development',
+    date: '2024-01-15',
+    category: 'Personal',
+    description: 'Sharing my experience learning web development, from HTML basics to modern React applications.',
+    image: '/images/blog/web-dev-journey.jpg',
+    link: '/my-portfolio/blog/my-journey-into-web-development',
+    tags: ['web development', 'career', 'learning', 'react']
+  },
+  {
+    id: 'understanding-react-hooks',
+    title: 'Understanding React Hooks',
+    date: '2024-01-22',
+    category: 'Tutorial',
+    description: 'A comprehensive guide to React Hooks, covering useState, useEffect, custom hooks, and best practices.',
+    image: '/images/blog/react-hooks.jpg',
+    link: '/my-portfolio/blog/understanding-react-hooks',
+    tags: ['react', 'hooks', 'javascript', 'tutorial']
+  },
+  {
+    id: 'building-responsive-layouts-css-grid',
+    title: 'Building Responsive Layouts with CSS Grid',
+    date: '2024-01-29',
+    category: 'Tutorial',
+    description: 'Learn how to create flexible, responsive layouts using CSS Grid with practical examples and techniques.',
+    image: '/images/blog/css-grid.jpg',
+    link: '/my-portfolio/blog/building-responsive-layouts-css-grid',
+    tags: ['css', 'grid', 'responsive design', 'layout']
+  }
+];
 
 export default function Blog() {
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);

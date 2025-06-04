@@ -60,8 +60,9 @@ Project and blog details are written in Markdown, providing:
 - Version control friendly format
 - Rich text formatting
 - Code syntax highlighting
+- $\frac{1}{2}$
 
-## Performance Optimizations
+## Performance OptimizationsDS
 
 ### Loading Performance
 - Code splitting for optimal bundle sizes

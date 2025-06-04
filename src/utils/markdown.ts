@@ -11,8 +11,9 @@ export interface ParsedMarkdown {
   toc: TocItem[];
 }
 
-export async function parseMarkdown(content: string): Promise<ParsedMarkdown> {
+export async function parseMarkdown(content: string, removeMainTitle: boolean = false): Promise<ParsedMarkdown> {
   const toc: TocItem[] = [];
+  let isFirstH1 = true;
   
   // Configure marked with custom renderer
   const renderer = {
@@ -23,6 +24,12 @@ export async function parseMarkdown(content: string): Promise<ParsedMarkdown> {
         .replace(/[^\w\s-]/g, '')
         .replace(/\s+/g, '-')
         .trim();
+      
+      // Skip the first H1 if removeMainTitle is true
+      if (removeMainTitle && depth === 1 && isFirstH1) {
+        isFirstH1 = false;
+        return '';
+      }
       
       toc.push({
         id,
