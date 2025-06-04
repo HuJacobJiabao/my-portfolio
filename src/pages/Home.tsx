@@ -6,6 +6,7 @@ import WorkCard from "../components/WorkCard"
 import ProjectCard from "../components/ProjectCard"
 import Sidebar from "../components/Sidebar"
 import ScrollToTop from "../components/ScrollToTop"
+import Footer from "../components/Footer"
 import config from "../config/config"
 
 // Define types for config data
@@ -365,12 +366,7 @@ const Home = () => {
             </section>
 
             {/* Footer */}
-            <footer className={styles.footer}>
-                <div className={styles.footerText}>
-                    <p>{config.site.footer.copyright}</p>
-                    <p>{config.site.footer.message}</p>
-                </div>
-            </footer>
+            <Footer />
 
             {/* Scroll to Top Button */}
             <ScrollToTop />

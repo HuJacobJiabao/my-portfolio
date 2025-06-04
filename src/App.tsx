@@ -11,8 +11,17 @@ function ScrollToTop() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    // Reset scroll position to top when route changes
+    // Temporarily disable smooth scrolling for route changes
+    const originalBehavior = document.documentElement.style.scrollBehavior;
+    document.documentElement.style.scrollBehavior = 'auto';
+    
+    // Reset scroll position to top immediately when route changes
     window.scrollTo(0, 0);
+    
+    // Restore smooth scrolling after a brief delay
+    setTimeout(() => {
+      document.documentElement.style.scrollBehavior = originalBehavior;
+    }, 100);
   }, [pathname]);
 
   return null;

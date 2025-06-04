@@ -1,13 +1,3 @@
-/* Ensure pages naturally start at top */
-html {
-  scroll-behavior: auto; /* Disable smooth scrolling */
-}
-
-/* Reset scroll position for route changes */
-#root {
-  position: relative;
-}
-
 .pageWrapper {
   padding-top: 60px; /* 导航栏高度 */
 }

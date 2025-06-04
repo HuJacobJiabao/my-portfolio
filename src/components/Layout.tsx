@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { useState } from 'react';
 import NavBar from './NavBar';
 import Sidebar from './Sidebar';
+import Footer from './Footer';
 import styles from '../styles/Layout.module.css';
 
 interface LayoutProps {
@@ -53,12 +54,7 @@ export default function Layout({
         </div>
       </main>
 
-      <footer className={styles.footer}>
-        <div className={styles.footerText}>
-          <p>© 2024 Made with ❤️ by Jiabao</p>
-          <p>Built with React + TypeScript + Vite</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
