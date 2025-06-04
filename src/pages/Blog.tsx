@@ -1,9 +1,10 @@
+import { useRef } from 'react';
 import Layout from '../components/Layout';
 import BlogCard from '../components/BlogCard';
 import styles from '../styles/Blog.module.css';
 
 // Sample blog data - you can replace this with real data
-const blogPosts = [
+export const blogPosts = [
   {
     title: "Hello World",
     date: "2024-04-21",
@@ -61,8 +62,27 @@ const blogPosts = [
 ];
 
 export default function Blog() {
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  const handleSidebarItemClick = (index: number) => {
+    if (cardRefs.current[index]) {
+      cardRefs.current[index]?.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start',
+        inline: 'nearest'
+      });
+    }
+  };
+
+  const sidebarItems = blogPosts.map(post => ({ title: post.title }));
+
   return (
-    <Layout title="Blog">
+    <Layout 
+      title="Blog"
+      sidebarItems={sidebarItems}
+      sidebarItemType="blog"
+      onSidebarItemClick={handleSidebarItemClick}
+    >
       <div className={styles.blogContainer}>
         <p className={styles.description}>
           Welcome to my blog! This is where I share my thoughts on technology, 
@@ -72,16 +92,21 @@ export default function Blog() {
         
         <div className={styles.blogGrid}>
           {blogPosts.map((post, index) => (
-            <BlogCard
+            <div 
               key={index}
-              title={post.title}
-              date={post.date}
-              category={post.category}
-              description={post.description}
-              image={post.image}
-              link={post.link}
-              tags={post.tags}
-            />
+              ref={el => { cardRefs.current[index] = el; }}
+              className={styles.blogCardWrapper}
+            >
+              <BlogCard
+                title={post.title}
+                date={post.date}
+                category={post.category}
+                description={post.description}
+                image={post.image}
+                link={post.link}
+                tags={post.tags}
+              />
+            </div>
           ))}
         </div>
       </div>

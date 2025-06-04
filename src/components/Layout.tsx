@@ -7,9 +7,18 @@ import styles from '../styles/Layout.module.css';
 interface LayoutProps {
   children: ReactNode;
   title?: string;
+  sidebarItems?: { title: string; id?: string }[];
+  sidebarItemType?: 'project' | 'blog' | 'archive';
+  onSidebarItemClick?: (index: number) => void;
 }
 
-export default function Layout({ children, title }: LayoutProps) {
+export default function Layout({ 
+  children, 
+  title, 
+  sidebarItems, 
+  sidebarItemType, 
+  onSidebarItemClick 
+}: LayoutProps) {
   const [activeSection, setActiveSection] = useState('about');
 
   return (
@@ -19,7 +28,13 @@ export default function Layout({ children, title }: LayoutProps) {
       <main className={styles.main}>
         <div className={styles.aboutWrapper}>
           <div className={styles.aboutContainer}>
-            <Sidebar activeSection={activeSection} onSectionChange={setActiveSection} />
+            <Sidebar 
+              activeSection={activeSection} 
+              onSectionChange={setActiveSection}
+              items={sidebarItems}
+              itemType={sidebarItemType}
+              onItemClick={onSidebarItemClick}
+            />
             
             <div className={styles.rightContentArea}>
               <div className={styles.rightContent}>

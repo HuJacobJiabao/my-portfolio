@@ -5,6 +5,9 @@ import config from '../config/config';
 interface SidebarProps {
   activeSection: string;
   onSectionChange: (sectionId: string) => void;
+  items?: { title: string; id?: string }[];
+  itemType?: 'project' | 'blog' | 'archive';
+  onItemClick?: (index: number) => void;
 }
 
 interface NavigationSection {
@@ -15,8 +18,14 @@ interface NavigationSection {
   contentType?: string;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ activeSection, onSectionChange }) => {
-  // Get all sections and visible sections from config
+const Sidebar: React.FC<SidebarProps> = ({ 
+  activeSection, 
+  onSectionChange, 
+  items = [], 
+  itemType,
+  onItemClick 
+}) => {
+  // Get all sections and visible sections from config (for Home page)
   const allSections = config.site.navigation.sections as NavigationSection[];
   const visibleSectionIds = config.site.navigation.visibleSections as string[];
   
@@ -24,6 +33,9 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, onSectionChange }) => 
   const sections = allSections.filter(section => 
     visibleSectionIds.includes(section.id)
   );
+
+  // Determine what to show in navigation based on context
+  const showItems = items.length > 0 && itemType;
 
   return (
     <div className={styles.leftSidebar}>
@@ -52,19 +64,42 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, onSectionChange }) => 
 
       {/* Navigation Card */}
       <div className={styles.navigationCard}>
-        <h4>Navigation</h4>
-        <nav className={styles.navList}>
-          {sections.map(section => (
-            <button
-              key={section.id}
-              className={`${styles.navItem} ${activeSection === section.id ? styles.active : ''}`}
-              onClick={() => onSectionChange(section.id)}
-            >
-              <span className={styles.navIcon}>{section.icon}</span>
-              <span>{section.title}</span>
-            </button>
-          ))}
-        </nav>
+        {showItems ? (
+          <>
+            <h4>{itemType === 'project' ? 'Projects' : itemType === 'blog' ? 'Blog Posts' : 'Archive Items'}</h4>
+            <nav className={styles.navList}>
+              {items.map((item, index) => (
+                <button
+                  key={index}
+                  className={`${styles.navItem} ${styles.itemNavItem}`}
+                  onClick={() => onItemClick && onItemClick(index)}
+                  title={item.title}
+                >
+                  <span className={styles.navIcon}>
+                    {itemType === 'project' ? '💻' : itemType === 'blog' ? '📝' : '📁'}
+                  </span>
+                  <span className={styles.itemTitle}>{item.title}</span>
+                </button>
+              ))}
+            </nav>
+          </>
+        ) : (
+          <>
+            <h4>Navigation</h4>
+            <nav className={styles.navList}>
+              {sections.map(section => (
+                <button
+                  key={section.id}
+                  className={`${styles.navItem} ${activeSection === section.id ? styles.active : ''}`}
+                  onClick={() => onSectionChange(section.id)}
+                >
+                  <span className={styles.navIcon}>{section.icon}</span>
+                  <span>{section.title}</span>
+                </button>
+              ))}
+            </nav>
+          </>
+        )}
       </div>
     </div>
   );

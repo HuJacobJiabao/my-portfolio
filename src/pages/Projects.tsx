@@ -1,9 +1,10 @@
+import { useRef } from 'react';
 import Layout from '../components/Layout';
 import Card from '../components/Card';
 import styles from '../styles/Projects.module.css';
 
 // Sample project data - you can replace this with real data
-const projects = [
+export const projects = [
   {
     title: "Portfolio Website",
     date: "2024-12-15",
@@ -61,8 +62,27 @@ const projects = [
 ];
 
 export default function Projects() {
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  const handleSidebarItemClick = (index: number) => {
+    if (cardRefs.current[index]) {
+      cardRefs.current[index]?.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start',
+        inline: 'nearest'
+      });
+    }
+  };
+
+  const sidebarItems = projects.map(project => ({ title: project.title }));
+
   return (
-    <Layout title="Projects">
+    <Layout 
+      title="Projects"
+      sidebarItems={sidebarItems}
+      sidebarItemType="project"
+      onSidebarItemClick={handleSidebarItemClick}
+    >
       <div className={styles.projectsContainer}>
         <p className={styles.description}>
           Welcome to my projects showcase! Here you'll find a collection of my work spanning 
@@ -72,17 +92,22 @@ export default function Projects() {
         
         <div className={styles.projectsGrid}>
           {projects.map((project, index) => (
-            <Card
+            <div 
               key={index}
-              title={project.title}
-              date={project.date}
-              category={project.category}
-              description={project.description}
-              image={project.image}
-              link={project.link}
-              tags={project.tags}
-              type="project"
-            />
+              ref={el => { cardRefs.current[index] = el; }}
+              className={styles.projectCardWrapper}
+            >
+              <Card
+                title={project.title}
+                date={project.date}
+                category={project.category}
+                description={project.description}
+                image={project.image}
+                link={project.link}
+                tags={project.tags}
+                type="project"
+              />
+            </div>
           ))}
         </div>
       </div>
