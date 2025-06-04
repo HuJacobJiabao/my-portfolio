@@ -4,30 +4,37 @@ import NavBar from './NavBar';
 import Sidebar from './Sidebar';
 import Footer from './Footer';
 import styles from '../styles/Layout.module.css';
+import ScrollToTop from './ScrollToTop';
 
 interface LayoutProps {
   children: ReactNode;
   title?: string;
+  headerBackground?: string;
   sidebarItems?: { title: string; id?: string }[];
-  sidebarItemType?: 'project' | 'blog' | 'archive';
+  sidebarItemType?: 'project' | 'blog' | 'archive' | 'toc';
   onSidebarItemClick?: (index: number) => void;
 }
 
 export default function Layout({ 
   children, 
   title, 
+  headerBackground,
   sidebarItems, 
   sidebarItemType, 
   onSidebarItemClick 
 }: LayoutProps) {
   const [activeSection, setActiveSection] = useState('about');
 
+  const headerStyle = headerBackground ? {
+    backgroundImage: `url('${headerBackground}')`
+  } : undefined;
+
   return (
     <div className={styles.wrapper}>
       <NavBar />
       
       {title && (
-        <header className={styles.pageHeader}>
+        <header className={styles.pageHeader} style={headerStyle}>
           <h1>{title}</h1>
         </header>
       )}
@@ -55,6 +62,7 @@ export default function Layout({
       </main>
 
       <Footer />
+      <ScrollToTop />
     </div>
   );
 }

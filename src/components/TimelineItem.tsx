@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import styles from '../styles/TimelineItem.module.css';
 
 interface TimelineItemProps {
@@ -7,6 +8,7 @@ interface TimelineItemProps {
   type: 'project' | 'blog';
   link?: string;
   category?: string;
+  id?: string; // Add id for project navigation
 }
 
 export default function TimelineItem({ 
@@ -15,10 +17,17 @@ export default function TimelineItem({
   image, 
   type,
   link,
-  category 
+  category,
+  id
 }: TimelineItemProps) {
+  const navigate = useNavigate();
+
   const handleClick = () => {
-    if (link) {
+    if (type === 'project' && id) {
+      // Navigate to project detail page
+      navigate(`/my-portfolio/project/${id}`);
+    } else if (link) {
+      // External link
       window.open(link, '_blank', 'noopener noreferrer');
     }
   };

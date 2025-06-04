@@ -157,6 +157,7 @@
   transition: all 0.3s ease;
   font-size: 0.9rem;
   overflow: hidden;
+  outline: none; /* Remove focus outline */
 }
 
 .navItem:hover {
@@ -168,7 +169,17 @@
 .navItem.active {
   background: linear-gradient(135deg, #3498db, #2ecc71);
   color: white;
-  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+  border: none; /* Explicitly remove any border */
+  outline: none; /* Remove focus outline */
+}
+
+.navItem:focus {
+  outline: none; /* Remove focus outline for keyboard navigation */
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.3); /* Optional: Add a subtle focus indicator */
+}
+
+.navItem.active:focus {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4); /* Focus indicator for active items */
 }
 
 .navIcon {

@@ -17,6 +17,7 @@ interface ArchiveItem {
   link?: string;
   category?: string;
   year: number;
+  id?: string; // Add id for projects
 }
 
 // Items per page
@@ -46,7 +47,8 @@ export default function Archive() {
         type: 'project' as const,
         link: project.link,
         category: project.category,
-        year: new Date(project.date).getFullYear()
+        year: new Date(project.date).getFullYear(),
+        id: project.id // Include id for navigation
       }))
     ];
 
@@ -147,7 +149,8 @@ export default function Archive() {
                             date={item.date}
                             image={item.image}
                             type={item.type}
-                            link={item.link}
+                            link={item.type === 'blog' ? item.link : undefined}
+                            id={item.type === 'project' ? item.id : undefined}
                             category={item.category}
                           />
                         </div>

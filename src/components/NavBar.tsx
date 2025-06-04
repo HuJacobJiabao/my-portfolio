@@ -1,13 +1,29 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styles from '../styles/NavBar.module.css';
 import { useState, useEffect } from 'react';
 import config from '../config/config';
 
 export default function NavBar() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [prevScrollPos, setPrevScrollPos] = useState(0);
   const [visible, setVisible] = useState(true);
   const [atTop, setAtTop] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // Function to handle navigation clicks
+  const handleNavClick = (to: string, event: React.MouseEvent) => {
+    // If we're already on this page, force re-navigation with a timestamp
+    if (location.pathname === to) {
+      event.preventDefault();
+      // Add a timestamp to force navigation even to the same route
+      navigate(`${to}?refresh=${Date.now()}`, { replace: true });
+      setMenuOpen(false);
+      return;
+    }
+    // Otherwise, let React Router handle it normally
+    setMenuOpen(false);
+  };
 
   // Clear any residual inline styles on component mount
   useEffect(() => {
@@ -49,11 +65,11 @@ export default function NavBar() {
       </div>
 
       <ul className={`${styles.navLinks} ${menuOpen ? styles.showMenu : ''}`}>
-        <li><Link to="/my-portfolio/" onClick={() => setMenuOpen(false)}>Home</Link></li>
+        <li><Link to="/my-portfolio/" onClick={(e) => handleNavClick('/my-portfolio/', e)}>Home</Link></li>
         <li><a href={`${import.meta.env.BASE_URL}${config.site.contact.resume}`} target="_blank" rel="noopener noreferrer">CV</a></li>
-        <li><Link to="/my-portfolio/project/" onClick={() => setMenuOpen(false)}>Project</Link></li>
-        <li><Link to="/my-portfolio/blog/" onClick={() => setMenuOpen(false)}>Blog</Link></li>
-        <li><Link to="/my-portfolio/archive/" onClick={() => setMenuOpen(false)}>Archive</Link></li>
+        <li><Link to="/my-portfolio/project/" onClick={(e) => handleNavClick('/my-portfolio/project/', e)}>Project</Link></li>
+        <li><Link to="/my-portfolio/blog/" onClick={(e) => handleNavClick('/my-portfolio/blog/', e)}>Blog</Link></li>
+        <li><Link to="/my-portfolio/archive/" onClick={(e) => handleNavClick('/my-portfolio/archive/', e)}>Archive</Link></li>
       </ul>
     </nav>
   );

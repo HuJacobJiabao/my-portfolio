@@ -15,7 +15,6 @@
   background-image: url('/background/hero.jpg');
   background-size: cover;
   background-position: center;
-  background-attachment: fixed;
   padding: 120px 0 80px;
   text-align: center;
   margin-top: 0;
@@ -45,7 +44,6 @@
   z-index: 2;
   padding: 10px 30px;
   display: inline-block;
-  background-color: rgba(0, 0, 0, 0.2);
 }
 
 @keyframes fadeInUp {

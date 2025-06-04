@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import styles from '../styles/Card.module.css';
 
 interface CardProps {
@@ -9,6 +10,7 @@ interface CardProps {
   link?: string;
   tags?: string[];
   type?: 'project' | 'blog' | 'archive';
+  id?: string;
 }
 
 export default function Card({ 
@@ -19,10 +21,17 @@ export default function Card({
   image, 
   link, 
   tags = [],
-  type = 'project' 
+  type = 'project',
+  id
 }: CardProps) {
+  const navigate = useNavigate();
+
   const handleClick = () => {
-    if (link) {
+    if (type === 'project' && id) {
+      // Navigate to project detail page
+      navigate(`/my-portfolio/project/${id}`);
+    } else if (link) {
+      // External link
       window.open(link, '_blank', 'noopener noreferrer');
     }
   };
@@ -31,7 +40,7 @@ export default function Card({
   
   return (
     <div 
-      className={`${styles.card} ${styles[type]} ${link ? styles.clickable : ''}`}
+      className={`${styles.card} ${styles[type]} ${(link || (type === 'project' && id)) ? styles.clickable : ''}`}
       onClick={handleClick}
     >
       <div className={styles.imageContainer}>
@@ -73,10 +82,10 @@ export default function Card({
           </div>
         )}
         
-        {link && (
+        {(link || (type === 'project' && id)) && (
           <div className={styles.cardFooter}>
             <span className={styles.readMore}>
-              Read More <i className="fas fa-arrow-right"></i>
+              {type === 'project' ? 'View Details' : 'Read More'} <i className="fas fa-arrow-right"></i>
             </span>
           </div>
         )}

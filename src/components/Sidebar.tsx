@@ -6,7 +6,7 @@ interface SidebarProps {
   activeSection: string;
   onSectionChange: (sectionId: string) => void;
   items?: { title: string; id?: string }[];
-  itemType?: 'project' | 'blog' | 'archive';
+  itemType?: 'project' | 'blog' | 'archive' | 'toc';
   onItemClick?: (index: number) => void;
 }
 
@@ -66,7 +66,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div className={styles.navigationCard}>
         {showItems ? (
           <>
-            <h4>{itemType === 'project' ? 'Projects' : itemType === 'blog' ? 'Blog Posts' : 'Archive Items'}</h4>
+            <h4>{itemType === 'project' ? 'Projects' : itemType === 'blog' ? 'Blog Posts' : itemType === 'toc' ? 'Table of Contents' : 'Archive Items'}</h4>
             <nav className={styles.navList}>
               {items.map((item, index) => (
                 <button
@@ -76,7 +76,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                   title={item.title}
                 >
                   <span className={styles.navIcon}>
-                    {itemType === 'project' ? '💻' : itemType === 'blog' ? '📝' : '📁'}
+                    {itemType === 'project' ? '💻' : itemType === 'blog' ? '📝' : itemType === 'toc' ? '📖' : '📁'}
                   </span>
                   <span className={styles.itemTitle}>{item.title}</span>
                 </button>

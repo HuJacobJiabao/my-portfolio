@@ -12,6 +12,8 @@ html, body, #root {
 
 html {
   scroll-behavior: smooth;
+  /* 防止页面刷新时的背景跳动 - 强制显示滚动条槽 */
+  overflow-y: scroll;
 }
 
 :root {

@@ -3,61 +3,36 @@ import Layout from '../components/Layout';
 import Card from '../components/Card';
 import styles from '../styles/Projects.module.css';
 
-// Sample project data - you can replace this with real data
-export const projects = [
+// Project data - add your real projects here
+export const projects: Array<{
+  id: string;
+  title: string;
+  date: string;
+  category: string;
+  description: string;
+  image: string;
+  link: string;
+  tags: string[];
+}> = [
   {
-    title: "Portfolio Website",
+    id: "portfolio-website",
+    title: "Modern Portfolio Website",
     date: "2024-12-15",
     category: "Web Development",
-    description: "A modern, responsive portfolio website built with React, TypeScript, and Vite. Features include smooth animations, responsive design, and dynamic content management.",
-    image: import.meta.env.BASE_URL + "/default_cover.jpg",
-    link: "https://github.com/yourusername/portfolio",
-    tags: ["React", "TypeScript", "Vite", "CSS Modules"]
+    description: "A modern, responsive portfolio website built with React, TypeScript, and Vite. Features include smooth animations, responsive design, and dynamic content management with markdown support.",
+    image: import.meta.env.BASE_URL + "background/hero.jpg",
+    link: "/my-portfolio/project/portfolio-website",
+    tags: ["React", "TypeScript", "Vite", "CSS Modules", "Markdown"]
   },
   {
-    title: "E-commerce Platform",
+    id: "react-dashboard",
+    title: "React Analytics Dashboard",
     date: "2024-11-20",
-    category: "Full Stack",
-    description: "A complete e-commerce solution with user authentication, payment processing, and admin dashboard. Built with modern web technologies and cloud deployment.",
-    image: import.meta.env.BASE_URL + "/default_cover.jpg",
-    link: "https://github.com/yourusername/ecommerce",
-    tags: ["Next.js", "Node.js", "MongoDB", "Stripe"]
-  },
-  {
-    title: "Machine Learning Dashboard",
-    date: "2024-10-05",
-    category: "Data Science",
-    description: "An interactive dashboard for visualizing machine learning model performance with real-time data processing and advanced analytics capabilities.",
-    image: import.meta.env.BASE_URL + "/default_cover.jpg",
-    link: "https://github.com/yourusername/ml-dashboard",
-    tags: ["Python", "TensorFlow", "React", "D3.js"]
-  },
-  {
-    title: "Mobile Task Manager",
-    date: "2024-09-12",
-    category: "Mobile Development",
-    description: "A cross-platform mobile application for task management with offline capabilities, push notifications, and team collaboration features.",
-    image: import.meta.env.BASE_URL + "/default_cover.jpg",
-    link: "https://github.com/yourusername/task-manager",
-    tags: ["React Native", "Firebase", "Redux", "TypeScript"]
-  },
-  {
-    title: "API Gateway Service",
-    date: "2024-08-18",
-    category: "Backend",
-    description: "A scalable API gateway service with rate limiting, authentication, and monitoring capabilities. Designed for microservices architecture.",
-    image: import.meta.env.BASE_URL + "/default_cover.jpg",
-    link: "https://github.com/yourusername/api-gateway",
-    tags: ["Go", "Docker", "Kubernetes", "Redis"]
-  },
-  {
-    title: "Real-time Chat Application",
-    date: "2024-07-25",
-    category: "Web Development",
-    description: "A real-time chat application with multiple rooms, file sharing, and message encryption. Features modern UI and responsive design.",
-    image: import.meta.env.BASE_URL + "/default_cover.jpg",
-    link: "https://github.com/yourusername/chat-app",
-    tags: ["Socket.io", "Express", "React", "MongoDB"]
+    category: "Data Visualization",
+    description: "A comprehensive analytics dashboard built with React, TypeScript, and modern data visualization libraries. Features interactive charts, real-time updates, and responsive design.",
+    image: import.meta.env.BASE_URL + "background/about.jpg",
+    link: "/my-portfolio/project/react-dashboard",
+    tags: ["React", "TypeScript", "Chart.js", "D3.js", "Redux Toolkit"]
   }
 ];
 
@@ -84,28 +59,34 @@ export default function Projects() {
       onSidebarItemClick={handleSidebarItemClick}
     >
       <div className={styles.projectsContainer}>
-
-        
-        <div className={styles.projectsGrid}>
-          {projects.map((project, index) => (
-            <div 
-              key={index}
-              ref={el => { cardRefs.current[index] = el; }}
-              className={styles.projectCardWrapper}
-            >
-              <Card
-                title={project.title}
-                date={project.date}
-                category={project.category}
-                description={project.description}
-                image={project.image}
-                link={project.link}
-                tags={project.tags}
-                type="project"
-              />
-            </div>
-          ))}
-        </div>
+        {projects.length === 0 ? (
+          <div className={styles.emptyState}>
+            <div className={styles.emptyIcon}>💻</div>
+            <h2>No Projects Yet</h2>
+            <p>Projects will be displayed here once they are added.</p>
+          </div>
+        ) : (
+          <div className={styles.projectsGrid}>
+            {projects.map((project, index) => (
+              <div 
+                key={index}
+                ref={el => { cardRefs.current[index] = el; }}
+                className={styles.projectCardWrapper}
+              >
+                <Card
+                  title={project.title}
+                  date={project.date}
+                  category={project.category}
+                  description={project.description}
+                  image={project.image}
+                  id={project.id}
+                  tags={project.tags}
+                  type="project"
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </Layout>
   );
