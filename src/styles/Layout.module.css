@@ -7,6 +7,60 @@
   scroll-behavior: smooth;
 }
 
+.pageHeader {
+  position: relative;
+  left: 0;
+  right: 0;
+  z-index: 998;
+  background-image: url('/background/hero.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  padding: 120px 0 80px;
+  text-align: center;
+  margin-top: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+}
+
+.pageHeader::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: -1;
+}
+
+.pageHeader h1 {
+  font-size: 3.5rem;
+  color: #ffffff;
+  margin: 0;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  position: relative;
+  z-index: 2;
+  animation: fadeInUp 1s ease-out;
+  padding: 10px 30px;
+  display: inline-block;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .main {
   width: 100vw;
   min-height: 100vh;
@@ -18,7 +72,7 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 100px 20px;
+  padding: 60px 20px 100px;
   box-sizing: border-box;
 }
 
@@ -64,23 +118,6 @@
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.header {
-  margin-bottom: 25px;
-}
-
-.header h1 {
-  font-size: 2.5rem;
-  color: #ffffff;
-  margin: 0 0 20px 0;
-  font-weight: 700;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  padding: 15px 25px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border-radius: 15px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .content {
@@ -138,6 +175,14 @@
 }
 
 @media (max-width: 768px) {
+  .pageHeader {
+    padding: 90px 0 60px;
+  }
+
+  .pageHeader h1 {
+    font-size: 2.2rem;
+  }
+
   .aboutContainer {
     grid-template-columns: 1fr;
     gap: 20px;
@@ -152,12 +197,6 @@
     min-height: 300px;
   }
 
-  .header h1 {
-    font-size: 1.8rem;
-    padding: 12px 20px;
-    text-align: center;
-  }
-
   .aboutWrapper {
     margin: 0 auto;
     padding: 15px;
@@ -167,6 +206,6 @@
   }
 
   .main {
-    padding: 100px 10px 40px;
+    padding: 40px 10px 40px;
   }
 }

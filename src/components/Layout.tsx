@@ -25,6 +25,12 @@ export default function Layout({
     <div className={styles.wrapper}>
       <NavBar />
       
+      {title && (
+        <header className={styles.pageHeader}>
+          <h1>{title}</h1>
+        </header>
+      )}
+      
       <main className={styles.main}>
         <div className={styles.aboutWrapper}>
           <div className={styles.aboutContainer}>
@@ -38,11 +44,6 @@ export default function Layout({
             
             <div className={styles.rightContentArea}>
               <div className={styles.rightContent}>
-                {title && (
-                  <div className={styles.header}>
-                    <h1>{title}</h1>
-                  </div>
-                )}
                 <div className={styles.content}>
                   {children}
                 </div>
