@@ -22,6 +22,7 @@
   align-items: center;
   text-align: center;
   overflow: hidden;
+  animation: fadeInDown 1s ease-in-out;
 }
 
 .hero::before {
@@ -62,6 +63,20 @@
   text-decoration: none;
   z-index: 2;
   animation: bounce 2s infinite;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  outline: none;
+}
+
+.downArrow:hover {
+  opacity: 0.8;
+}
+
+.downArrow:focus {
+  outline: none;
+  border: none;
 }
 
 @keyframes bounce {
@@ -177,6 +192,17 @@
   from {
     opacity: 0;
     transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
   }
   to {
     opacity: 1;

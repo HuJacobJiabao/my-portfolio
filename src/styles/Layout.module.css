@@ -21,6 +21,7 @@
   margin-top: 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   overflow: hidden;
+  animation: fadeInDown 1s ease-in-out;
 }
 
 .pageHeader::before {
@@ -42,18 +43,26 @@
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
   position: relative;
   z-index: 2;
-  animation: fadeInUp 1s ease-out;
   padding: 10px 30px;
   display: inline-block;
   background-color: rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 @keyframes fadeInUp {
   from {
     opacity: 0;
     transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
   }
   to {
     opacity: 1;
@@ -105,7 +114,8 @@
   background: transparent;
   border-radius: 20px;
   padding: 40px;
-  animation: fadeIn 0.5s ease-in-out;
+  padding-top: 0;
+  animation: fadeIn 1s ease-in-out;
   min-height: 500px;
 }
 

@@ -1,8 +1,21 @@
+/* Animation keyframes */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Sidebar Component Styles */
 .leftSidebar {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  animation: fadeInUp 1s ease-in-out;
 }
 
 .profileCard {

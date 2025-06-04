@@ -84,11 +84,6 @@ export default function Blog() {
       onSidebarItemClick={handleSidebarItemClick}
     >
       <div className={styles.blogContainer}>
-        <p className={styles.description}>
-          Welcome to my blog! This is where I share my thoughts on technology, 
-          programming insights, project experiences, and learnings from my journey 
-          in software development and computer science.
-        </p>
         
         <div className={styles.blogGrid}>
           {blogPosts.map((post, index) => (

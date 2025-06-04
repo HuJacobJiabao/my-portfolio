@@ -84,11 +84,7 @@ export default function Projects() {
       onSidebarItemClick={handleSidebarItemClick}
     >
       <div className={styles.projectsContainer}>
-        <p className={styles.description}>
-          Welcome to my projects showcase! Here you'll find a collection of my work spanning 
-          web development, machine learning, and software engineering. Each project represents 
-          a journey of learning and innovation.
-        </p>
+
         
         <div className={styles.projectsGrid}>
           {projects.map((project, index) => (

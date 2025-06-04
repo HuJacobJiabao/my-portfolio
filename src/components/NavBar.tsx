@@ -49,11 +49,11 @@ export default function NavBar() {
       </div>
 
       <ul className={`${styles.navLinks} ${menuOpen ? styles.showMenu : ''}`}>
-        <li><Link to="/my-portfolio/">Home</Link></li>
+        <li><Link to="/my-portfolio/" onClick={() => setMenuOpen(false)}>Home</Link></li>
         <li><a href={`${import.meta.env.BASE_URL}${config.site.contact.resume}`} target="_blank" rel="noopener noreferrer">CV</a></li>
-        <li><Link to="/my-portfolio/project/">Project</Link></li>
-        <li><Link to="/my-portfolio/blog/">Blog</Link></li>
-        <li><Link to="/my-portfolio/archive/">Archive</Link></li>
+        <li><Link to="/my-portfolio/project/" onClick={() => setMenuOpen(false)}>Project</Link></li>
+        <li><Link to="/my-portfolio/blog/" onClick={() => setMenuOpen(false)}>Blog</Link></li>
+        <li><Link to="/my-portfolio/archive/" onClick={() => setMenuOpen(false)}>Archive</Link></li>
       </ul>
     </nav>
   );

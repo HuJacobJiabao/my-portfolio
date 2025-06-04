@@ -109,18 +109,14 @@ export default function Archive() {
       onSidebarItemClick={handleSidebarItemClick}
     >
       <div className={styles.archiveContainer}>
-        <div className={styles.archiveHeader}>
-          <h1 className={styles.archiveTitle}>
-            <span className={styles.titleIcon}>📚</span>
-            Articles - {allArchiveItems.length}
-          </h1>
-          <p className={styles.description}>
-            A chronological timeline of my projects and blog posts. Navigate through my journey 
-            of learning, building, and sharing knowledge in software development.
-          </p>
-        </div>
 
         <div className={styles.timelineWrapper}>
+          <div className={styles.archiveHeader}>
+            <h1 className={styles.archiveTitle}>
+              <span className={styles.emojiIcon}>📚</span>
+              Articles - {allArchiveItems.length}
+            </h1>
+          </div>
           <div className={styles.timeline}>
             {Object.keys(currentItemsByYear)
               .map(Number)

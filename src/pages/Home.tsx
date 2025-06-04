@@ -330,9 +330,20 @@ const Home = () => {
                     <h1>{config.site.hero.name}</h1>
                     <p>{config.site.hero.quote}</p>
                 </div>
-                <a href="#about" className={styles.downArrow}>
+                <button 
+                    className={styles.downArrow}
+                    onClick={() => {
+                        const aboutSection = document.getElementById('about');
+                        if (aboutSection) {
+                            aboutSection.scrollIntoView({ 
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    }}
+                >
                     <i className="fas fa-angle-down scroll-down-effects"></i>
-                </a>
+                </button>
             </section>
 
             {/* About Section */}
