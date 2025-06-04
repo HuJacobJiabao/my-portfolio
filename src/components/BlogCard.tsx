@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import styles from '../styles/BlogCard.module.css';
 
 interface BlogCardProps {
@@ -19,9 +20,17 @@ export default function BlogCard({
   link, 
   tags = []
 }: BlogCardProps) {
+  const navigate = useNavigate();
+
   const handleClick = () => {
     if (link) {
-      window.open(link, '_blank', 'noopener noreferrer');
+      // Check if it's an internal link (starts with /my-portfolio/)
+      if (link.startsWith('/my-portfolio/')) {
+        navigate(link);
+      } else {
+        // External link - open in new tab
+        window.open(link, '_blank', 'noopener noreferrer');
+      }
     }
   };
 

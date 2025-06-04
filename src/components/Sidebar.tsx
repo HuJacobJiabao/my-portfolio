@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styles from '../styles/Sidebar.module.css';
 import config from '../config/config';
 
@@ -27,8 +27,17 @@ const Sidebar: React.FC<SidebarProps> = ({
   onItemClick,
   activeItemId
 }) => {
-  // State for tracking expanded sections in TOC
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
+  // State for sticky navigation card
+  const [isSticky, setIsSticky] = useState(false);
+  const [originalCardTop, setOriginalCardTop] = useState<number | null>(null); // D: original absolute position (constant)
+  const [currentCardTop, setCurrentCardTop] = useState<number | null>(null); // d1: current absolute position (changes with animation)
+  const [cardWidth, setCardWidth] = useState<number | null>(null);
+  const [cardLeft, setCardLeft] = useState<number | null>(null);
+  const [isScrollingUp, setIsScrollingUp] = useState(false); // Track scroll direction
+  const [prevScrollPos, setPrevScrollPos] = useState(0); // Track previous scroll position
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const navigationCardRef = useRef<HTMLDivElement>(null);
+  const placeholderRef = useRef<HTMLDivElement>(null);
 
   // Get all sections and visible sections from config (for Home page)
   const allSections = config.site.navigation.sections as NavigationSection[];
@@ -47,48 +56,222 @@ const Sidebar: React.FC<SidebarProps> = ({
     }));
   };
 
-  // Function to find parent sections of a given item
-  const findParentSections = (items: any[], targetIndex: number): string[] => {
-    const parents: string[] = [];
-    const targetLevel = items[targetIndex]?.level || 1;
-    
-    // Look backwards from the target item to find parents
-    for (let i = targetIndex - 1; i >= 0; i--) {
-      const item = items[i];
-      if (item.level < targetLevel) {
-        parents.unshift(item.id || `item-${i}`);
-        // Continue looking for higher-level parents
-        if (item.level === 1) break;
-      }
-    }
-    
-    return parents;
-  };
-
-  // Auto-expand sections when activeItemId changes
+  // Sticky navigation card effect
   useEffect(() => {
-    if (activeItemId && itemType === 'toc' && items.length > 0) {
-      const preparedItems = prepareTocItems(items);
-      const activeIndex = preparedItems.findIndex(item => item.id === activeItemId);
+    const measureCardPosition = () => {
+      if (!navigationCardRef.current) return;
       
-      if (activeIndex !== -1) {
-        const parents = findParentSections(preparedItems, activeIndex);
-        const newExpanded = new Set([...parents, activeItemId]);
-        setExpandedSections(newExpanded);
+      const rect = navigationCardRef.current.getBoundingClientRect();
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      
+      // D: original absolute position from page top (constant)
+      const absoluteTop = rect.top + scrollTop;
+      
+      // Get computed style to ensure we capture the actual rendered width
+      const actualWidth = navigationCardRef.current.offsetWidth;
+      
+      if (originalCardTop === null) {
+        setOriginalCardTop(absoluteTop); // D: 只设置一次，作为常量
+      }
+      setCurrentCardTop(absoluteTop); // d1: 当前绝对位置，会因动画而改变
+      setCardWidth(actualWidth);
+      setCardLeft(rect.left);
+    };
+
+    const handleScroll = () => {
+      if (window.innerWidth <= 768) {
+        // Disable sticky on mobile
+        if (isSticky) {
+          setIsSticky(false);
+        }
+        return;
+      }
+
+      if (!navigationCardRef.current || originalCardTop === null) return;
+
+      const currentScrollPos = window.pageYOffset || document.documentElement.scrollTop;
+      
+      // Detect scroll direction
+      const scrollingUp = currentScrollPos < prevScrollPos;
+      setIsScrollingUp(scrollingUp);
+      setPrevScrollPos(currentScrollPos);
+
+      // 重新测量当前card的位置（d1），因为动画会改变位置
+      if (isSticky && navigationCardRef.current) {
+        const rect = navigationCardRef.current.getBoundingClientRect();
+        const newCurrentTop = rect.top + currentScrollPos;
+        setCurrentCardTop(newCurrentTop);
+      }
+
+      // 使用最新的currentCardTop或初始测量值
+      const cardTopToUse = currentCardTop || originalCardTop;
+      if (!cardTopToUse) return;
+
+      // d2: current distance from viewport top
+      const d2 = cardTopToUse - currentScrollPos;
+      
+      // Required minimum distances
+      const minDistanceDown = 20; // 下拉时最小距离
+      const minDistanceUp = 80;   // 上拉时最小距离（为navbar预留空间）
+      
+      const requiredDistance = scrollingUp ? minDistanceUp : minDistanceDown;
+      
+      // Should be sticky when d2 becomes less than required distance
+      const shouldBeSticky = d2 <= requiredDistance;
+      
+      // Should stop being sticky when scrolled back to original position
+      // 检查是否回到了原始位置（D）附近
+      const distanceFromOriginal = originalCardTop - currentScrollPos;
+      const shouldStopSticky = distanceFromOriginal > requiredDistance;
+
+      if (!isSticky && shouldBeSticky) {
+        setIsSticky(true);
+      } else if (isSticky && shouldStopSticky) {
+        setIsSticky(false);
+      }
+    };
+
+    const handleResize = () => {
+      // Reset sticky state and remeasure on resize
+      setIsSticky(false);
+      setOriginalCardTop(null);
+      setCurrentCardTop(null);
+      setCardWidth(null);
+      setCardLeft(null);
+      
+      // Remeasure after a short delay
+      setTimeout(measureCardPosition, 100);
+    };
+
+    // Initial measurement
+    setTimeout(measureCardPosition, 100);
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [isSticky, originalCardTop, currentCardTop, prevScrollPos]);
+
+  // Function to render nested TOC with visual hierarchy and connection lines
+  const renderNestedTOC = (items: any[]): React.ReactElement | null => {
+    if (!items || items.length === 0) return null;
+
+    // Group items by level 2 sections
+    const groupedItems: { [key: string]: any[] } = {};
+    let currentLevel2: string | null = null;
+
+    items.forEach((item, index) => {
+      if (item.level === 1) {
+        // Level 1 items are always shown independently
+        const key = `level1-${index}`;
+        groupedItems[key] = [{ ...item, originalIndex: index }];
+      } else if (item.level === 2) {
+        // Start a new level 2 group
+        currentLevel2 = item.id || `item-${index}`;
+        groupedItems[currentLevel2!] = [{ ...item, originalIndex: index }];
+      } else if (item.level > 2 && currentLevel2) {
+        // Add to current level 2 group
+        groupedItems[currentLevel2!].push({ ...item, originalIndex: index });
+      }
+    });
+
+    // Find which level 2 section should be expanded based on activeItemId
+    let expandedLevel2: string | null = null;
+    if (activeItemId) {
+      const activeItem = items.find(item => item.id === activeItemId);
+      if (activeItem) {
+        if (activeItem.level === 2) {
+          expandedLevel2 = activeItemId;
+        } else if (activeItem.level > 2) {
+          // Find the parent level 2 section
+          const activeIndex = items.findIndex(item => item.id === activeItemId);
+          for (let i = activeIndex - 1; i >= 0; i--) {
+            if (items[i].level === 2) {
+              expandedLevel2 = items[i].id || `item-${i}`;
+              break;
+            } else if (items[i].level === 1) {
+              break;
+            }
+          }
+        }
       }
     }
-  }, [activeItemId, itemType, items]);
 
-  // Function to check if an item should be visible
-  const isItemVisible = (item: any, index: number): boolean => {
-    if (itemType !== 'toc') return true;
-    if (item.level === 1) return true; // Top-level items always visible
-    
-    const preparedItems = prepareTocItems(items);
-    const parents = findParentSections(preparedItems, index);
-    
-    // Item is visible if all its parents are expanded
-    return parents.every(parentId => expandedSections.has(parentId));
+    return (
+      <div className={styles.tocNestedContainer}>
+        {Object.entries(groupedItems).map(([groupKey, groupItems]) => {
+          const isLevel1Group = groupKey.startsWith('level1-');
+          const isExpanded = !isLevel1Group && groupKey === expandedLevel2;
+          
+          if (isLevel1Group) {
+            // Render level 1 items independently
+            const item = groupItems[0];
+            const isActive = activeItemId === item.id;
+            
+            return (
+              <div key={groupKey} className={styles.tocLevel1Container}>
+                <button
+                  className={`${styles.navItem} ${styles.tocItem} ${styles.tocLevel1} ${isActive ? styles.active : ''}`}
+                  onClick={() => onItemClick && onItemClick(item.originalIndex)}
+                  title={item.title}
+                >
+                  <div className={styles.tocItemContent}>
+                    <span className={styles.tocTitle}>{item.title}</span>
+                  </div>
+                </button>
+              </div>
+            );
+          } else {
+            // Render level 2 groups with potential expansion
+            const level2Item = groupItems.find(item => item.level === 2);
+            const childItems = groupItems.filter(item => item.level > 2);
+            const isLevel2Active = activeItemId === level2Item?.id;
+            
+            return (
+              <div key={groupKey} className={`${styles.tocLevel2Container} ${isExpanded ? styles.expanded : ''}`}>
+                {/* Level 2 heading */}
+                <button
+                  className={`${styles.navItem} ${styles.tocItem} ${styles.tocLevel2} ${isLevel2Active ? styles.active : ''}`}
+                  onClick={() => level2Item && onItemClick && onItemClick(level2Item.originalIndex)}
+                  title={level2Item?.title}
+                >
+                  <div className={styles.tocItemContent}>
+                    <span className={styles.tocTitle}>{level2Item?.title}</span>
+                  </div>
+                </button>
+                
+                {/* Child items (level 3+) with connection line */}
+                {isExpanded && childItems.length > 0 && (
+                  <div className={styles.tocChildContainer}>
+                    <div className={styles.tocConnectionLine}></div>
+                    <div className={styles.tocChildItems}>
+                      {childItems.map((childItem) => {
+                        const isChildActive = activeItemId === childItem.id;
+                        return (
+                          <button
+                            key={childItem.originalIndex}
+                            className={`${styles.navItem} ${styles.tocItem} ${styles[`tocLevel${childItem.level}`]} ${isChildActive ? styles.active : ''}`}
+                            onClick={() => onItemClick && onItemClick(childItem.originalIndex)}
+                            title={childItem.title}
+                          >
+                            <div className={styles.tocItemContent}>
+                              <span className={styles.tocTitle}>{childItem.title}</span>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          }
+        })}
+      </div>
+    );
   };
 
   // Determine what to show in navigation based on context
@@ -98,7 +281,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const preparedItems = itemType === 'toc' && items ? prepareTocItems(items) : items;
 
   return (
-    <div className={styles.leftSidebar}>
+    <div ref={sidebarRef} className={styles.leftSidebar}>
       {/* Profile Card with Integrated Contact Info */}
       <div className={styles.profileCard}>
         <div className={styles.photoWrapper}>
@@ -122,35 +305,41 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
       </div>
 
-      {/* Navigation Card */}
-      <div className={styles.navigationCard}>
+      {/* Navigation Card with sticky behavior */}
+      <div style={{ position: 'relative' }}>
+        {/* Placeholder to maintain layout when sticky */}
+        {isSticky && cardWidth && (
+          <div 
+            ref={placeholderRef}
+            style={{ 
+              height: '250px', // Approximate height to maintain layout
+              width: `${cardWidth}px`
+            }} 
+          />
+        )}
+        
+        <div 
+          ref={navigationCardRef}
+          className={`${styles.navigationCard} ${isSticky ? styles.stickyNavigationCard : ''}`}
+          style={isSticky && cardWidth && cardLeft !== null ? {
+            position: 'fixed',
+            top: isScrollingUp ? '80px' : '20px', // 80px when scrolling up (navbar space), 20px when scrolling down
+            left: `${cardLeft}px`,
+            width: `${cardWidth}px`,
+            zIndex: 1000,
+            boxSizing: 'border-box',
+            transition: 'top 0.3s ease' // Smooth transition between positions
+          } : undefined}
+        >
         {showItems ? (
           <>
             <h4>{itemType === 'project' ? 'Projects' : itemType === 'blog' ? 'Blog Posts' : itemType === 'toc' ? 'Catalog' : 'Archive Items'}</h4>
             <nav className={styles.navList}>
               {itemType === 'toc' ? (
-                // Special rendering for TOC with tree structure, nesting and expand/collapse
-                preparedItems?.map((item: any, index: number) => {
-                  const itemId = item.id || `item-${index}`;
-                  const isActive = activeItemId === itemId;
-                  const isVisible = isItemVisible(item, index);
-                  
-                  if (!isVisible) return null;
-                  
-                  return (
-                    <div key={index} className={styles.tocItemContainer}>
-                      <button
-                        className={`${styles.navItem} ${styles.tocItem} ${styles[`tocLevel${item.level}`]} ${isActive ? styles.active : ''}`}
-                        onClick={() => onItemClick && onItemClick(index)}
-                        title={item.title}
-                      >
-                        <div className={styles.tocItemContent}>
-                          <span className={styles.tocTitle}>{item.title}</span>
-                        </div>
-                      </button>
-                    </div>
-                  );
-                })
+                // Enhanced TOC with nested structure and visual hierarchy
+                <div className={styles.tocContainer}>
+                  {renderNestedTOC(preparedItems || [])}
+                </div>
               ) : (
                 // Default rendering for other item types
                 items?.map((item, index) => (
@@ -187,6 +376,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           </>
         )}
       </div>
+    </div>
     </div>
   );
 };

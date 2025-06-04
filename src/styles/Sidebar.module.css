@@ -16,6 +16,7 @@
   flex-direction: column;
   gap: 20px;
   animation: fadeInUp 1s ease-in-out;
+  max-width: 300px;
 }
 
 .profileCard {
@@ -103,7 +104,17 @@
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.2);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  /* Remove overflow: hidden to allow dynamic expansion */
+  box-sizing: border-box; /* Ensure consistent width calculation */
+  /* Remove max-width to allow natural width, which will be preserved when sticky */
+}
+
+/* Sticky navigation card styles */
+.stickyNavigationCard {
+  /* Dynamic positioning and width are handled via inline styles in JavaScript */
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2) !important;
+  transition: box-shadow 0.3s ease;
+  box-sizing: border-box; /* Ensure consistent width calculation */
+  /* Remove max-width to allow JavaScript to control the exact width */
 }
 
 .navigationCard h4 {
@@ -192,8 +203,26 @@
 
 /* Responsive design for sidebar */
 @media (max-width: 768px) {
+  .leftSidebar {
+    max-width: 80vw; /* Reduce width to make cards thinner */
+    width: 80vw;
+    margin: 0 auto; /* Center display */
+    align-items: center; /* Center content */
+    padding: 0; /* Remove padding, let cards control their own sizing */
+    box-sizing: border-box;
+  }
+
   .profileCard {
-    padding: 15px;
+    padding: 20px;
+    width: 100%; /* Use full width of parent container */
+    margin: 0; /* Remove margin, let parent container control centering */
+    box-sizing: border-box;
+  }
+
+  .navigationCard {
+    width: 100%; /* Use full width of parent container */
+    margin: 0; /* Remove margin, let parent container control centering */
+    box-sizing: border-box;
   }
 
   .photo {
@@ -204,9 +233,75 @@
   .profileName {
     font-size: 1.1rem;
   }
+
+  /* Disable sticky on mobile */
+  .stickyNavigationCard {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: 100%;
+    z-index: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    margin: 0; /* Remove margin, let parent container control centering */
+    box-sizing: border-box;
+  }
 }
 
-/* TOC-specific styles for enhanced catalog display */
+/* TOC-specific styles for enhanced catalog display with nested structure */
+
+/* Main TOC container */
+.tocContainer {
+  width: 100%;
+}
+
+.tocNestedContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Level 1 container styles */
+.tocLevel1Container {
+  margin: 2px 0;
+}
+
+/* Level 2 container styles with expansion capability */
+.tocLevel2Container {
+  margin: 2px 0;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.tocLevel2Container.expanded {
+  background: rgba(0, 0, 0, 0.02);
+  padding-left: 8px;
+  margin-left: 4px;
+}
+
+/* Child container with connection line */
+.tocChildContainer {
+  position: relative;
+  margin-top: 4px;
+  padding-left: 16px; /* Add left padding to make space for connection line */
+}
+
+.tocConnectionLine {
+  position: absolute;
+  left: 8px; /* Adjust position to center it */
+  top: 0;
+  bottom: 0;
+  width: 1px; /* Thin line */
+  background: #000000; /* Simple black line */
+  opacity: 0.3; /* Slightly transparent, not too intrusive */
+}
+
+.tocChildItems {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+/* Enhanced TOC item styles */
 .tocItem {
   display: flex;
   align-items: flex-start;
@@ -330,41 +425,55 @@
   line-height: 1.3;
 }
 
-/* Update level-specific padding and colors for clear hierarchy */
+/* Update level-specific styles for nested structure with progressive indentation */
 .tocLevel1 {
-  padding: 8px 12px;
+  padding: 10px 12px;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #1a202c; /* Dark blue-gray for top level */
-  margin-left: 0;
-  position: relative;
+  color: #1a202c;
+  margin: 0;
+  width: 100%;
+  text-align: left;
 }
 
 .tocLevel2 {
-  padding: 6px 12px 6px 24px; /* Simple indentation for level 2 */
+  padding: 8px 12px;
   font-size: 0.85rem;
-  color: #2d3748; /* Medium blue-gray for level 2 */
-  position: relative;
+  font-weight: 500;
+  color: #2d3748;
+  margin: 0;
+  width: 100%;
+  text-align: left;
 }
 
+/* Child items in expanded level 2 sections with progressive indentation */
 .tocLevel3 {
-  padding: 5px 12px 5px 36px; /* Progressive indentation for level 3 */
+  padding: 6px 12px 6px 24px; /* Add left margin for first level indentation */
   font-size: 0.8rem;
-  color: #4a5568; /* Lighter blue-gray for level 3 */
-  position: relative;
+  color: #4a5568;
+  margin: 0;
+  width: 100%;
+  text-align: left;
+  font-weight: 400;
 }
 
 .tocLevel4 {
-  padding: 4px 12px 4px 48px; /* Progressive indentation for level 4 */
+  padding: 5px 12px 5px 36px; /* Add more left margin for second level indentation */
   font-size: 0.78rem;
-  color: #718096; /* Even lighter for level 4 */
-  position: relative;
+  color: #718096;
+  margin: 0;
+  width: 100%;
+  text-align: left;
+  font-weight: 400;
 }
 
 .tocLevel5,
 .tocLevel6 {
-  padding: 4px 12px 4px 60px; /* Progressive indentation for deeper levels */
+  padding: 4px 12px 4px 48px; /* Add maximum left margin for third level indentation */
   font-size: 0.75rem;
-  color: #a0aec0; /* Lightest for deepest levels */
-  position: relative;
+  color: #a0aec0;
+  margin: 0;
+  width: 100%;
+  text-align: left;
+  font-weight: 400;
 }

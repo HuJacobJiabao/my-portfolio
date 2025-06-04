@@ -10,17 +10,27 @@ export const blogPosts: Array<{
   date: string;
   category: string;
   description: string;
-  image: string;
+  image?: string; // Make image optional
   link: string;
   tags: string[];
 }> = [
+  {
+    id: 'building-advanced-toc-navigation',
+    title: 'Building an Advanced Table of Contents Navigation with Nested Hierarchy and Sticky Behavior',
+    date: '2025-06-04',
+    category: 'Frontend Development',
+    description: 'When building a portfolio website with extensive documentation and blog posts, having an intuitive and visually appealing Table of Contents navigation becomes crucial...',
+    // image: undefined, // Will use default_cover.jpg
+    link: '/my-portfolio/blog/building-advanced-toc-navigation',
+    tags: ['React', 'CSS', 'UI/UX', 'Navigation', 'Frontend Development']
+  },
   {
     id: 'my-journey-into-web-development',
     title: 'My Journey into Web Development',
     date: '2024-01-15',
     category: 'Personal',
     description: 'Sharing my experience learning web development, from HTML basics to modern React applications.',
-    image: '/images/blog/web-dev-journey.jpg',
+    image: import.meta.env.BASE_URL + "default_cover.jpg", // Will use default_cover.jpg
     link: '/my-portfolio/blog/my-journey-into-web-development',
     tags: ['web development', 'career', 'learning', 'react']
   },
@@ -30,7 +40,7 @@ export const blogPosts: Array<{
     date: '2024-01-22',
     category: 'Tutorial',
     description: 'A comprehensive guide to React Hooks, covering useState, useEffect, custom hooks, and best practices.',
-    image: '/images/blog/react-hooks.jpg',
+    // image: undefined, // Will use default_cover.jpg
     link: '/my-portfolio/blog/understanding-react-hooks',
     tags: ['react', 'hooks', 'javascript', 'tutorial']
   },
@@ -40,7 +50,7 @@ export const blogPosts: Array<{
     date: '2024-01-29',
     category: 'Tutorial',
     description: 'Learn how to create flexible, responsive layouts using CSS Grid with practical examples and techniques.',
-    image: '/images/blog/css-grid.jpg',
+    // image: undefined, // Will use default_cover.jpg
     link: '/my-portfolio/blog/building-responsive-layouts-css-grid',
     tags: ['css', 'grid', 'responsive design', 'layout']
   }
