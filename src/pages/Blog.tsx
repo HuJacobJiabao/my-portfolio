@@ -9,7 +9,7 @@ const blogPosts = [
     date: "2024-04-21",
     category: "Blog",
     description: "Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting...",
-    image: "/background/hero.jpg",
+    image: import.meta.env.BASE_URL + "/default_cover.jpg",
     link: "/blog/hello-world",
     tags: ["Introduction", "Hexo", "Blog"]
   },
@@ -18,7 +18,7 @@ const blogPosts = [
     date: "2022-04-16",
     category: "Blog",
     description: "Why I Create This Post Using Markdown can help us get a clear website without the knowledge of HTML. There's still several shortages that Markdown's functions are...",
-    image: "/background/about.jpg",
+    image: import.meta.env.BASE_URL + "/default_cover.jpg",
     link: "/blog/beautify-post",
     tags: ["Markdown", "Plugins", "Web Design"]
   },
@@ -27,7 +27,7 @@ const blogPosts = [
     date: "2024-03-15",
     category: "Tutorial",
     description: "A comprehensive guide to understanding and using React Hooks in modern web development. Learn useState, useEffect, and custom hooks with practical examples.",
-    image: "/background/hero.jpg",
+    image: import.meta.env.BASE_URL + "/default_cover.jpg",
     link: "/blog/react-hooks-guide",
     tags: ["React", "JavaScript", "Frontend", "Tutorial"]
   },
@@ -36,7 +36,7 @@ const blogPosts = [
     date: "2024-02-28",
     category: "Backend",
     description: "Best practices for designing and implementing scalable REST APIs using Node.js, Express, and modern development patterns. Includes performance optimization tips.",
-    image: "/background/about.jpg",
+    image: import.meta.env.BASE_URL + "/default_cover.jpg",
     link: "/blog/scalable-apis-nodejs",
     tags: ["Node.js", "API", "Backend", "Performance"]
   },
@@ -45,7 +45,7 @@ const blogPosts = [
     date: "2024-01-20",
     category: "AI/ML",
     description: "Exploring how machine learning can enhance user experiences in web applications. From recommendation systems to intelligent search and personalization.",
-    image: "/background/hero.jpg",
+    image: import.meta.env.BASE_URL + "/default_cover.jpg",
     link: "/blog/ml-web-development",
     tags: ["Machine Learning", "Web Development", "AI", "UX"]
   },
@@ -54,7 +54,7 @@ const blogPosts = [
     date: "2024-01-05",
     category: "Programming",
     description: "Essential TypeScript patterns and best practices for writing maintainable, type-safe code. Tips for effective use of interfaces, generics, and utility types.",
-    image: "/background/about.jpg",
+    image: import.meta.env.BASE_URL + "/default_cover.jpg",
     link: "/blog/typescript-best-practices",
     tags: ["TypeScript", "JavaScript", "Best Practices", "Code Quality"]
   }

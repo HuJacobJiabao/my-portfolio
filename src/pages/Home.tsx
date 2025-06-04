@@ -67,11 +67,17 @@ const getImagePath = (type: string, filename: string): string => {
     if (!filename) return '';
     
     const baseUrl = import.meta.env.BASE_URL;
+    
+    // Handle default_cover.jpg specifically - it's in the public root
+    if (filename === 'default_cover.jpg') {
+        return `${baseUrl}default_cover.jpg`;
+    }
+    
     switch (type) {
         case 'schools':
-            return `${baseUrl}/schools/${filename}`;
+            return `${baseUrl}schools/${filename}`;
         case 'background':
-            return `${baseUrl}/background/${filename}`;
+            return `${baseUrl}background/${filename}`;
         default:
             return `${baseUrl}${filename}`;
     }

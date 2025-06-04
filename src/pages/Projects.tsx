@@ -9,7 +9,7 @@ const projects = [
     date: "2024-12-15",
     category: "Web Development",
     description: "A modern, responsive portfolio website built with React, TypeScript, and Vite. Features include smooth animations, responsive design, and dynamic content management.",
-    image: "/background/hero.jpg",
+    image: import.meta.env.BASE_URL + "/default_cover.jpg",
     link: "https://github.com/yourusername/portfolio",
     tags: ["React", "TypeScript", "Vite", "CSS Modules"]
   },
@@ -18,7 +18,7 @@ const projects = [
     date: "2024-11-20",
     category: "Full Stack",
     description: "A complete e-commerce solution with user authentication, payment processing, and admin dashboard. Built with modern web technologies and cloud deployment.",
-    image: "/background/about.jpg",
+    image: import.meta.env.BASE_URL + "/default_cover.jpg",
     link: "https://github.com/yourusername/ecommerce",
     tags: ["Next.js", "Node.js", "MongoDB", "Stripe"]
   },
@@ -27,7 +27,7 @@ const projects = [
     date: "2024-10-05",
     category: "Data Science",
     description: "An interactive dashboard for visualizing machine learning model performance with real-time data processing and advanced analytics capabilities.",
-    image: "/background/hero.jpg",
+    image: import.meta.env.BASE_URL + "/default_cover.jpg",
     link: "https://github.com/yourusername/ml-dashboard",
     tags: ["Python", "TensorFlow", "React", "D3.js"]
   },
@@ -36,7 +36,7 @@ const projects = [
     date: "2024-09-12",
     category: "Mobile Development",
     description: "A cross-platform mobile application for task management with offline capabilities, push notifications, and team collaboration features.",
-    image: "/background/about.jpg",
+    image: import.meta.env.BASE_URL + "/default_cover.jpg",
     link: "https://github.com/yourusername/task-manager",
     tags: ["React Native", "Firebase", "Redux", "TypeScript"]
   },
@@ -45,7 +45,7 @@ const projects = [
     date: "2024-08-18",
     category: "Backend",
     description: "A scalable API gateway service with rate limiting, authentication, and monitoring capabilities. Designed for microservices architecture.",
-    image: "/background/hero.jpg",
+    image: import.meta.env.BASE_URL + "/default_cover.jpg",
     link: "https://github.com/yourusername/api-gateway",
     tags: ["Go", "Docker", "Kubernetes", "Redis"]
   },
@@ -54,7 +54,7 @@ const projects = [
     date: "2024-07-25",
     category: "Web Development",
     description: "A real-time chat application with multiple rooms, file sharing, and message encryption. Features modern UI and responsive design.",
-    image: "/background/about.jpg",
+    image: import.meta.env.BASE_URL + "/default_cover.jpg",
     link: "https://github.com/yourusername/chat-app",
     tags: ["Socket.io", "Express", "React", "MongoDB"]
   }

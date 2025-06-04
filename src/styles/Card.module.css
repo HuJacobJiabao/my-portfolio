@@ -4,7 +4,6 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   transition: all 0.3s ease;
-  border: 1px solid #e8ecef;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -136,8 +135,9 @@
 }
 
 /* Type-specific styling */
-.project {
-  border-left: 4px solid #e67e22;
+
+/* .project {
+  border: 2px solid #e67e22;
 }
 
 .blog {
@@ -147,6 +147,7 @@
 .archive {
   border-left: 4px solid #9b59b6;
 }
+  */
 
 .project .cardCategory {
   color: #e67e22;

@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from '../styles/BlogCard.module.css';
 
 interface BlogCardProps {
@@ -31,11 +30,13 @@ export default function BlogCard({
       className={`${styles.blogCard} ${link ? styles.clickable : ''}`}
       onClick={handleClick}
     >
-      {image && (
-        <div className={styles.imageContainer}>
-          <img src={image} alt={title} className={styles.cardImage} />
-        </div>
-      )}
+      <div className={styles.imageContainer}>
+        <img 
+          src={image || `${import.meta.env.BASE_URL}default_cover.jpg`} 
+          alt={title} 
+          className={styles.cardImage}
+        />
+      </div>
       
       <div className={styles.cardContent}>
         <div className={styles.cardHeader}>

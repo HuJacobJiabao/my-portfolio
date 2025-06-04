@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from '../styles/Card.module.css';
 
 interface CardProps {
@@ -28,16 +27,20 @@ export default function Card({
     }
   };
 
+  const defaultImage = '/default_cover.jpg';
+  
   return (
     <div 
       className={`${styles.card} ${styles[type]} ${link ? styles.clickable : ''}`}
       onClick={handleClick}
     >
-      {image && (
-        <div className={styles.imageContainer}>
-          <img src={image} alt={title} className={styles.cardImage} />
-        </div>
-      )}
+      <div className={styles.imageContainer}>
+        <img 
+          src={image || defaultImage} 
+          alt={title} 
+          className={styles.cardImage}
+        />
+      </div>
       
       <div className={styles.cardContent}>
         <div className={styles.cardHeader}>
