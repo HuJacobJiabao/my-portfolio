@@ -14,7 +14,7 @@ interface ContentItem {
   date: string;
   category: string;
   description: string;
-  image: string;
+  image?: string; // Make image optional to match blog posts
   link: string;
   tags: string[];
 }

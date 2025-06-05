@@ -1,4 +1,25 @@
 import { marked } from 'marked';
+import Prism from 'prismjs';
+
+// Import essential language support (avoiding problematic dependencies)
+import 'prismjs/components/prism-markup'; // Must be loaded first for HTML/XML
+import 'prismjs/components/prism-css';
+import 'prismjs/components/prism-javascript';
+import 'prismjs/components/prism-typescript';
+import 'prismjs/components/prism-jsx';
+import 'prismjs/components/prism-tsx';
+import 'prismjs/components/prism-json';
+import 'prismjs/components/prism-bash';
+import 'prismjs/components/prism-markdown';
+import 'prismjs/components/prism-yaml';
+import 'prismjs/components/prism-python';
+import 'prismjs/components/prism-java';
+import 'prismjs/components/prism-c';
+import 'prismjs/components/prism-cpp';
+import 'prismjs/components/prism-sql';
+
+// Import Prism CSS theme
+import 'prismjs/themes/prism-okaidia.css';
 
 export interface TocItem {
   id: string;
@@ -38,6 +59,56 @@ export async function parseMarkdown(content: string, removeMainTitle: boolean = 
       });
 
       return `<h${depth} id="${id}">${text}</h${depth}>`;
+    },
+    code({ text, lang }: { text: string; lang?: string }) {
+      // Map common language aliases (only for languages we've imported)
+      const languageMap: { [key: string]: string } = {
+        'js': 'javascript',
+        'ts': 'typescript',
+        'jsx': 'jsx',
+        'tsx': 'tsx',
+        'css': 'css',
+        'json': 'json',
+        'bash': 'bash',
+        'shell': 'bash',
+        'sh': 'bash',
+        'md': 'markdown',
+        'yaml': 'yaml',
+        'yml': 'yaml',
+        'html': 'markup',
+        'xml': 'markup',
+        'py': 'python',
+        'c++': 'cpp',
+        'sql': 'sql'
+      };
+
+      const normalizedLang = lang ? languageMap[lang.toLowerCase()] || lang.toLowerCase() : 'text';
+      
+      try {
+        // Always try to highlight with Prism if language is available
+        if (normalizedLang && Prism.languages[normalizedLang]) {
+          const highlighted = Prism.highlight(text, Prism.languages[normalizedLang], normalizedLang);
+          return `<pre class="language-${normalizedLang}"><code class="language-${normalizedLang}">${highlighted}</code></pre>`;
+        } else {
+          // Fallback: escape HTML and return with basic styling
+          const escapedText = text
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+          return `<pre class="language-text"><code class="language-text">${escapedText}</code></pre>`;
+        }
+      } catch (error) {
+        console.warn(`Failed to highlight code for language: ${normalizedLang}`, error);
+        const escapedText = text
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+        return `<pre class="language-text"><code class="language-text">${escapedText}</code></pre>`;
+      }
     }
   };
 

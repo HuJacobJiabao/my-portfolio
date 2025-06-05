@@ -12,7 +12,7 @@ import { projects } from './Projects';
 interface ArchiveItem {
   title: string;
   date: string;
-  image: string;
+  image: string | undefined; // Make image optional to match blog posts
   type: 'project' | 'blog';
   link?: string;
   category?: string;

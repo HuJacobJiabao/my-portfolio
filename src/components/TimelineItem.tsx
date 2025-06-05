@@ -4,7 +4,7 @@ import styles from '../styles/TimelineItem.module.css';
 interface TimelineItemProps {
   title: string;
   date: string;
-  image: string;
+  image: string | undefined; // Make image optional to match blog posts
   type: 'project' | 'blog';
   link?: string;
   category?: string;
