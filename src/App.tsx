@@ -13,17 +13,28 @@ function ScrollToTop() {
   const location = useLocation();
 
   useEffect(() => {
-    // Temporarily disable smooth scrolling for route changes
-    const originalBehavior = document.documentElement.style.scrollBehavior;
-    document.documentElement.style.scrollBehavior = 'auto';
+    // Store original scroll behavior
+    const htmlElement = document.documentElement;
+    const originalScrollBehavior = htmlElement.style.scrollBehavior;
     
-    // Reset scroll position to top immediately when route changes
-    window.scrollTo(0, 0);
+    // Temporarily disable smooth scrolling to prevent animation
+    htmlElement.style.scrollBehavior = 'auto';
     
-    // Restore smooth scrolling after a brief delay
-    setTimeout(() => {
-      document.documentElement.style.scrollBehavior = originalBehavior;
-    }, 100);
+    // Force immediate positioning without animation
+    // Use multiple methods to ensure it works across browsers
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'auto'
+    });
+    
+    // Restore smooth scrolling after positioning is complete
+    // Use requestAnimationFrame to ensure the scroll position is set first
+    requestAnimationFrame(() => {
+      htmlElement.style.scrollBehavior = originalScrollBehavior;
+    });
   }, [location.pathname, location.search]);
 
   return null;

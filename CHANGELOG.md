@@ -6,7 +6,27 @@ This document tracks all major changes, features, and bug fixes made to the port
 
 ### 🧹 Production Optimization
 
-#### **Debug Logging Removal**
+#### 1. **Page Navigation Scroll Behavior Fix** - RESOLVED ✅
+- **Issue**: When navigating to new pages, the page would visibly scroll to the top instead of starting at the top position
+- **Root Cause**: Two conflicting scroll behaviors:
+  1. Global `scroll-behavior: smooth` CSS setting caused animated scrolling during navigation
+  2. `ScrollToTop` component used `window.scrollTo(0, 0)` which triggered the smooth scroll animation
+- **Solution**: Implemented immediate positioning without scroll animation
+  - **Temporary Smooth Scroll Override**: Disable smooth scrolling during route changes
+  - **Immediate Positioning**: Use `document.documentElement.scrollTop = 0` for instant positioning
+  - **Restore Smooth Scrolling**: Re-enable smooth scrolling for normal page interactions
+- **Implementation Details**:
+  - Modified `ScrollToTop` component to temporarily disable smooth scrolling
+  - Used direct DOM manipulation for immediate scroll position reset
+  - Added cleanup to restore original scroll behavior after positioning
+- **Files Modified**:
+  - `src/App.tsx` - Enhanced ScrollToTop component with smooth scroll override
+- **Benefits**:
+  - Clean page loads without visible scrolling animation
+  - Better user experience for navigation
+  - Preserved smooth scrolling for normal page interactions
+
+#### 2. **Debug Logging Removal**
 - **Change**: Removed all debug console logging from SPA routing scripts for clean production build
 - **Files Modified**:
   - `public/404.html` - Removed 3 console.log statements from redirect script
@@ -19,7 +39,7 @@ This document tracks all major changes, features, and bug fixes made to the port
 
 ### 🐛 Critical Bug Fixes
 
-#### **GitHub Pages SPA Routing Fix** - RESOLVED ✅
+#### 3. **GitHub Pages SPA Routing Fix** - RESOLVED ✅
 - **Issue**: Single Page Application routes would show 404 errors when accessed directly or refreshed
   - **Direct URL Access**: `https://hujacobjiabao.github.io/my-portfolio/project/` returned 404
   - **Page Refresh**: Refreshing any route other than homepage resulted in 404 error
@@ -58,7 +78,7 @@ This document tracks all major changes, features, and bug fixes made to the port
   - ✅ Social media link previews work correctly
   - ✅ No duplicate content issues
 
-#### **Header Height Consistency & Title Display Optimization**
+#### 4. **Header Height Consistency & Title Display Optimization**
 - **Issue**: Page headers had inconsistent heights causing layout jumps and poor UX
   - **Project Pages**: 281.59px header height
   - **Article Pages**: 518.25px header height  
@@ -87,7 +107,7 @@ This document tracks all major changes, features, and bug fixes made to the port
   - ✅ Improved mobile experience with proportional scaling
   - ✅ No layout shift when navigating between different content types
 
-#### **Navigation Card Animation Synchronization**
+#### 5. **Navigation Card Animation Synchronization**
   - **Problem**: Navigation card positioning was based on scroll direction rather than navbar visibility state
   - **Root Cause**: 
     - Z-index conflicts between navbar (1000) and navigation card (1000)
@@ -111,7 +131,7 @@ This document tracks all major changes, features, and bug fixes made to the port
 ## [Previous] - 2025-06-04
 
 ### 🔧 Major Bug Fixes & Improvements
-- **Code Block State Management Bug**: Fixed critical issue where code blocks would automatically expand when scrolling
+#### 1. **Code Block State Management Bug**: Fixed critical issue where code blocks would automatically expand when scrolling
   - **Root Cause**: Complex state management system was causing conflicts with React re-renders during scroll events
   - **Solution**: **Removed expand/collapse functionality entirely** and simplified code block system
   - **Impact**: Code blocks now maintain stable state and are not affected by scroll events
@@ -122,7 +142,7 @@ This document tracks all major changes, features, and bug fixes made to the port
     - ✅ Cleaner user experience focused on content readability
 
 ### 🚀 Performance Optimizations
-- **React Re-rendering Prevention**: Implemented comprehensive optimizations to prevent unnecessary re-renders
+#### 2. **React Re-rendering Prevention**: Implemented comprehensive optimizations to prevent unnecessary re-renders
   - **Sidebar Component**: Added `React.memo` wrapper to prevent re-renders when props haven't changed
   - **Scroll Event Throttling**: Implemented `requestAnimationFrame` throttling for scroll events in both Sidebar and DetailPage
   - **Markdown Content Optimization**: Fixed issue where entire markdown content re-rendered when TOC navigation changed
@@ -144,7 +164,7 @@ This document tracks all major changes, features, and bug fixes made to the port
     - ✅ Better user experience on lower-end devices
 
 ### 🎨 Code Block System Simplification
-- **Streamlined Functionality**: Code blocks now feature only essential functionality
+#### 3. **Streamlined Functionality**: Code blocks now feature only essential functionality
   - **Language Display**: Clean language labels for each code block
   - **Copy Functionality**: Reliable one-click copy to clipboard with visual feedback
   - **Removed Features**: Expand/collapse toggle buttons and related state management
@@ -155,7 +175,7 @@ This document tracks all major changes, features, and bug fixes made to the port
   - Simplified HTML templates in `src/utils/markdown.ts` (already optimized)
 
 ### 📚 Documentation
-- **Performance Optimization Guide**: Created comprehensive documentation
+#### 4. **Performance Optimization Guide**: Created comprehensive documentation
   - New file: `PERFORMANCE_OPTIMIZATION.md` with detailed explanations of all optimizations
   - Includes before/after comparisons and technical implementation details
   - Provides guidance for future performance improvements

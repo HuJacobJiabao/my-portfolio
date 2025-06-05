@@ -2,7 +2,111 @@
 
 This file contains detailed technical implementation notes for developers working on this portfolio project.
 
-## Markdown Content Re-rendering Optimization - June 4, 2025
+## June 5, 2025 - Page Navigation Scroll Behavior Fix
+
+### Problem Statement
+When navigating to new pages on the GitHub Pages deployed site, pages would visibly scroll to the top instead of starting at the top position. This created an undesirable scrolling animation on every route change.
+
+### Root Cause Analysis
+The issue was caused by conflicting scroll behaviors:
+
+```typescript
+// PROBLEMATIC CSS SETTING
+html {
+  scroll-behavior: smooth; /* This caused animated scrolling during navigation */
+}
+
+// PROBLEMATIC SCROLL COMPONENT
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  
+  useEffect(() => {
+    window.scrollTo(0, 0); // This triggered smooth scroll animation
+  }, [pathname]);
+  
+  return null;
+}
+```
+
+**The Problem Flow:**
+1. User navigates to new page
+2. Page loads at previous scroll position or random position
+3. `ScrollToTop` component executes `window.scrollTo(0, 0)`
+4. Global `scroll-behavior: smooth` causes animated scrolling to top
+5. User sees unwanted scrolling animation
+
+### Solution: Immediate Positioning Without Animation
+
+#### Implementation
+```typescript
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  
+  useEffect(() => {
+    // Store original scroll behavior
+    const originalScrollBehavior = document.documentElement.style.scrollBehavior;
+    
+    // Temporarily disable smooth scrolling
+    document.documentElement.style.scrollBehavior = 'auto';
+    
+    // Immediately position at top without animation
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0; // Fallback for older browsers
+    
+    // Restore original scroll behavior for normal page interactions
+    setTimeout(() => {
+      document.documentElement.style.scrollBehavior = originalScrollBehavior;
+    }, 0);
+  }, [pathname]);
+  
+  return null;
+}
+```
+
+#### Key Technical Details
+
+**1. Temporary Smooth Scroll Override**
+- Store original `scroll-behavior` CSS value
+- Set `scroll-behavior: auto` to disable animations
+- Use `setTimeout` to restore original behavior after positioning
+
+**2. Direct DOM Manipulation**
+- Use `document.documentElement.scrollTop = 0` for immediate positioning
+- Include `document.body.scrollTop = 0` fallback for older browsers
+- Avoid `window.scrollTo()` which respects CSS scroll-behavior settings
+
+**3. Timing Considerations**
+- Override happens synchronously before scroll positioning
+- Restoration happens asynchronously via `setTimeout(0)`
+- Ensures scroll position is set before smooth scrolling is re-enabled
+
+### Files Modified
+- `src/App.tsx` - Enhanced ScrollToTop component implementation
+
+### Testing Results
+- ✅ Pages now start at top position without visible scrolling
+- ✅ Normal page scrolling still uses smooth behavior
+- ✅ Works consistently across all browsers
+- ✅ No impact on other scroll interactions
+
+### Alternative Solutions Considered
+
+**Option 1: Remove global smooth scrolling**
+- Would break smooth scrolling for anchor links and normal page interactions
+- Not acceptable for UX reasons
+
+**Option 2: Use `scrollTo` with `behavior: 'auto'`**
+```typescript
+window.scrollTo({ top: 0, behavior: 'auto' });
+```
+- Less compatible with older browsers
+- Still requires CSS override for maximum compatibility
+
+**Option 3: CSS-only solution**
+- No pure CSS solution available for this specific routing issue
+- Requires JavaScript intervention during route changes
+
+## June 4, 2025 - Markdown Content Re-rendering Optimization
 
 ### Problem Statement
 When navigating through Table of Contents (TOC) in markdown pages, the entire markdown content area would re-render unnecessarily, causing poor performance and visual flickering.
@@ -95,7 +199,7 @@ const markdownContentProps = useMemo(() => {
 - **Memoization**: Both component and props are properly memoized
 - **Props Stability**: Content props only change when actual content changes, not navigation state
 
-## Code Block State Management Bug Fix - June 4, 2025
+## June 4, 2025 - Code Block State Management Bug Fix
 
 ### Problem Statement
 Code blocks that were manually collapsed would automatically expand when the user scrolled up or down the page, making it impossible to maintain the collapsed state during navigation.
@@ -380,7 +484,7 @@ try {
 *Implementation completed: June 4, 2025*
 *Next review: When adding new interactive features*
 
-## Navigation Card Animation Synchronization - June 5, 2025
+## June 5, 2025 - Navigation Card Animation Synchronization
 
 ### Problem Statement
 The navigation card (TOC sidebar) would disappear during navbar animations and reappear when the navbar completely hid, causing a jarring user experience.
@@ -494,7 +598,7 @@ style={{
 *Implementation completed: June 5, 2025*
 *Next review: When adding new navigation features*
 
-## Header Height Consistency & Title Display Optimization - June 5, 2025
+## June 5, 2025 - Header Height Consistency & Title Display Optimization
 
 ### Problem Statement
 Page headers had inconsistent heights between Project pages (281.59px) and Article pages (518.25px), causing layout jumps and poor user experience. Additionally, titles were reducing font size too aggressively instead of utilizing line breaks for better readability.
@@ -578,7 +682,7 @@ if (titleLength > 120) return `${baseClass} ${styles.superLong}`; // 2.0rem
 *Implementation completed: June 5, 2025*
 *Next review: When adding new content types or layout variations*
 
-## GitHub Pages SPA Routing Fix - June 5, 2025
+## June 5, 2025 - GitHub Pages SPA Routing Fix
 
 ### Problem Statement
 Single Page Application (SPA) routing was failing on GitHub Pages when users refreshed the page or directly accessed routes like `/my-portfolio/project/`. The browser would show a 404 error because GitHub Pages static server was looking for physical HTML files that don't exist in a SPA architecture.
@@ -707,7 +811,7 @@ This is the standard solution for GitHub Pages SPAs, used by Create React App an
 *Implementation completed: June 5, 2025*
 *Next review: When migrating to custom domain or different hosting*
 
-## GitHub Pages SPA Routing Fix - Troubleshooting & Resolution - June 5, 2025
+## June 5, 2025 - GitHub Pages SPA Routing Fix - Troubleshooting & Resolution
 
 ### Initial Implementation Issues
 After implementing the basic 404.html redirect solution, several issues were discovered during testing:
