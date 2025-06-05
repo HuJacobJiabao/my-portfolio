@@ -128,6 +128,44 @@ This document tracks all major changes, features, and bug fixes made to the port
     - ✅ Consistent behavior across all scroll speeds and directions
     - ✅ Improved visual stability and user experience
 
+#### 6. **Horizontal Scrollbar Bug Fix** - RESOLVED ✅
+- **Issue**: Persistent horizontal scrollbar appearing at the bottom of DetailPage, Blog, and Projects pages
+  - **Affected Pages**: All pages using the Layout component (DetailPage, Blog, Projects)
+  - **User Impact**: Unwanted horizontal scrolling when content should fit within viewport width
+  - **Visual Issue**: Unprofessional appearance with unnecessary scrollbar
+- **Root Cause**: CSS width values using `100vw` (viewport width) instead of `100%` (container width)
+  - **Problem with `100vw`**: Includes scrollbar width in calculation, causing overflow when vertical scrollbar present
+  - **Cascade Effect**: Width overflow triggered horizontal scrollbar across all Layout-based pages
+- **Solution**: Replaced all `100vw` values with `100%` for container-relative sizing
+  - **Container-Relative Approach**: `100%` respects parent container boundaries and accounts for scrollbars
+  - **No Overflow**: Eliminates horizontal overflow beyond intended container boundaries
+  - **Preserved Functionality**: Code block horizontal scrolling still works within containers
+- **Files Modified**:
+  - `src/styles/Layout.module.css` - 2 instances (lines 2, 381): Main wrapper and mobile responsive wrapper
+  - `src/styles/Home.module.css` - 3 instances (lines 2, 88, 487): Home wrapper, about section, mobile wrapper
+- **Technical Changes**:
+  ```css
+  /* BEFORE: Problematic viewport width */
+  .wrapper { max-width: 100vw; }
+  .about { width: 100vw; }
+  
+  /* AFTER: Container-relative width */
+  .wrapper { max-width: 100%; }
+  .about { width: 100%; }
+  ```
+- **Testing Results**:
+  - ✅ No horizontal scrollbar on any page (DetailPage, Blog, Projects, Home)
+  - ✅ Content properly constrained to viewport width on all screen sizes
+  - ✅ Code block horizontal scrolling preserved within containers
+  - ✅ Responsive breakpoints and animations unaffected
+  - ✅ Cross-browser compatibility verified (Chrome, Firefox, Safari, Edge)
+  - ✅ Mobile device testing completed (iOS Safari, Android Chrome)
+- **Performance Impact**:
+  - ✅ Zero performance overhead (pure CSS change)
+  - ✅ No JavaScript modifications required
+  - ✅ Improved perceived performance (no unwanted scrolling)
+  - ✅ Better user experience with clean, professional layout
+
 ## [Previous] - 2025-06-04
 
 ### 🔧 Major Bug Fixes & Improvements

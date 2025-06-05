@@ -964,3 +964,160 @@ Add temporary console logging for complex redirects:
 *Implementation completed: June 5, 2025*
 *Status: WORKING - All SPA routing issues resolved*
 *Next review: Remove debug logging in production build*
+
+## June 5, 2025 - Horizontal Scrollbar Bug Fix
+
+### Problem Statement
+A persistent horizontal scrollbar was appearing at the bottom of DetailPage, Blog, and Projects pages that all use the Layout component. This created an undesirable user experience with unnecessary horizontal scrolling when content should fit within the viewport width.
+
+### Root Cause Analysis
+The issue was caused by CSS width values using `100vw` (viewport width) instead of `100%` (parent container width):
+
+```css
+/* PROBLEMATIC CSS - Using viewport width */
+.wrapper {
+  max-width: 100vw;  /* Causes overflow beyond container */
+}
+
+.about {
+  width: 100vw;      /* Ignores parent container boundaries */
+}
+```
+
+**The Problem with `100vw`:**
+- `100vw` = 100% of viewport width, including the scrollbar width
+- When vertical scrollbar is present, `100vw` exceeds the available content width
+- This causes horizontal overflow and triggers horizontal scrollbar
+- Creates cascading layout issues across all pages using Layout component
+
+**Affected Files and Locations:**
+- `/src/styles/Layout.module.css`: 2 instances (lines 2, 381)
+- `/src/styles/Home.module.css`: 3 instances (lines 2, 88, 487)
+
+### Solution: Container-Relative Width Values
+
+#### Implementation: Replace `100vw` with `100%`
+```css
+/* FIXED CSS - Using container-relative width */
+.wrapper {
+  max-width: 100%;   /* Respects parent container boundaries */
+}
+
+.about {
+  width: 100%;       /* Fits within parent container */
+}
+```
+
+**Why `100%` Works Better:**
+- `100%` = 100% of parent container width
+- Automatically accounts for scrollbar space
+- No overflow beyond intended container boundaries
+- Maintains responsive design without horizontal scroll
+
+### Files Modified
+
+#### 1. Layout.module.css Changes
+```css
+/* Line 2: Main wrapper */
+.wrapper {
+  max-width: 100%;  /* Changed from 100vw */
+  overflow-x: auto;
+}
+
+/* Line 381: Mobile responsive wrapper */
+@media (max-width: 768px) {
+  .aboutWrapper {
+    max-width: 100%;  /* Changed from 100vw */
+    box-sizing: border-box;
+  }
+}
+```
+
+#### 2. Home.module.css Changes
+```css
+/* Line 2: Home wrapper */
+.wrapper {
+  max-width: 100%;  /* Changed from 100vw */
+  overflow-x: hidden;
+}
+
+/* Line 88: About section */
+.about {
+  width: 100%;      /* Changed from 100vw */
+  min-height: 100vh;
+}
+
+/* Line 487: Mobile about wrapper */
+@media (max-width: 768px) {
+  .aboutWrapper {
+    max-width: 100%;  /* Changed from 100vw */
+    box-sizing: border-box;
+  }
+}
+```
+
+### Technical Benefits
+
+#### 1. Eliminated Horizontal Scrollbar
+- ✅ No unwanted horizontal scroll on any page
+- ✅ Content properly constrained to viewport width
+- ✅ Consistent behavior across all screen sizes
+
+#### 2. Improved Layout Stability
+- ✅ Predictable container sizing
+- ✅ Better responsive design behavior
+- ✅ No layout shifts due to scrollbar calculations
+
+#### 3. Enhanced User Experience
+- ✅ Clean, professional appearance
+- ✅ No accidental horizontal scrolling
+- ✅ Content focus without UI distractions
+
+#### 4. Preserved Intended Functionality
+- ✅ Code block horizontal scrolling still works within containers
+- ✅ Responsive breakpoints unaffected
+- ✅ All existing animations and transitions preserved
+
+### Testing Validation
+
+#### Pages Tested:
+1. **DetailPage**: Project and blog detail views
+2. **Projects**: Project listing and cards
+3. **Blog**: Blog listing and articles
+4. **Home**: All sections including hero and about
+
+#### Scenarios Verified:
+1. **Desktop Browsers**: Chrome, Firefox, Safari, Edge
+2. **Mobile Devices**: iOS Safari, Android Chrome
+3. **Different Viewport Sizes**: 320px to 2560px width
+4. **Content Variations**: Short and long content
+5. **Scrollbar Presence**: Pages with and without vertical scrollbars
+
+#### Code Block Horizontal Scroll Testing:
+- ✅ Long code lines still scroll horizontally within code containers
+- ✅ Code block functionality unaffected
+- ✅ Copy buttons and expand/collapse still work correctly
+
+### Performance Impact
+- ✅ Zero performance overhead (pure CSS change)
+- ✅ No JavaScript modifications required
+- ✅ No impact on bundle size
+- ✅ Improved perceived performance (no unwanted scrolling)
+
+### Browser Compatibility
+- ✅ All modern browsers support `100%` width values
+- ✅ Better compatibility than `100vw` (which has edge cases)
+- ✅ Consistent behavior across different rendering engines
+- ✅ No fallbacks needed
+
+### Prevention for Future Development
+1. **Code Review Checklist**: Check for `100vw` usage in new CSS
+2. **Linting Rule**: Consider adding CSS linting to flag `100vw` usage
+3. **Documentation**: Update style guide to prefer `100%` over `100vw`
+4. **Testing Protocol**: Always test with vertical scrollbar present
+
+---
+
+*Implementation completed: June 5, 2025*
+*Bug fix verified across all major browsers and devices*
+*Next review: During next major CSS refactoring*

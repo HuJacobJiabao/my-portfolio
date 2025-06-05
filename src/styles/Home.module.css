@@ -1,5 +1,5 @@
 .wrapper {
-  max-width: 100vw;
+  max-width: 100%;
   overflow-x: hidden;
   margin: 0;
   padding: 0;
@@ -85,7 +85,7 @@
 }
 
 .about {
-  width: 100vw;
+  width: 100%;
   min-height: 100vh;
   background: transparent;
   display: flex;
@@ -484,7 +484,7 @@
     margin: 0 auto;
     padding: 0; /* 移除内边距以给sidebar更多空间 */
     width: 100%;
-    max-width: 100vw; /* 使用全宽 */
+    max-width: 100%; /* 使用全宽 */
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
