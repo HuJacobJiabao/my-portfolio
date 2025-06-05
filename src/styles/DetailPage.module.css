@@ -154,24 +154,23 @@
 }
 
 .markdownContent code {
-  background: #f8f9fa;
-  color: #e74c3c;
+  /* Inline code styling - Night Owl theme colors */
+  background: rgb(1,22,39);
+  color: #d6deeb;
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
-  font-family: 'Monaco', 'Consolas', monospace;
+  border: 1px solid #0b2942;
+  font-family: "Source Code Pro", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 0.9rem;
 }
 
 .markdownContent pre {
-  background: #2c3e50;
-  color: #ecf0f1;
-  padding: 1.5rem;
-  border-radius: 8px;
-  overflow-x: auto;
+  /* Let Prism handle all pre styling */
   margin: 1.5rem 0;
 }
 
 .markdownContent pre code {
+  /* Reset inline code styles for code blocks */
   background: transparent;
   color: inherit;
   padding: 0;
@@ -189,6 +188,15 @@
   margin: 0;
   font-style: italic;
   color: #34495e;
+}
+
+/* Code block container integration */
+.markdownContent .code-block-container {
+  margin: 1.5rem 0;
+}
+
+.markdownContent .code-block-container pre {
+  margin: 0;
 }
 
 @media (max-width: 768px) {

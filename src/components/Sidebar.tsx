@@ -19,7 +19,7 @@ interface NavigationSection {
   contentType?: string;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ 
+const Sidebar: React.FC<SidebarProps> = React.memo(({ 
   activeSection, 
   onSectionChange, 
   items = [], 
@@ -38,6 +38,9 @@ const Sidebar: React.FC<SidebarProps> = ({
   const sidebarRef = useRef<HTMLDivElement>(null);
   const navigationCardRef = useRef<HTMLDivElement>(null);
   const placeholderRef = useRef<HTMLDivElement>(null);
+  
+  // Throttling variable for scroll events
+  let scrollTicking = false;
 
   // Get all sections and visible sections from config (for Home page)
   const allSections = config.site.navigation.sections as NavigationSection[];
@@ -89,45 +92,53 @@ const Sidebar: React.FC<SidebarProps> = ({
 
       if (!navigationCardRef.current || originalCardTop === null) return;
 
-      const currentScrollPos = window.pageYOffset || document.documentElement.scrollTop;
-      
-      // Detect scroll direction
-      const scrollingUp = currentScrollPos < prevScrollPos;
-      setIsScrollingUp(scrollingUp);
-      setPrevScrollPos(currentScrollPos);
+      // Throttle scroll events using requestAnimationFrame
+      if (!scrollTicking) {
+        requestAnimationFrame(() => {
+          const currentScrollPos = window.pageYOffset || document.documentElement.scrollTop;
+          
+          // Detect scroll direction
+          const scrollingUp = currentScrollPos < prevScrollPos;
+          setIsScrollingUp(scrollingUp);
+          setPrevScrollPos(currentScrollPos);
 
-      // 重新测量当前card的位置（d1），因为动画会改变位置
-      if (isSticky && navigationCardRef.current) {
-        const rect = navigationCardRef.current.getBoundingClientRect();
-        const newCurrentTop = rect.top + currentScrollPos;
-        setCurrentCardTop(newCurrentTop);
-      }
+          // 重新测量当前card的位置（d1），因为动画会改变位置
+          if (isSticky && navigationCardRef.current) {
+            const rect = navigationCardRef.current.getBoundingClientRect();
+            const newCurrentTop = rect.top + currentScrollPos;
+            setCurrentCardTop(newCurrentTop);
+          }
 
-      // 使用最新的currentCardTop或初始测量值
-      const cardTopToUse = currentCardTop || originalCardTop;
-      if (!cardTopToUse) return;
+          // 使用最新的currentCardTop或初始测量值
+          const cardTopToUse = currentCardTop || originalCardTop;
+          if (!cardTopToUse) return;
 
-      // d2: current distance from viewport top
-      const d2 = cardTopToUse - currentScrollPos;
-      
-      // Required minimum distances
-      const minDistanceDown = 20; // 下拉时最小距离
-      const minDistanceUp = 80;   // 上拉时最小距离（为navbar预留空间）
-      
-      const requiredDistance = scrollingUp ? minDistanceUp : minDistanceDown;
-      
-      // Should be sticky when d2 becomes less than required distance
-      const shouldBeSticky = d2 <= requiredDistance;
-      
-      // Should stop being sticky when scrolled back to original position
-      // 检查是否回到了原始位置（D）附近
-      const distanceFromOriginal = originalCardTop - currentScrollPos;
-      const shouldStopSticky = distanceFromOriginal > requiredDistance;
+          // d2: current distance from viewport top
+          const d2 = cardTopToUse - currentScrollPos;
+          
+          // Required minimum distances
+          const minDistanceDown = 20; // 下拉时最小距离
+          const minDistanceUp = 80;   // 上拉时最小距离（为navbar预留空间）
+          
+          const requiredDistance = scrollingUp ? minDistanceUp : minDistanceDown;
+          
+          // Should be sticky when d2 becomes less than required distance
+          const shouldBeSticky = d2 <= requiredDistance;
+          
+          // Should stop being sticky when scrolled back to original position
+          // 检查是否回到了原始位置（D）附近
+          const distanceFromOriginal = originalCardTop - currentScrollPos;
+          const shouldStopSticky = distanceFromOriginal > requiredDistance;
 
-      if (!isSticky && shouldBeSticky) {
-        setIsSticky(true);
-      } else if (isSticky && shouldStopSticky) {
-        setIsSticky(false);
+          if (!isSticky && shouldBeSticky) {
+            setIsSticky(true);
+          } else if (isSticky && shouldStopSticky) {
+            setIsSticky(false);
+          }
+          
+          scrollTicking = false;
+        });
+        scrollTicking = true;
       }
     };
 
@@ -379,6 +390,8 @@ const Sidebar: React.FC<SidebarProps> = ({
     </div>
     </div>
   );
-};
+});
+
+Sidebar.displayName = 'Sidebar';
 
 export default Sidebar;

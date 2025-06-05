@@ -17,9 +17,11 @@ import 'prismjs/components/prism-java';
 import 'prismjs/components/prism-c';
 import 'prismjs/components/prism-cpp';
 import 'prismjs/components/prism-sql';
+import 'prismjs/components/prism-rust';
+import 'prismjs/components/prism-go';
 
-// Import Prism CSS theme
-import 'prismjs/themes/prism-okaidia.css';
+// Import custom Night Owl theme
+import '../styles/prism-night-owl-theme.css';
 
 export interface TocItem {
   id: string;
@@ -79,16 +81,33 @@ export async function parseMarkdown(content: string, removeMainTitle: boolean = 
         'xml': 'markup',
         'py': 'python',
         'c++': 'cpp',
-        'sql': 'sql'
+        'sql': 'sql',
+        'rust': 'rust',
+        'rs': 'rust',
+        'go': 'go',
+        'golang': 'go'
       };
 
       const normalizedLang = lang ? languageMap[lang.toLowerCase()] || lang.toLowerCase() : 'text';
+      const displayLang = lang || 'text';
       
       try {
         // Always try to highlight with Prism if language is available
         if (normalizedLang && Prism.languages[normalizedLang]) {
           const highlighted = Prism.highlight(text, Prism.languages[normalizedLang], normalizedLang);
-          return `<pre class="language-${normalizedLang}"><code class="language-${normalizedLang}">${highlighted}</code></pre>`;
+          return `
+            <div class="code-block-container">
+              <div class="code-block-banner">
+                <div class="code-block-controls">
+                  <span class="code-block-language">${displayLang}</span>
+                </div>
+                <button class="code-block-copy" title="Copy" onclick="window.copyCodeBlock(this)">
+                  <span class="copy-icon">📄</span>
+                </button>
+              </div>
+              <pre class="language-${normalizedLang} code-block-content"><code class="language-${normalizedLang}">${highlighted}</code></pre>
+            </div>
+          `;
         } else {
           // Fallback: escape HTML and return with basic styling
           const escapedText = text
@@ -97,7 +116,19 @@ export async function parseMarkdown(content: string, removeMainTitle: boolean = 
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#39;');
-          return `<pre class="language-text"><code class="language-text">${escapedText}</code></pre>`;
+          return `
+            <div class="code-block-container">
+              <div class="code-block-banner">
+                <div class="code-block-controls">
+                  <span class="code-block-language">${displayLang}</span>
+                </div>
+                <button class="code-block-copy" title="Copy" onclick="window.copyCodeBlock(this)">
+                  <span class="copy-icon">📄</span>
+                </button>
+              </div>
+              <pre class="language-text code-block-content"><code class="language-text">${escapedText}</code></pre>
+            </div>
+          `;
         }
       } catch (error) {
         console.warn(`Failed to highlight code for language: ${normalizedLang}`, error);
@@ -107,7 +138,19 @@ export async function parseMarkdown(content: string, removeMainTitle: boolean = 
           .replace(/>/g, '&gt;')
           .replace(/"/g, '&quot;')
           .replace(/'/g, '&#39;');
-        return `<pre class="language-text"><code class="language-text">${escapedText}</code></pre>`;
+        return `
+          <div class="code-block-container">
+            <div class="code-block-banner">
+              <div class="code-block-controls">
+                <span class="code-block-language">${displayLang}</span>
+              </div>
+              <button class="code-block-copy" title="Copy" onclick="window.copyCodeBlock(this)">
+                <span class="copy-icon">📋</span>
+              </button>
+            </div>
+            <pre class="language-text code-block-content"><code class="language-text">${escapedText}</code></pre>
+          </div>
+        `;
       }
     }
   };

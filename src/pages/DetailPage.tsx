@@ -1,9 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, Navigate, useLocation } from 'react-router-dom';
 import Layout from '../components/Layout';
+import MarkdownContent from '../components/MarkdownContent';
 import { projects } from './Projects';
 import { blogPosts } from './Blog';
 import { fetchMarkdownContent, parseMarkdown, type ParsedMarkdown } from '../utils/markdown';
+import { initializeCodeBlocks } from '../utils/codeBlock';
 import styles from '../styles/DetailPage.module.css';
 
 type ContentType = 'project' | 'blog';
@@ -59,12 +61,20 @@ export default function DetailPage() {
     }
   }, [markdownData?.toc]);
 
-  // Set up scroll listener for active section tracking
+  // Set up scroll listener for active section tracking with throttling
   useEffect(() => {
     if (!markdownData?.toc.length) return;
 
+    let ticking = false;
+    
     const handleScroll = () => {
-      requestAnimationFrame(updateActiveSection);
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          updateActiveSection();
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -99,20 +109,36 @@ export default function DetailPage() {
     loadContent();
   }, [contentItem, contentType]);
 
+  // Initialize code blocks after markdown is loaded
+  useEffect(() => {
+    if (markdownData && !loading) {
+      // Use requestAnimationFrame to ensure DOM is fully rendered
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          console.log('DetailPage: Initializing code blocks...');
+          initializeCodeBlocks();
+        }, 100);
+      });
+    }
+  }, [markdownData, loading]);
+
   // If content not found, redirect to appropriate page
   if (!contentItem) {
     const redirectPath = contentType === 'project' ? '/my-portfolio/project/' : '/my-portfolio/blog/';
     return <Navigate to={redirectPath} replace />;
   }
 
-  // Create sidebar items from table of contents
-  const sidebarItems = markdownData?.toc.map(item => ({
-    title: item.title,
-    id: item.id,
-    level: item.level
-  })) || [];
+  // Create sidebar items from table of contents (memoized)
+  const sidebarItems = useMemo(() => {
+    return markdownData?.toc.map(item => ({
+      title: item.title,
+      id: item.id,
+      level: item.level
+    })) || [];
+  }, [markdownData?.toc]);
 
-  const handleSidebarItemClick = (index: number) => {
+  // Memoized callback for sidebar item clicks
+  const handleSidebarItemClick = useCallback((index: number) => {
     const item = sidebarItems[index];
     if (item?.id) {
       const element = document.getElementById(item.id);
@@ -123,7 +149,21 @@ export default function DetailPage() {
         });
       }
     }
-  };
+  }, [sidebarItems]);
+
+  // Memoized markdown content props to prevent unnecessary re-renders
+  const markdownContentProps = useMemo(() => {
+    if (!markdownData || !contentItem) return null;
+    
+    return {
+      markdownData,
+      contentItemTitle: contentItem.title,
+      contentItemDate: new Date(contentItem.date).toLocaleDateString(),
+      contentItemTags: contentItem.tags,
+      contentType,
+      contentItemCategory: contentItem.category
+    };
+  }, [markdownData, contentItem, contentType]);
 
   return (
     <Layout
@@ -150,37 +190,15 @@ export default function DetailPage() {
           </div>
         )}
         
-        {markdownData && !loading && !error && (
+        {markdownContentProps && !loading && !error && (
           <div className={styles.content}>
-            <div className={styles.contentHeader}>
-              <h1 className={styles.contentTitle}>{contentItem.title}</h1>
-              <div className={styles.contentMeta}>
-                <div className={styles.metaItem}>
-                  <span className={styles.metaLabel}>Type:</span>
-                  <span className={styles.metaValue}>{contentType === 'project' ? '💻 Project' : '📝 Blog Post'}</span>
-                </div>
-                <div className={styles.metaItem}>
-                  <span className={styles.metaLabel}>Category:</span>
-                  <span className={styles.metaValue}>{contentItem.category}</span>
-                </div>
-                <div className={styles.metaItem}>
-                  <span className={styles.metaLabel}>Created:</span>
-                  <span className={styles.metaValue}>{new Date(contentItem.date).toLocaleDateString()}</span>
-                </div>
-                <div className={styles.metaItem}>
-                  <span className={styles.metaLabel}>Tags:</span>
-                  <div className={styles.tags}>
-                    {contentItem.tags.map((tag, index) => (
-                      <span key={index} className={styles.tag}>{tag}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div 
-              className={styles.markdownContent}
-              dangerouslySetInnerHTML={{ __html: markdownData.html }}
+            <MarkdownContent
+              markdownData={markdownContentProps.markdownData}
+              contentItemTitle={markdownContentProps.contentItemTitle}
+              contentItemDate={markdownContentProps.contentItemDate}
+              contentItemTags={markdownContentProps.contentItemTags}
+              contentType={markdownContentProps.contentType}
+              contentItemCategory={markdownContentProps.contentItemCategory}
             />
           </div>
         )}
