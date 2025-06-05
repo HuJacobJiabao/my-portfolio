@@ -4,32 +4,29 @@
   <meta charset="utf-8">
   <title>Jiabao Hu - Portfolio</title>
   <script type="text/javascript">
-    // Single Page Apps for GitHub Pages
-    // MIT License
-    // https://github.com/rafgraph/spa-github-pages
+    // Simplified redirect for GitHub Pages
+    var currentPath = window.location.pathname;
+    console.log('404 redirect - current path:', currentPath);
     
-    var pathSegmentsToKeep = 1;
-    var l = window.location;
-    
-    // Debug logging
-    console.log('404.html redirect - original URL:', l.href);
-    console.log('404.html redirect - pathname:', l.pathname);
-    
-    // For GitHub Pages project sites, we need to handle /my-portfolio/ base path
-    var redirectUrl = l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-      l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
-      l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
-      (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
-      l.hash;
-    
-    console.log('404.html redirect - redirecting to:', redirectUrl);
-    
-    l.replace(redirectUrl);
+    // If we're in a subdirectory of /my-portfolio/, redirect to index with hash
+    if (currentPath.startsWith('/my-portfolio/') && currentPath !== '/my-portfolio/') {
+      var redirectPath = '/my-portfolio/';
+      var route = currentPath.replace('/my-portfolio/', '');
+      
+      console.log('404 redirect - route to preserve:', route);
+      
+      // Simple redirect to index with the route as hash
+      var newUrl = window.location.protocol + '//' + window.location.host + redirectPath + '#' + route;
+      console.log('404 redirect - redirecting to:', newUrl);
+      
+      window.location.replace(newUrl);
+    } else {
+      // Fallback to home page
+      window.location.replace('/my-portfolio/');
+    }
   </script>
 </head>
 <body>
-  <!-- This page is a fallback for GitHub Pages SPA routing -->
-  <!-- Content below ensures the file is over 512 bytes for IE compatibility -->
   <div style="display:none;">
     GitHub Pages SPA Redirect - This page automatically redirects to the main application.
     If you are seeing this message, JavaScript may be disabled in your browser.
@@ -37,6 +34,7 @@
     This redirect mechanism ensures that single page applications work correctly when
     hosted on GitHub Pages by converting 404 errors into proper route redirects.
     The technique is widely used and recommended for React applications and other SPAs.
+    Loading...
   </div>
 </body>
 </html>
