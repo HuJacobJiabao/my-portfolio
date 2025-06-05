@@ -1,4 +1,4 @@
-<!-- ---
+---
 title: "Building an Advanced Table of Contents Navigation with Nested Hierarchy and Sticky Behavior"
 date: "2025-06-04"
 description: "A deep dive into implementing a sophisticated TOC navigation component with nested hierarchy, visual connection lines, progressive indentation, and sticky positioning in React and CSS."
@@ -7,7 +7,7 @@ tags: ["React", "CSS", "UI/UX", "Navigation", "Frontend Development"]
 category: "Frontend Development"
 readTime: "12 min"
 cover: "/default_cover.jpg"
---- -->
+---
 
 # Building an Advanced Table of Contents Navigation with Nested Hierarchy and Sticky Behavior
 
