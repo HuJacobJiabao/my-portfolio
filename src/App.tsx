@@ -40,10 +40,13 @@ function AppContent() {
     <PageTransition transitionKey={transitionKey}>
       <Routes>
         <Route path="/my-portfolio/" element={<Home />} />
+        <Route path="/my-portfolio/project" element={<Projects />} />
         <Route path="/my-portfolio/project/" element={<Projects />} />
         <Route path="/my-portfolio/project/:id" element={<DetailPage />} />
+        <Route path="/my-portfolio/blog" element={<Blog />} />
         <Route path="/my-portfolio/blog/" element={<Blog />} />
         <Route path="/my-portfolio/blog/:id" element={<DetailPage />} />
+        <Route path="/my-portfolio/archive" element={<Archive />} />
         <Route path="/my-portfolio/archive/" element={<Archive />} />
       </Routes>
     </PageTransition>

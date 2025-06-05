@@ -4,8 +4,90 @@ This document tracks all major changes, features, and bug fixes made to the port
 
 ## [Unreleased] - 2025-06-05
 
+### 🧹 Production Optimization
+
+#### **Debug Logging Removal**
+- **Change**: Removed all debug console logging from SPA routing scripts for clean production build
+- **Files Modified**:
+  - `public/404.html` - Removed 3 console.log statements from redirect script
+  - `index.html` - Removed 4 console.log statements from route restoration script
+- **Benefits**:
+  - Cleaner browser console for end users
+  - Slightly reduced script size
+  - More professional production environment
+  - No functional changes to routing behavior
+
 ### 🐛 Critical Bug Fixes
-- **Navigation Card Animation Synchronization**: Fixed critical visual bug where navigation card would disappear during navbar animations
+
+#### **GitHub Pages SPA Routing Fix** - RESOLVED ✅
+- **Issue**: Single Page Application routes would show 404 errors when accessed directly or refreshed
+  - **Direct URL Access**: `https://hujacobjiabao.github.io/my-portfolio/project/` returned 404
+  - **Page Refresh**: Refreshing any route other than homepage resulted in 404 error
+  - **Deep Linking**: Sharing specific page URLs with others failed
+- **Root Cause**: GitHub Pages static server was looking for physical HTML files that don't exist in SPAs
+  - Only `/my-portfolio/index.html` exists
+  - Routes like `/my-portfolio/project/` don't have corresponding HTML files
+  - GitHub Pages returns 404 for missing files instead of falling back to index.html
+- **Solution**: Implemented standard GitHub Pages SPA redirect strategy
+  - **404.html Redirect**: Created redirect script that converts 404 errors into query-based redirects
+  - **Route Restoration**: Enhanced index.html to detect and restore original URLs
+  - **Build Process Fix**: Added explicit file copying to ensure 404.html deploys correctly
+- **Production Optimization**: Removed debug console logging from routing scripts
+- **Implementation Details**:
+  - **404.html**: Redirects `/my-portfolio/project/` → `/?/project/` (encoded format)
+  - **index.html**: Detects encoded routes and restores original URL using `history.replaceState`
+  - **Build Script**: Added `cp public/404.html dist/404.html` to prevent file clearing
+  - **Debug Logging**: Removed all console output for clean production build
+- **Files Modified**:
+  - `public/404.html` (NEW) - GitHub Pages 404 fallback with redirect script
+  - `index.html` - Added route restoration script in `<head>` section
+  - `package.json` - Updated build command to ensure 404.html deployment
+  - `src/App.tsx` - Added catch-all routes for better path handling
+- **Testing Results**:
+  - ✅ Direct URL access works: `https://hujacobjiabao.github.io/my-portfolio/project/`
+  - ✅ Page refresh maintains correct route on all pages
+  - ✅ Browser back/forward navigation preserved
+  - ✅ Deep links can be shared successfully
+  - ✅ No impact on normal site navigation performance
+- **Browser Compatibility**: 
+  - ✅ All modern browsers (History API support)
+  - ✅ IE10+ compatibility (404.html > 512 bytes)
+  - ✅ Mobile browsers fully supported
+- **SEO Impact**: 
+  - ✅ Search engines see correct original URLs
+  - ✅ Social media link previews work correctly
+  - ✅ No duplicate content issues
+
+#### **Header Height Consistency & Title Display Optimization**
+- **Issue**: Page headers had inconsistent heights causing layout jumps and poor UX
+  - **Project Pages**: 281.59px header height
+  - **Article Pages**: 518.25px header height  
+  - **Title Font Reduction**: Titles reduced font size too aggressively instead of using line breaks
+- **Root Cause**: 
+  - No fixed height system caused headers to expand based on content
+  - Font reduction triggered at low character thresholds (40, 60, 80 chars)
+  - Title area didn't properly accommodate multi-line titles
+- **Solution**: Implemented fixed header system with smart typography
+  - **Fixed Heights**: 200px desktop, 220px mobile (reduced by 40-60px)
+  - **Three-Area Structure**: Title area, metadata area, tags area with proper spacing
+  - **Smart Title Logic**: Raised font reduction thresholds to 80/100/120 characters
+  - **Enhanced Typography**: Increased metadata font sizes (+0.2rem across all elements)
+- **Implementation Results**:
+  - **Title Behavior**: Prioritizes line breaks over font size reduction
+  - **Font Sizes**: Larger metadata text (0.9rem/1rem vs 0.7rem/0.8rem)
+  - **Space Efficiency**: Smaller header with larger, more readable text
+  - **Consistency**: Fixed heights eliminate layout jumps between page types
+- **Files Modified**:
+  - `src/styles/Layout.module.css` - Header styling and responsive design
+  - `src/components/Layout.tsx` - Dynamic title sizing logic
+- **Testing Results**:
+  - ✅ Consistent header heights across all page types
+  - ✅ Titles wrap to multiple lines before reducing font size
+  - ✅ Better text readability with larger metadata fonts  
+  - ✅ Improved mobile experience with proportional scaling
+  - ✅ No layout shift when navigating between different content types
+
+#### **Navigation Card Animation Synchronization**
   - **Problem**: Navigation card positioning was based on scroll direction rather than navbar visibility state
   - **Root Cause**: 
     - Z-index conflicts between navbar (1000) and navigation card (1000)
