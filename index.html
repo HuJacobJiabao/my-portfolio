@@ -22,13 +22,19 @@
       // the correct url will be waiting in the browser's history for
       // the single page app to route accordingly.
       (function(l) {
+        console.log('index.html redirect check - original URL:', l.href);
+        console.log('index.html redirect check - search:', l.search);
+        
         if (l.search[1] === '/' ) {
+          console.log('index.html redirect check - processing redirect');
           var decoded = l.search.slice(1).split('&').map(function(s) { 
             return s.replace(/~and~/g, '&')
           }).join('?');
-          window.history.replaceState(null, null,
-              l.pathname.slice(0, -1) + decoded + l.hash
-          );
+          
+          var newUrl = l.pathname.slice(0, -1) + decoded + l.hash;
+          console.log('index.html redirect check - restoring to:', newUrl);
+          
+          window.history.replaceState(null, null, newUrl);
         }
       }(window.location))
     </script>
