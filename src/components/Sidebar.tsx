@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from '../styles/Sidebar.module.css';
 import config from '../config/config';
+import { useNavbarState } from '../hooks/useNavbarState';
 
 interface SidebarProps {
   activeSection: string;
@@ -27,13 +28,15 @@ const Sidebar: React.FC<SidebarProps> = React.memo(({
   onItemClick,
   activeItemId
 }) => {
+  // Get navbar state for synchronized positioning
+  const { visible: navbarVisible } = useNavbarState();
+  
   // State for sticky navigation card
   const [isSticky, setIsSticky] = useState(false);
   const [originalCardTop, setOriginalCardTop] = useState<number | null>(null); // D: original absolute position (constant)
   const [currentCardTop, setCurrentCardTop] = useState<number | null>(null); // d1: current absolute position (changes with animation)
   const [cardWidth, setCardWidth] = useState<number | null>(null);
   const [cardLeft, setCardLeft] = useState<number | null>(null);
-  const [isScrollingUp, setIsScrollingUp] = useState(false); // Track scroll direction
   const [prevScrollPos, setPrevScrollPos] = useState(0); // Track previous scroll position
   const sidebarRef = useRef<HTMLDivElement>(null);
   const navigationCardRef = useRef<HTMLDivElement>(null);
@@ -62,23 +65,31 @@ const Sidebar: React.FC<SidebarProps> = React.memo(({
   // Sticky navigation card effect
   useEffect(() => {
     const measureCardPosition = () => {
-      if (!navigationCardRef.current) return;
+      if (!navigationCardRef.current || !sidebarRef.current) return;
       
-      const rect = navigationCardRef.current.getBoundingClientRect();
+      // Only measure when card is in its natural (non-sticky) position
+      if (isSticky) return;
+      
+      const cardRect = navigationCardRef.current.getBoundingClientRect();
+      const sidebarRect = sidebarRef.current.getBoundingClientRect();
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
       
       // D: original absolute position from page top (constant)
-      const absoluteTop = rect.top + scrollTop;
+      const absoluteTop = cardRect.top + scrollTop;
       
       // Get computed style to ensure we capture the actual rendered width
       const actualWidth = navigationCardRef.current.offsetWidth;
+      
+      // Use sidebar's left position as the base reference for more stable positioning
+      // This ensures the sticky card aligns perfectly with the sidebar
+      const leftPosition = sidebarRect.left;
       
       if (originalCardTop === null) {
         setOriginalCardTop(absoluteTop); // D: 只设置一次，作为常量
       }
       setCurrentCardTop(absoluteTop); // d1: 当前绝对位置，会因动画而改变
       setCardWidth(actualWidth);
-      setCardLeft(rect.left);
+      setCardLeft(leftPosition);
     };
 
     const handleScroll = () => {
@@ -90,7 +101,16 @@ const Sidebar: React.FC<SidebarProps> = React.memo(({
         return;
       }
 
-      if (!navigationCardRef.current || originalCardTop === null) return;
+      if (!navigationCardRef.current || !sidebarRef.current) return;
+
+      // If we don't have the original measurements yet, try to measure them now
+      if (originalCardTop === null || cardLeft === null) {
+        // Only try to measure if we're not in sticky mode
+        if (!isSticky) {
+          measureCardPosition();
+        }
+        return;
+      }
 
       // Throttle scroll events using requestAnimationFrame
       if (!scrollTicking) {
@@ -99,7 +119,6 @@ const Sidebar: React.FC<SidebarProps> = React.memo(({
           
           // Detect scroll direction
           const scrollingUp = currentScrollPos < prevScrollPos;
-          setIsScrollingUp(scrollingUp);
           setPrevScrollPos(currentScrollPos);
 
           // 重新测量当前card的位置（d1），因为动画会改变位置
@@ -150,21 +169,41 @@ const Sidebar: React.FC<SidebarProps> = React.memo(({
       setCardWidth(null);
       setCardLeft(null);
       
-      // Remeasure after a short delay
+      // Remeasure after a short delay to allow layout to stabilize
       setTimeout(measureCardPosition, 100);
     };
 
-    // Initial measurement
-    setTimeout(measureCardPosition, 100);
+    // Initial measurement with better timing
+    // Use multiple attempts to ensure we get the correct measurement
+    const performInitialMeasurement = () => {
+      // Wait for layout to stabilize, then measure multiple times
+      setTimeout(() => {
+        measureCardPosition();
+        // Second measurement to ensure consistency
+        setTimeout(measureCardPosition, 50);
+        // Third measurement after a longer delay for complex layouts
+        setTimeout(measureCardPosition, 200);
+      }, 50);
+    };
+
+    performInitialMeasurement();
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', handleResize);
+    
+    // Also listen for DOMContentLoaded and load events to ensure proper measurement
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', performInitialMeasurement);
+    }
+    window.addEventListener('load', performInitialMeasurement);
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleResize);
+      document.removeEventListener('DOMContentLoaded', performInitialMeasurement);
+      window.removeEventListener('load', performInitialMeasurement);
     };
-  }, [isSticky, originalCardTop, currentCardTop, prevScrollPos]);
+  }, [isSticky, originalCardTop, currentCardTop, prevScrollPos, navbarVisible]);
 
   // Function to render nested TOC with visual hierarchy and connection lines
   const renderNestedTOC = (items: any[]): React.ReactElement | null => {
@@ -334,12 +373,21 @@ const Sidebar: React.FC<SidebarProps> = React.memo(({
           className={`${styles.navigationCard} ${isSticky ? styles.stickyNavigationCard : ''}`}
           style={isSticky && cardWidth && cardLeft !== null ? {
             position: 'fixed',
-            top: isScrollingUp ? '80px' : '20px', // 80px when scrolling up (navbar space), 20px when scrolling down
+            top: (() => {
+              // More precise positioning based on navbar visibility
+              if (navbarVisible) {
+                // Navbar is visible, leave space for it
+                return '80px';
+              } else {
+                // Navbar is hidden, use minimal top space
+                return '20px';
+              }
+            })(),
             left: `${cardLeft}px`,
             width: `${cardWidth}px`,
-            zIndex: 1000,
+            zIndex: 1001, // Higher than navbar to avoid conflicts
             boxSizing: 'border-box',
-            transition: 'top 0.3s ease' // Smooth transition between positions
+            transition: 'top 0.3s ease' // Smooth transition synchronized with navbar
           } : undefined}
         >
         {showItems ? (

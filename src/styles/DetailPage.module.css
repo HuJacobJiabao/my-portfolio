@@ -41,63 +41,11 @@
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.2);
   line-height: 1.7;
-}
-
-.contentHeader {
-  margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 2px solid #ecf0f1;
-}
-
-.contentTitle {
-  color: #2c3e50;
-  font-size: 2rem; /* Smaller than the original 2.5rem */
-  font-weight: 700;
-  margin: 0 0 1.5rem 0;
-  padding-bottom: 0.5rem;
-  border-bottom: 3px solid #3498db;
-}
-
-.contentMeta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
-}
-
-.metaItem {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.metaLabel {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #7f8c8d;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.metaValue {
-  font-size: 1rem;
-  color: #2c3e50;
-  font-weight: 500;
-}
-
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.tag {
-  background: linear-gradient(135deg, #3498db, #2ecc71);
-  color: white;
-  padding: 0.375rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  white-space: nowrap;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: visible; /* Allow horizontal overflow for code blocks */
+  overflow-y: visible; /* Allow vertical overflow */
+  box-sizing: border-box;
 }
 
 .markdownContent {
@@ -154,12 +102,12 @@
 }
 
 .markdownContent code {
-  /* Inline code styling - Night Owl theme colors */
-  background: rgb(1,22,39);
+  /* Inline code styling - grey background */
+  background: #4a5568;
   color: #d6deeb;
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
-  border: 1px solid #0b2942;
+  border: 1px solid #5a6f81;
   font-family: "Source Code Pro", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 0.9rem;
 }
@@ -193,10 +141,29 @@
 /* Code block container integration */
 .markdownContent .code-block-container {
   margin: 1.5rem 0;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden; /* Prevent container overflow */
+  box-sizing: border-box;
 }
 
 .markdownContent .code-block-container pre {
   margin: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto; /* Enable horizontal scrolling only */
+  overflow-y: visible; /* No vertical scrolling */
+  box-sizing: border-box;
+  white-space: pre; /* Preserve formatting */
+  word-wrap: normal; /* Prevent wrapping */
+  word-break: normal; /* Prevent breaking */
+}
+
+.markdownContent .code-block-container pre code {
+  white-space: pre; /* Ensure code maintains pre formatting */
+  word-wrap: normal;
+  word-break: normal;
+  overflow-wrap: normal;
 }
 
 @media (max-width: 768px) {
@@ -220,5 +187,16 @@
   
   .markdownContent h3 {
     font-size: 1.25rem;
+  }
+  
+  /* Ensure code blocks work well on mobile */
+  .markdownContent .code-block-container {
+    margin: 1rem 0;
+    border-radius: 6px;
+  }
+  
+  .markdownContent .code-block-container pre {
+    font-size: 0.875rem; /* Slightly smaller font on mobile */
+    padding: 1rem; /* Reduce padding on mobile */
   }
 }

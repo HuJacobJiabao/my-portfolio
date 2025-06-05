@@ -2,13 +2,12 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styles from '../styles/NavBar.module.css';
 import { useState, useEffect } from 'react';
 import config from '../config/config';
+import { useNavbarState } from '../hooks/useNavbarState';
 
 export default function NavBar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [prevScrollPos, setPrevScrollPos] = useState(0);
-  const [visible, setVisible] = useState(true);
-  const [atTop, setAtTop] = useState(true);
+  const { visible, atTop } = useNavbarState();
   const [menuOpen, setMenuOpen] = useState(false);
 
   // Function to handle navigation clicks
@@ -37,7 +36,6 @@ export default function NavBar() {
   useEffect(() => {
     const handleScroll = () => {
       setMenuOpen(false);
-      const currentScrollPos = window.scrollY;
       
       // Clear any inline styles that might have been applied
       const navbar = document.querySelector('nav');
@@ -45,15 +43,11 @@ export default function NavBar() {
         navbar.style.transform = '';
         navbar.style.transition = '';
       }
-      
-      setVisible(prevScrollPos > currentScrollPos || currentScrollPos < 10);
-      setAtTop(currentScrollPos <= 10);
-      setPrevScrollPos(currentScrollPos);
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [prevScrollPos]);
+  }, []);
 
   
   return (

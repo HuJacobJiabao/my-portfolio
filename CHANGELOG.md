@@ -2,7 +2,31 @@
 
 This document tracks all major changes, features, and bug fixes made to the portfolio website project.
 
-## [Unreleased] - 2025-06-04
+## [Unreleased] - 2025-06-05
+
+### 🐛 Critical Bug Fixes
+- **Navigation Card Animation Synchronization**: Fixed critical visual bug where navigation card would disappear during navbar animations
+  - **Problem**: Navigation card positioning was based on scroll direction rather than navbar visibility state
+  - **Root Cause**: 
+    - Z-index conflicts between navbar (1000) and navigation card (1000)
+    - State desynchronization - different components using different scroll logic
+    - Animation timing mismatches causing visual artifacts
+  - **Solution**: Implemented centralized navbar state management
+    - **New Hook**: `src/hooks/useNavbarState.ts` - Shared state management for navbar visibility
+    - **Synchronized Positioning**: Navigation card now directly tracks navbar state instead of scroll direction
+    - **Layer Fix**: Increased navigation card z-index to 1001 to prevent conflicts
+    - **Animation Sync**: Aligned transition timing (0.3s) across components
+  - **Files Modified**:
+    - `src/hooks/useNavbarState.ts` (NEW) - Centralized navbar state hook
+    - `src/components/NavBar.tsx` - Integrated shared state management
+    - `src/components/Sidebar.tsx` - Updated positioning logic and z-index
+  - **Impact**: 
+    - ✅ No more navigation card disappearing during animations
+    - ✅ Smooth, synchronized transitions between navbar and navigation card
+    - ✅ Consistent behavior across all scroll speeds and directions
+    - ✅ Improved visual stability and user experience
+
+## [Previous] - 2025-06-04
 
 ### 🔧 Major Bug Fixes & Improvements
 - **Code Block State Management Bug**: Fixed critical issue where code blocks would automatically expand when scrolling
@@ -166,4 +190,4 @@ When making changes to this project:
 
 ---
 
-*Last updated: June 4, 2025*
+*Last updated: June 5, 2025*

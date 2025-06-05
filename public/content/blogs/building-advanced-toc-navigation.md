@@ -103,9 +103,9 @@ const renderNestedTOC = () => {
 
 ### Key Algorithm: Smart Expansion Logic
 The most crucial part was implementing smart expansion that shows children only when the user is browsing within that section:
-
+中文字体test
 ```typescript
-const shouldExpandLevel2Group = (level2Id: string, childItems: TocItem[]): boolean => {
+const shouldExpandLevel2Group = (level2Id: string, childItems: TocItem[]): boolean => { dsadsa dsads 哈哈哈哈
   if (!activeItemId) return false;
   
   // Expand if the level 2 item itself is active

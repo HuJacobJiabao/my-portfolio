@@ -9,14 +9,15 @@ pre[class*='language-'] {
   color: #d6deeb;
   background: #011627;
   text-shadow: none;
-  font-family: "Source Code Pro", "JetBrains Mono", "Operator Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  font-size: 1em;
+  font-family: "Source Code Pro", "JetBrains Mono", "Operator Mono", "Fira Code", "Microsoft Yahei", "微软雅黑", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.95rem;
   line-height: 1.5;
   letter-spacing: 0.5px;
-  white-space: pre;
+  white-space: pre; /* Preserve whitespace and prevent wrapping */
   word-spacing: normal;
-  word-break: normal;
-  word-wrap: normal;
+  word-break: normal; /* Prevent breaking words */
+  word-wrap: normal; /* Prevent wrapping */
+  overflow-wrap: normal; /* Prevent overflow wrapping */
   text-align: left;
   -moz-tab-size: 4;
   -o-tab-size: 4;
@@ -57,15 +58,23 @@ pre[class*='language-'] {
   border-radius: 0;
   margin: 0;
   box-shadow: none;
+  overflow-x: auto; /* Allow horizontal scrolling for long lines */
+  overflow-y: visible; /* No vertical scrolling, let content flow naturally */
+  white-space: pre; /* Preserve whitespace and prevent wrapping */
+  word-wrap: normal; /* Prevent word wrapping */
+  word-break: normal; /* Prevent word breaking */
+  max-width: 100%; /* Ensure doesn't exceed container width */
+  width: 100%; /* Force full width */
+  box-sizing: border-box; /* Include padding in width calculation */
 }
 
 /* Inline code styling - no border for code inside pre blocks */
 :not(pre) > code[class*='language-'] {
   color: #d6deeb;
-  background: #1d3b53;
+  background: #4a5568;
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
-  border: 1px solid #0b2942;
+  border: 1px solid #5a6f81;
   box-decoration-break: clone;
 }
 
@@ -76,6 +85,10 @@ pre[class*='language-'] > code[class*='language-'] {
   padding: 0;
   border-radius: 0;
   box-shadow: none;
+  white-space: pre; /* Ensure code inside pre maintains pre formatting */
+  word-wrap: normal; /* Prevent word wrapping */
+  word-break: normal; /* Prevent word breaking */
+  overflow-wrap: normal; /* Prevent overflow wrapping */
 }
 
 /* Comments - Night Owl muted blue-gray */
@@ -212,6 +225,10 @@ pre[class*='language-'] > code[class*='language-'] {
   background: #011627;
   border: 1px solid #0b2942;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  width: 100%; /* Ensure consistent width */
+  max-width: 100%; /* Prevent overflow */
+  min-width: 0; /* Prevent content from affecting container width */
+  box-sizing: border-box; /* Include borders in width calculation */
 }
 
 .code-block-banner {
@@ -219,9 +236,13 @@ pre[class*='language-'] > code[class*='language-'] {
   justify-content: space-between;
   align-items: center;
   background: #1d3b53;
-  padding: 0.5rem 0.75rem;
+  padding: 0.25rem 0.75rem;
   border-bottom: 1px solid #0b2942;
   font-size: 0.875rem;
+  width: 100%; /* Force full width */
+  box-sizing: border-box; /* Include padding in width calculation */
+  min-width: 0; /* Prevent children from affecting width */
+  flex-shrink: 0; /* Prevent shrinking */
 }
 
 .code-block-controls {
@@ -264,7 +285,7 @@ pre[class*='language-'] > code[class*='language-'] {
 }
 
 .code-block-container.collapsed .toggle-icon {
-  transform: rotate(90deg);
+  transform: rotate(-90deg);
 }
 
 .code-block-language {
@@ -310,12 +331,46 @@ pre[class*='language-'] > code[class*='language-'] {
   border: none !important;
   border-radius: 0 !important;
   box-shadow: none !important;
-  transition: max-height 0.3s ease, opacity 0.3s ease;
-  overflow: hidden;
+  overflow-x: auto; /* Enable horizontal scrolling for long lines */
+  overflow-y: visible; /* No vertical scrolling, let content flow naturally */
+  width: 100%; /* Ensure full width */
+  max-width: 100%; /* Prevent overflow */
+  box-sizing: border-box; /* Include padding in width */
+  white-space: pre; /* Preserve whitespace and prevent wrapping */
+  word-wrap: normal; /* Prevent word wrapping */
+  word-break: normal; /* Prevent word breaking */
 }
 
 .code-block-container.collapsed .code-block-content {
-  max-height: 0;
-  opacity: 0;
-  padding: 0 1.5em;
+  display: none;
+}
+
+/* Force horizontal scrolling behavior for all code content */
+.code-block-container * {
+  white-space: pre !important;
+  word-wrap: normal !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+}
+
+/* Ensure scroll bars are visible when needed - HORIZONTAL ONLY */
+.code-block-container pre[class*='language-']::-webkit-scrollbar {
+  height: 8px; /* Horizontal scrollbar height */
+  width: 0px; /* No vertical scrollbar */
+  background: #0b2942;
+}
+
+.code-block-container pre[class*='language-']::-webkit-scrollbar-thumb {
+  background: #1d3b53;
+  border-radius: 4px;
+}
+
+.code-block-container pre[class*='language-']::-webkit-scrollbar-thumb:hover {
+  background: #2d4b63;
+}
+
+/* Firefox scrollbar styling - horizontal only */
+.code-block-container pre[class*='language-'] {
+  scrollbar-width: thin;
+  scrollbar-color: #1d3b53 #0b2942;
 }

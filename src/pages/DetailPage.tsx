@@ -5,7 +5,6 @@ import MarkdownContent from '../components/MarkdownContent';
 import { projects } from './Projects';
 import { blogPosts } from './Blog';
 import { fetchMarkdownContent, parseMarkdown, type ParsedMarkdown } from '../utils/markdown';
-import { initializeCodeBlocks } from '../utils/codeBlock';
 import styles from '../styles/DetailPage.module.css';
 
 type ContentType = 'project' | 'blog';
@@ -28,6 +27,7 @@ export default function DetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeItemId, setActiveItemId] = useState<string>('');
+  const [lastUpdateTime, setLastUpdateTime] = useState<string | null>(null);
 
   // Determine if this is a project or blog based on the URL path
   const contentType: ContentType = location.pathname.includes('/project/') ? 'project' : 'blog';
@@ -94,6 +94,19 @@ export default function DetailPage() {
         setError(null);
         
         const markdownPath = `${import.meta.env.BASE_URL}content/${contentType}s/${contentItem.id}.md`;
+        
+        // Get file last modified time
+        try {
+          const headResponse = await fetch(markdownPath, { method: 'HEAD' });
+          const lastModified = headResponse.headers.get('Last-Modified');
+          if (lastModified) {
+            setLastUpdateTime(new Date(lastModified).toLocaleDateString());
+          }
+        } catch (headError) {
+          console.warn('Could not get last modified time:', headError);
+          setLastUpdateTime(null);
+        }
+        
         const content = await fetchMarkdownContent(markdownPath);
         const parsed = await parseMarkdown(content, true); // Remove main title
         
@@ -108,19 +121,6 @@ export default function DetailPage() {
 
     loadContent();
   }, [contentItem, contentType]);
-
-  // Initialize code blocks after markdown is loaded
-  useEffect(() => {
-    if (markdownData && !loading) {
-      // Use requestAnimationFrame to ensure DOM is fully rendered
-      requestAnimationFrame(() => {
-        setTimeout(() => {
-          console.log('DetailPage: Initializing code blocks...');
-          initializeCodeBlocks();
-        }, 100);
-      });
-    }
-  }, [markdownData, loading]);
 
   // If content not found, redirect to appropriate page
   if (!contentItem) {
@@ -161,9 +161,10 @@ export default function DetailPage() {
       contentItemDate: new Date(contentItem.date).toLocaleDateString(),
       contentItemTags: contentItem.tags,
       contentType,
-      contentItemCategory: contentItem.category
+      contentItemCategory: contentItem.category,
+      contentItemLastUpdate: lastUpdateTime
     };
-  }, [markdownData, contentItem, contentType]);
+  }, [markdownData, contentItem, contentType, lastUpdateTime]);
 
   return (
     <Layout
@@ -173,6 +174,11 @@ export default function DetailPage() {
       sidebarItemType="toc"
       onSidebarItemClick={handleSidebarItemClick}
       activeItemId={activeItemId}
+      contentItemDate={markdownContentProps?.contentItemDate}
+      contentItemTags={markdownContentProps?.contentItemTags}
+      contentType={contentType}
+      contentItemCategory={markdownContentProps?.contentItemCategory}
+      contentItemLastUpdate={markdownContentProps?.contentItemLastUpdate || undefined}
     >
       <div className={styles.detailPage}>
         {loading && (
@@ -190,15 +196,10 @@ export default function DetailPage() {
           </div>
         )}
         
-        {markdownContentProps && !loading && !error && (
+        {markdownData && !loading && !error && (
           <div className={styles.content}>
             <MarkdownContent
-              markdownData={markdownContentProps.markdownData}
-              contentItemTitle={markdownContentProps.contentItemTitle}
-              contentItemDate={markdownContentProps.contentItemDate}
-              contentItemTags={markdownContentProps.contentItemTags}
-              contentType={markdownContentProps.contentType}
-              contentItemCategory={markdownContentProps.contentItemCategory}
+              markdownData={markdownData}
             />
           </div>
         )}

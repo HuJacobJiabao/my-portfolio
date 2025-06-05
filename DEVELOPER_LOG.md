@@ -379,3 +379,201 @@ try {
 
 *Implementation completed: June 4, 2025*
 *Next review: When adding new interactive features*
+
+## Navigation Card Animation Synchronization - June 5, 2025
+
+### Problem Statement
+The navigation card (TOC sidebar) would disappear during navbar animations and reappear when the navbar completely hid, causing a jarring user experience.
+
+### Root Cause Analysis
+The issue was caused by conflicting animation states and z-index layering:
+
+```typescript
+// PROBLEMATIC APPROACH - Scroll direction based positioning
+top: isScrollingUp ? '80px' : '20px'  // Inconsistent with navbar state
+zIndex: 1000  // Same as navbar, causing conflicts
+```
+
+**The Problems:**
+1. **State Desynchronization**: Navigation card positioning was based on scroll direction, not navbar visibility
+2. **Z-Index Conflicts**: Both navbar and navigation card used `z-index: 1000`
+3. **Animation Timing Mismatch**: Different update triggers caused visual inconsistencies
+4. **Missing Dependencies**: useEffect wasn't tracking navbar state changes
+
+### Solution: Synchronized State Management
+
+#### 1. Created Shared Navbar State Hook
+```typescript
+// /src/hooks/useNavbarState.ts - Centralized navbar state management
+export const useNavbarState = () => {
+  const [visible, setVisible] = useState(true);
+  const [atTop, setAtTop] = useState(true);
+  const [prevScrollPos, setPrevScrollPos] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollPos = window.scrollY;
+      setVisible(prevScrollPos > currentScrollPos || currentScrollPos < 10);
+      setAtTop(currentScrollPos <= 10);
+      setPrevScrollPos(currentScrollPos);
+    };
+    // Scroll event handling...
+  }, [prevScrollPos]);
+
+  return { visible, atTop, prevScrollPos };
+};
+```
+
+#### 2. Synchronized Navigation Card Positioning
+```typescript
+// IMPROVED APPROACH - Direct navbar state synchronization
+const { visible: navbarVisible } = useNavbarState();
+
+// Navigation card positioning logic
+style={{
+  position: 'fixed',
+  top: navbarVisible ? '80px' : '20px',  // Direct sync with navbar state
+  zIndex: 1001,  // Higher than navbar to prevent conflicts
+  transition: 'top 0.3s ease'  // Synchronized animation timing
+}}
+```
+
+#### 3. Component Architecture Changes
+
+**NavBar.tsx Updates:**
+- Removed duplicate scroll state management
+- Integrated shared `useNavbarState` hook
+- Simplified scroll event handling
+
+**Sidebar.tsx Updates:**
+- Added `useNavbarState` import and usage
+- Updated navigation card positioning logic
+- Added `navbarVisible` to useEffect dependencies
+- Increased z-index to 1001 for proper layering
+
+### Implementation Details
+
+#### Files Modified:
+1. **`src/hooks/useNavbarState.ts`** (NEW)
+   - Centralized navbar state management
+   - Shared scroll event handling logic
+   - Provides `visible`, `atTop`, `prevScrollPos` states
+
+2. **`src/components/NavBar.tsx`**
+   - Integrated shared state hook
+   - Removed duplicate scroll logic
+   - Simplified component structure
+
+3. **`src/components/Sidebar.tsx`**
+   - Added navbar state synchronization
+   - Updated positioning logic from scroll-direction to state-based
+   - Improved z-index layering (1001 > 1000)
+   - Enhanced useEffect dependencies
+
+#### Key Technical Improvements:
+- **State Synchronization**: Both components use identical scroll state
+- **Layering Fix**: Navigation card now properly layers above navbar
+- **Animation Timing**: 0.3s transitions match across components
+- **Dependency Tracking**: useEffect properly tracks navbar state changes
+
+### Testing Scenarios Validated:
+1. **Scroll Down**: Navbar hides → Navigation card moves to `top: 20px`
+2. **Scroll Up**: Navbar shows → Navigation card moves to `top: 80px`
+3. **Animation Phases**: No disappearing during transition periods
+4. **Fast Scrolling**: State changes remain synchronized
+5. **Page Refresh**: Initial positioning works correctly
+
+### Performance Impact:
+- ✅ Reduced redundant scroll event handlers
+- ✅ Centralized state management reduces component complexity
+- ✅ Smooth animations without visual artifacts
+- ✅ Consistent behavior across all scroll speeds
+
+---
+
+*Implementation completed: June 5, 2025*
+*Next review: When adding new navigation features*
+
+## Header Height Consistency & Title Display Optimization - June 5, 2025
+
+### Problem Statement
+Page headers had inconsistent heights between Project pages (281.59px) and Article pages (518.25px), causing layout jumps and poor user experience. Additionally, titles were reducing font size too aggressively instead of utilizing line breaks for better readability.
+
+### Root Cause Analysis
+1. **Inconsistent Header Heights**: No fixed height system caused headers to expand based on content
+2. **Premature Font Reduction**: Titles reduced font size at low character thresholds (40, 60, 80 chars)
+3. **Poor Space Utilization**: Title area didn't properly accommodate multi-line titles
+
+### Solution: Fixed Header System with Smart Typography
+
+#### 1. Implemented Fixed Header Height Architecture
+```css
+.pageHeader {
+  height: 200px;           /* Fixed height for consistency */
+  min-height: 200px;       /* Prevent collapse */
+  padding: 100px 0 15px;   /* Compact padding */
+}
+```
+
+#### 2. Three-Area Header Structure
+- **Title Area**: Flexible space for titles with line breaks
+- **Metadata Area**: Fixed space for project/blog metadata  
+- **Tags Area**: Fixed space for content tags
+
+#### 3. Smart Title Sizing Logic
+```typescript
+// OLD: Aggressive font reduction
+if (titleLength > 40) return `${baseClass} ${styles.veryLong}`;   // 1.8rem
+if (titleLength > 60) return `${baseClass} ${styles.extraLong}`;  // 1.5rem  
+if (titleLength > 80) return `${baseClass} ${styles.superLong}`;  // 1.3rem
+
+// NEW: Line-break prioritized approach
+if (titleLength > 80) return `${baseClass} ${styles.veryLong}`;   // 2.5rem
+if (titleLength > 100) return `${baseClass} ${styles.extraLong}`; // 2.2rem
+if (titleLength > 120) return `${baseClass} ${styles.superLong}`; // 2.0rem
+```
+
+### Implementation Details
+
+#### Files Modified:
+1. **`src/styles/Layout.module.css`**
+   - Reduced header height from 240px to **200px** (desktop), 280px to **220px** (mobile)
+   - Increased metadata font sizes: labels 0.7rem → **0.9rem**, values 0.8rem → **1rem**
+   - Increased tag font sizes: 0.7rem → **0.8rem**
+   - Enhanced title area max-height: 80px → **90px** for better line accommodation
+   - Updated dynamic font classes with larger minimum sizes
+
+2. **`src/components/Layout.tsx`**
+   - Raised font reduction thresholds: 40/60/80 chars → **80/100/120** chars
+   - Prioritizes line breaks over font size reduction
+
+#### Key Improvements:
+- **40px Height Reduction**: 240px → 200px header (desktop)
+- **60px Mobile Reduction**: 280px → 220px header (mobile)  
+- **Larger Metadata Text**: +0.2rem across all metadata elements
+- **Smart Title Handling**: Prefers multi-line display over font reduction
+- **Consistent Layout**: Fixed heights eliminate layout jumps
+
+### Typography Enhancement Results:
+- **Title Priority**: Line breaks used before font size reduction
+- **Better Readability**: Larger metadata text (0.9rem/1rem vs 0.7rem/0.8rem)
+- **Space Efficiency**: Smaller header with larger, more readable text
+- **Mobile Optimization**: Proportional scaling maintained
+
+### Testing Scenarios Validated:
+1. **Short Titles** (<80 chars): Full 3rem font size with line breaks
+2. **Medium Titles** (80-100 chars): 2.5rem with natural line wrapping
+3. **Long Titles** (100-120 chars): 2.2rem with controlled line breaks  
+4. **Very Long Titles** (120+ chars): 2rem minimum readable size
+5. **Cross-Device**: Consistent header heights on all screen sizes
+
+### Performance Impact:
+- ✅ Eliminated layout shift between page types
+- ✅ Improved text readability with larger font sizes
+- ✅ Better space utilization in compact header design
+- ✅ Enhanced mobile experience with proportional scaling
+
+---
+
+*Implementation completed: June 5, 2025*
+*Next review: When adding new content types or layout variations*

@@ -14,6 +14,12 @@ interface LayoutProps {
   sidebarItemType?: 'project' | 'blog' | 'archive' | 'toc';
   onSidebarItemClick?: (index: number) => void;
   activeItemId?: string;
+  contentType?: 'project' | 'blog';
+  // Metadata props for project/blog pages
+  contentItemDate?: string;
+  contentItemTags?: string[];
+  contentItemCategory?: string;
+  contentItemLastUpdate?: string;
 }
 
 export default function Layout({ 
@@ -23,7 +29,12 @@ export default function Layout({
   sidebarItems, 
   sidebarItemType, 
   onSidebarItemClick,
-  activeItemId
+  activeItemId,
+  contentItemDate,
+  contentItemTags,
+  contentType,
+  contentItemCategory,
+  contentItemLastUpdate
 }: LayoutProps) {
   const [activeSection, setActiveSection] = useState('about');
 
@@ -31,13 +42,67 @@ export default function Layout({
     backgroundImage: `url('${headerBackground}')`
   } : undefined;
 
+  // Function to get dynamic title class based on title length
+  const getTitleClasses = () => {
+    if (!title || !contentType) return `${styles.pageTitle}`;
+    
+    const baseClass = `${styles.pageTitle} ${styles.articleTitle}`;
+    const titleLength = title.length;
+    
+    // 提高阈值，让标题更多时候保持大字体，优先分行显示
+    if (titleLength > 120) return `${baseClass} ${styles.superLong}`;  // 从80提高到120
+    if (titleLength > 100) return `${baseClass} ${styles.extraLong}`;  // 从60提高到100
+    if (titleLength > 80) return `${baseClass} ${styles.veryLong}`;    // 从40提高到80
+    
+    return baseClass;
+  };
+
   return (
     <div className={styles.wrapper}>
       <NavBar />
       
       {title && (
         <header className={styles.pageHeader} style={headerStyle}>
-          <h1>{title}</h1>
+          <div className={styles.headerContent}>
+            <div className={styles.titleArea}>
+              <h1 className={getTitleClasses()}>{title}</h1>
+            </div>
+            {contentType && (
+              <>
+                <div className={styles.metadataArea}>
+                  <div className={styles.headerMeta}>
+                    <div className={styles.metaItem}>
+                      <span className={styles.metaLabel}>Type:</span>
+                      <span className={styles.metaValue}>{contentType === 'project' ? '💻 Project' : '📝 Blog Post'}</span>
+                    </div>
+                    <div className={styles.metaItem}>
+                      <span className={styles.metaLabel}>Category:</span>
+                      <span className={styles.metaValue}>{contentItemCategory}</span>
+                    </div>
+                    <div className={styles.metaItem}>
+                      <span className={styles.metaLabel}>Created:</span>
+                      <span className={styles.metaValue}>{contentItemDate}</span>
+                    </div>
+                    {contentItemLastUpdate && (
+                      <div className={styles.metaItem}>
+                        <span className={styles.metaLabel}>Last Update:</span>
+                        <span className={styles.metaValue}>{contentItemLastUpdate}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                {contentItemTags && contentItemTags.length > 0 && (
+                  <div className={styles.tagsArea}>
+                    <div className={styles.headerTags}>
+                      {contentItemTags.map((tag, index) => (
+                        <span key={index} className={styles.headerTag}>{tag}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
         </header>
       )}
       

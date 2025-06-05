@@ -7,19 +7,33 @@ const elementsWithListeners = new WeakSet();
 export function initializeCodeBlocks() {
   // Initialize copy functionality
   const copyButtons = document.querySelectorAll('.code-block-copy');
-  
   copyButtons.forEach((button) => {
-    // Skip if already initialized
-    if (elementsWithListeners.has(button)) {
-      return;
-    }
-    
-    // Mark as initialized
+    if (elementsWithListeners.has(button)) return;
     elementsWithListeners.add(button);
-    
-    // Add event listener
     button.addEventListener('click', handleCopyClick);
   });
+
+  // Initialize toggle functionality
+  const toggleButtons = document.querySelectorAll('.code-block-toggle');
+  toggleButtons.forEach((button) => {
+    if (elementsWithListeners.has(button)) return;
+    elementsWithListeners.add(button);
+    button.addEventListener('click', handleToggleClick);
+  });
+}
+
+// Handle toggle button clicks
+function handleToggleClick(e: Event) {
+  e.preventDefault();
+  e.stopPropagation();
+  
+  const button = e.currentTarget as HTMLElement;
+  const container = button.closest('.code-block-container');
+  
+  if (!container) return;
+  
+  // Toggle the collapsed state
+  container.classList.toggle('collapsed');
 }
 
 // Handle copy button clicks
@@ -87,45 +101,8 @@ function showCopyFeedback(button: HTMLElement, success: boolean) {
 declare global {
   interface Window {
     copyCodeBlock: (button: HTMLElement) => void;
+    toggleCodeBlock: (button: HTMLElement) => void;
   }
-}
-
-// Set up global functions in browser environment
-if (typeof window !== 'undefined') {
-  // Global copy function
-  window.copyCodeBlock = async function(button: HTMLElement) {
-    const container = button.closest('.code-block-container');
-    
-    if (!container) return;
-    
-    const codeElement = container.querySelector('pre code');
-    if (!codeElement) return;
-    
-    try {
-      const codeText = codeElement.textContent || '';
-      
-      if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(codeText);
-      } else {
-        const textArea = document.createElement('textarea');
-        textArea.value = codeText;
-        textArea.style.position = 'fixed';
-        textArea.style.left = '-999999px';
-        textArea.style.top = '-999999px';
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-        document.execCommand('copy');
-        textArea.remove();
-      }
-      
-      showCopyFeedback(button, true);
-      
-    } catch (err) {
-      console.error('Failed to copy code:', err);
-      showCopyFeedback(button, false);
-    }
-  };
 }
 
 // Auto-initialize when DOM is loaded (only in browser environment)

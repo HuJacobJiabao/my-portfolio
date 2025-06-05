@@ -99,9 +99,12 @@ export async function parseMarkdown(content: string, removeMainTitle: boolean = 
             <div class="code-block-container">
               <div class="code-block-banner">
                 <div class="code-block-controls">
+                  <button class="code-block-toggle" title="Toggle code block">
+                    <span class="toggle-icon">▼</span>
+                  </button>
                   <span class="code-block-language">${displayLang}</span>
                 </div>
-                <button class="code-block-copy" title="Copy" onclick="window.copyCodeBlock(this)">
+                <button class="code-block-copy" title="Copy">
                   <span class="copy-icon">📄</span>
                 </button>
               </div>
@@ -120,9 +123,12 @@ export async function parseMarkdown(content: string, removeMainTitle: boolean = 
             <div class="code-block-container">
               <div class="code-block-banner">
                 <div class="code-block-controls">
+                  <button class="code-block-toggle" title="Toggle code block">
+                    <span class="toggle-icon">▼</span>
+                  </button>
                   <span class="code-block-language">${displayLang}</span>
                 </div>
-                <button class="code-block-copy" title="Copy" onclick="window.copyCodeBlock(this)">
+                <button class="code-block-copy" title="Copy">
                   <span class="copy-icon">📄</span>
                 </button>
               </div>
@@ -142,9 +148,12 @@ export async function parseMarkdown(content: string, removeMainTitle: boolean = 
           <div class="code-block-container">
             <div class="code-block-banner">
               <div class="code-block-controls">
+                <button class="code-block-toggle" title="Toggle code block">
+                  <span class="toggle-icon">▼</span>
+                </button>
                 <span class="code-block-language">${displayLang}</span>
               </div>
-              <button class="code-block-copy" title="Copy" onclick="window.copyCodeBlock(this)">
+              <button class="code-block-copy" title="Copy">
                 <span class="copy-icon">📋</span>
               </button>
             </div>
