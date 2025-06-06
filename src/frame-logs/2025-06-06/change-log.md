@@ -20,11 +20,17 @@ Added `npm run log` command for creating daily log templates, enhanced Package.j
 ### 5. Documentation System Updates
 Converted DEVELOPER_LOG.md to index file with links to daily logs, updated CHANGELOG.md to reference daily logging structure, and added development workflow section and logging instructions to README.md.
 
-### 6. 🎯 **MAJOR MILESTONE: Dynamic Content Generation System Completion**
+### 6.  **MAJOR MILESTONE: Dynamic Content Generation System Completion**
 Successfully implemented and completed the dynamic content generation system that automatically scans `src/content/` directories, loads markdown files, parses frontmatter, and renders them as interactive cards and detail pages in `Blog.tsx` and `Projects.tsx`. This achievement represents a critical framework capability that enables seamless content management without manual configuration.
 
-### 7. 🖼️ **Advanced Asset Resolution System Implementation**
+### 7. **Advanced Asset Resolution System Implementation**
 Implemented comprehensive asset resolution system for markdown content that enables co-location of assets with markdown files in `src/` directory structure. The system provides automatic asset URL resolution with Vite integration, hot reloading support, and cross-folder asset referencing capabilities across the entire content directory.
+
+### 8.  **Cross-Folder Asset Resolution Bug Fix**
+Fixed critical issue where projects couldn't resolve cross-folder asset references like `../../projects/folder/image.png`. Enhanced the `calculateRelativePaths` function in `assetResolver.ts` to generate comprehensive relative path mappings, ensuring both blogs and projects have unified asset resolution behavior. This enables flexible content organization with assets referenced from any folder.
+
+### 9.  **HMR Fast Refresh Development Experience Fix**
+Fixed critical Hot Module Reload (HMR) issues where React component files were exporting utility functions, causing "export is incompatible" errors and breaking Fast Refresh. Extracted all utility functions (`generateIdFromTitle`, `loadBlogPosts`, `loadProjects`) from component files into dedicated utility modules (`contentUtils.ts`, `contentLoader.ts`). This ensures clean separation of concerns and reliable HMR behavior during development.
 
 ## Benefits
 

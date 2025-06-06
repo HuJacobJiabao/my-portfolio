@@ -4,9 +4,8 @@ import TimelineItem from '../components/TimelineItem';
 import Pagination from '../components/Pagination';
 import styles from '../styles/Archive.module.css';
 
-// Import data from other pages - in a real app, this would come from a shared data source
-import { loadBlogPosts, type BlogPost } from './Blog';
-import { loadProjects, type Project } from './Projects';
+// Import data from shared utility
+import { loadBlogPosts, loadProjects, type BlogPost, type Project } from '../utils/contentLoader';
 
 // Combined archive item interface
 interface ArchiveItem {

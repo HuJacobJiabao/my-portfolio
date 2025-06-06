@@ -283,7 +283,154 @@ const parsed = await parseMarkdown(content, true, assetMap);
 - **Future Enhancement**: Cross-folder and cross-content-type asset resolution can be implemented when needed
 - **Workaround**: Assets can be copied to the same directory or placed in `public/` folder for absolute paths
 
+### 3. Cross-Folder Asset Resolution Fix Implementation
+
+#### Problem Analysis
+- **Issue**: Two identical markdown files (`src/content/blogs/test-timestamp-blog-3/index.md` and `src/content/projects/test-asset-3/index.md`) both referenced `../../projects/test-asset-project-1/wallhaven-d85ewm.png` but only blogs could resolve it
+- **Root Cause**: Blog.tsx used direct asset resolution with `import.meta.glob` while Projects.tsx relied on `createAssetMapFromCache` function in `assetResolver.ts`, which wasn't generating proper relative path keys for cross-folder references
+- **Impact**: Inconsistent asset resolution behavior between blogs and projects, breaking project content that referenced assets outside their immediate folder
+
+#### Solution Design
+- **Approach**: Enhanced the `calculateRelativePaths` function in `assetResolver.ts` to always generate accurate relative paths from markdown folder to asset location
+- **Architecture**: Unified asset resolution behavior for both blogs and projects through comprehensive path mapping
+- **Benefits**: Cross-folder asset references work consistently across both content types
+
+#### Implementation Details
+
+**Enhanced Asset Path Calculation:**
+```typescript
+// assetResolver.ts - Enhanced relative path calculation
+function calculateRelativePaths(markdownFolderPath: string, assetPath: string): string[] {
+  const paths: string[] = [];
+  
+  // Always include the original asset key (relative path)
+  paths.push(assetPath);
+  
+  // Calculate accurate relative path from markdown folder to asset
+  try {
+    const markdownDir = path.dirname(markdownFolderPath);
+    const assetDir = path.dirname(assetPath);
+    const assetName = path.basename(assetPath);
+    
+    // Build relative path from markdown directory to asset
+    const relativePath = path.posix.join(path.posix.relative(markdownDir, assetDir), assetName);
+    if (relativePath && relativePath !== assetPath) {
+      paths.push(relativePath);
+      console.log(`Added relative path: ${relativePath} for asset: ${assetPath} from markdown: ${markdownFolderPath}`);
+    }
+  } catch (error) {
+    console.error(`Error calculating relative path for ${assetPath}:`, error);
+  }
+  
+  return paths;
+}
+```
+
+**Debugging and Verification:**
+- Added comprehensive console.log statements to track asset map generation
+- Verified that cross-folder references like `../../projects/test-asset-project-1/wallhaven-d85ewm.png` are properly mapped
+- Confirmed unified behavior between blog and project asset resolution
+
+#### Files Modified
+- `src/utils/assetResolver.ts` - Enhanced `calculateRelativePaths` function
+- `src/pages/Projects.tsx` - Maintained existing asset resolution logic
+- `src/content/blogs/test-timestamp-blog-3/index.md` - Test case with cross-folder reference
+- `src/content/projects/test-asset-3/index.md` - Test case with cross-folder reference
+
+#### Testing Results
+- ✅ Cross-folder asset references work in both blogs and projects
+- ✅ Asset map contains comprehensive path-to-URL mappings
+- ✅ Unified asset resolution behavior across content types
+- ✅ No performance degradation with enhanced path calculation
+- ✅ Debug output shows complete asset map generation process
+
+#### Next Steps
+1. Remove debugging console.log statements
+2. Consider removing redundant assetModules fallback logic from Projects.tsx
+3. Evaluate if assetMap field can be removed from Project interface if not needed by Card component
+
+### 4. HMR Fast Refresh Fix Implementation
+
+#### Problem Analysis
+- **Issue**: Hot Module Reload (HMR) Fast Refresh was failing with errors like "generateIdFromTitle export is incompatible" and "loadBlogPosts export is incompatible"
+- **Root Cause**: React component files (`Blog.tsx`, `Projects.tsx`) were exporting utility functions, which violates Vite's Fast Refresh requirements for consistent component exports
+- **Impact**: Development experience degraded with HMR failures requiring manual page refreshes, breaking the fast development workflow
+
+#### Solution Design
+- **Approach**: Extracted all utility functions from React component files into dedicated utility modules
+- **Architecture**: Created centralized content management utilities that can be imported by multiple components
+- **Benefits**: Clean separation of concerns, consistent HMR behavior, and reusable utility functions across the codebase
+
+#### Implementation Details
+
+**Utility Function Extraction:**
+```typescript
+// src/utils/contentUtils.ts - Content utility functions
+export function generateIdFromTitle(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '') // Remove special characters except spaces and hyphens
+    .replace(/\s+/g, '-')     // Replace spaces with hyphens
+    .replace(/-+/g, '-')      // Replace multiple hyphens with single hyphen
+    .trim();
+}
+
+// src/utils/contentLoader.ts - Content loading functions
+export async function loadBlogPosts(): Promise<BlogPost[]> {
+  // Dynamic content loading with frontmatter parsing
+  const blogModules = import.meta.glob('../content/blogs/**/index.md', { 
+    query: '?raw', 
+    import: 'default' 
+  });
+  // ...implementation details...
+}
+
+export async function loadProjects(): Promise<Project[]> {
+  // Dynamic project loading with asset resolution
+  const projectModules = import.meta.glob('../content/projects/**/index.md', { 
+    query: '?raw', 
+    import: 'default' 
+  });
+  // ...implementation details...
+}
+```
+
+**Component File Cleanup:**
+```typescript
+// Before: Components exported utility functions (causing HMR issues)
+export function generateIdFromTitle(title: string): string { /* ... */ }
+export async function loadBlogPosts(): Promise<BlogPost[]> { /* ... */ }
+
+// After: Components only export React components
+export default function Blog() {
+  // Clean component implementation with imported utilities
+  const posts = await loadBlogPosts(); // Imported from utils
+  const id = generateIdFromTitle(title); // Imported from utils
+}
+```
+
+#### Files Modified
+- `src/utils/contentUtils.ts` - Created for ID generation utilities
+- `src/utils/contentLoader.ts` - Created for content loading functions
+- `src/pages/Blog.tsx` - Removed utility exports, added imports from utils
+- `src/pages/Projects.tsx` - Removed utility exports, added imports from utils
+- `src/pages/DetailPage.tsx` - Updated imports to use new utility locations
+- `src/pages/Archive.tsx` - Updated imports to use new utility locations
+
+#### Testing Results
+- ✅ HMR Fast Refresh now works correctly for all component files
+- ✅ No more "export is incompatible" errors during development
+- ✅ Clean separation between React components and utility functions
+- ✅ All existing functionality preserved with improved development experience
+- ✅ Utility functions are now reusable across multiple components
+
+#### Benefits Achieved
+- **Improved Development Experience**: Fast Refresh works reliably without manual page refreshes
+- **Better Code Organization**: Clear separation between components and utilities
+- **Reusable Architecture**: Utility functions can be imported by any component
+- **Performance**: No impact on runtime performance, development-only improvement
+
 ---
 
 *Implementation completed: June 6, 2025*
-*Ready for structured daily development logging*
+*Ready for structured daily development logging and unified asset resolution*

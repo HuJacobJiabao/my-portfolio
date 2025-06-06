@@ -2,8 +2,8 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, Navigate, useLocation } from 'react-router-dom';
 import Layout from '../components/Layout';
 import MarkdownContent from '../components/MarkdownContent';
-import { loadProjects, generateIdFromTitle as generateProjectIdFromTitle, type Project } from './Projects';
-import { loadBlogPosts, generateIdFromTitle as generateBlogIdFromTitle, type BlogPost } from './Blog';
+import { loadProjects, loadBlogPosts, type Project, type BlogPost } from '../utils/contentLoader';
+import { generateIdFromTitle } from '../utils/contentUtils';
 import { fetchMarkdownContent, parseMarkdown, type ParsedMarkdown } from '../utils/markdown';
 import { createAssetMapFromCache } from '../utils/assetResolver';
 import matter from 'gray-matter';
@@ -194,7 +194,7 @@ export default function DetailPage() {
               const parsed = matter(moduleContent);
               const frontmatter = parsed.data;
               
-              const generatedId = generateBlogIdFromTitle(frontmatter.title);
+              const generatedId = generateIdFromTitle(frontmatter.title);
               console.log('Checking blog post:', {
                 path,
                 title: frontmatter.title,
@@ -244,7 +244,7 @@ export default function DetailPage() {
               // Extract folder name from path for ID generation
               const pathParts = path.split('/');
               const folderName = pathParts[pathParts.length - 2];
-              const generatedId = generateProjectIdFromTitle(frontmatter.title || folderName);
+              const generatedId = generateIdFromTitle(frontmatter.title || folderName);
               
               console.log('Checking project:', {
                 path,
