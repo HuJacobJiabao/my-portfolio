@@ -124,6 +124,15 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
           mutation.addedNodes.forEach((node) => {
             if (node.nodeType === Node.ELEMENT_NODE) {
               const element = node as Element;
+              
+              // Skip if this is a Mermaid-related element to avoid conflicts
+              if (element.classList?.contains('mermaid-container') ||
+                  element.classList?.contains('mermaid-diagram') ||
+                  element.tagName?.toLowerCase() === 'svg' ||
+                  element.closest?.('.mermaid-container')) {
+                return;
+              }
+              
               if (element.classList?.contains('code-block-container') || 
                   element.querySelector?.('.code-block-container')) {
                 shouldReinitialize = true;

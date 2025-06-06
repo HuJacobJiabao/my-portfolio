@@ -12,27 +12,18 @@
   padding: 4rem 2rem;
   text-align: center;
   min-height: 400px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.1));
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 25px;
   box-shadow: 
-    0 8px 32px rgba(31, 38, 135, 0.37),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+    0 8px 32px rgba(31, 38, 135, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  border: 1px solid #f0f0f0;
   position: relative;
   overflow: hidden;
 }
 
 .emptyState::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
-  pointer-events: none;
+  display: none;
 }
 
 .emptyIcon {
@@ -80,16 +71,18 @@
   padding: 4rem 2rem;
   text-align: center;
   min-height: 400px;
-  background: linear-gradient(135deg, rgba(52, 152, 219, 0.25), rgba(52, 152, 219, 0.1));
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 25px;
   box-shadow: 
-    0 8px 32px rgba(31, 38, 135, 0.37),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+    0 8px 32px rgba(31, 38, 135, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  border: 1px solid #f0f0f0;
   position: relative;
   overflow: hidden;
+}
+
+.loadingState::before {
+  display: none;
 }
 
 .loadingIcon {
@@ -120,16 +113,18 @@
   padding: 4rem 2rem;
   text-align: center;
   min-height: 400px;
-  background: linear-gradient(135deg, rgba(231, 76, 60, 0.25), rgba(231, 76, 60, 0.1));
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 25px;
   box-shadow: 
-    0 8px 32px rgba(31, 38, 135, 0.37),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+    0 8px 32px rgba(231, 76, 60, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  border: 1px solid #f0f0f0;
   position: relative;
   overflow: hidden;
+}
+
+.errorState::before {
+  display: none;
 }
 
 .errorIcon {
@@ -159,6 +154,24 @@
     transform: scale(1.1);
     opacity: 1;
   }
+}
+
+/* 主内容淡入动画 */
+@keyframes contentFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.emptyState,
+.loadingState,
+.errorState {
+  animation: contentFadeIn 0.8s cubic-bezier(0.4,0,0.2,1);
 }
 
 @media (max-width: 768px) {

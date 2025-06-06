@@ -18,8 +18,11 @@ html {
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  line-he  .mermaid-svg-container {
+    padding: 2.5rem 1.5rem; /* Reduced padding on mobile, but keep space for button */
+    min-height: 200px;
+    border-radius: 8px;
+  }nt-weight: 400;
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
@@ -78,6 +81,58 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+/* ==============================================
+   Blockquote Styles - Global
+   ============================================== */
+
+blockquote {
+  margin: 1.5rem 0;
+  padding: 1rem 1.5rem;
+  border-left: 4px solid #646cff;
+  background: rgba(100, 108, 255, 0.1);
+  border-radius: 0 8px 8px 0;
+  position: relative;
+  color: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+
+
+blockquote p {
+  margin: 0 0 0.5rem 0;
+  line-height: 1.6;
+}
+
+blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* Nested blockquotes */
+blockquote blockquote {
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  border-left: 3px solid #535bf2;
+  background: rgba(83, 91, 242, 0.08);
+  font-size: 0.95em;
+}
+
+blockquote blockquote::before {
+  font-size: 2rem;
+  left: 0.3rem;
+  top: -0.3rem;
+  color: #535bf2;
+}
+
+/* Deep nested blockquotes */
+blockquote blockquote blockquote {
+  border-left: 2px solid #747bff;
+  background: rgba(116, 123, 255, 0.06);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9em;
+}
+
+/* Light mode adjustments */
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -88,5 +143,328 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+  
+  blockquote {
+    color: #213547;
+    background: rgba(100, 108, 255, 0.08);
+    border-left-color: #646cff;
+  }
+  
+  blockquote::before {
+    color: #646cff;
+  }
+  
+  blockquote blockquote {
+    background: rgba(83, 91, 242, 0.06);
+    border-left-color: #535bf2;
+  }
+  
+  blockquote blockquote::before {
+    color: #535bf2;
+  }
+  
+  blockquote blockquote blockquote {
+    background: rgba(116, 123, 255, 0.04);
+    border-left-color: #747bff;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  blockquote {
+    margin: 1rem 0;
+    padding: 0.75rem 1rem;
+  }
+  
+  blockquote::before {
+    font-size: 2.5rem;
+    left: 0.3rem;
+    top: -0.3rem;
+  }
+  
+  blockquote blockquote {
+    padding: 0.5rem 0.75rem;
+  }
+  
+  blockquote blockquote::before {
+    font-size: 1.8rem;
+    left: 0.2rem;
+    top: -0.2rem;
+  }
+}
+
+/* ==============================================
+   KaTeX Math Equation Styles
+   ============================================== */
+
+/* KaTeX math equations */
+.katex {
+  font-size: 1.1em;
+  color: inherit;
+}
+
+.katex-display {
+  margin: 1.5rem 0;
+  text-align: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.katex-display .katex {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+/* Error handling for math equations */
+.katex-error {
+  color: #e74c3c;
+  background-color: rgba(231, 76, 60, 0.1);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.9em;
+  border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+/* Responsive math equations */
+@media (max-width: 768px) {
+  .katex {
+    font-size: 1em;
+  }
+  
+  .katex-display {
+    margin: 1rem 0;
+    padding: 0 0.5rem;
+  }
+}
+
+/* Light mode adjustments */
+@media (prefers-color-scheme: light) {
+  .katex-error {
+    color: #c0392b;
+    background-color: rgba(192, 57, 43, 0.08);
+    border-color: rgba(192, 57, 43, 0.2);
+  }
+}
+
+/* ==============================================
+   Highlighted Text Styles
+   ============================================== */
+
+mark.highlighted-text {
+  background-color: rgba(255, 255, 0, 0.4);
+  padding: 0 2px;
+  border-radius: 3px;
+  font-weight: inherit;
+  color: inherit;
+}
+
+/* Light mode */
+@media (prefers-color-scheme: light) {
+  mark.highlighted-text {
+    background-color: rgba(255, 230, 0, 0.5);
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* ==============================================
+   Mermaid Diagram Styles - Global
+   ============================================== */
+
+.mermaid-container {
+  margin: 2.5rem 0;
+  padding: 0;
+  overflow: auto;
+  position: relative; /* Ensures absolute positioning context for download button */
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  transition: all 0.3s ease;
+  isolation: isolate; /* Creates a new stacking context */
+}
+
+
+.mermaid-diagram {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.mermaid-svg-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+  min-height: 300px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px; /* Rounded corners on all sides */
+  margin: 0 auto; /* Center the container */
+  /* Width will be set dynamically to match SVG width */
+  position: relative; /* Positioning context for the download button */
+}
+
+.mermaid-svg-container > svg:first-child {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  margin: 0 !important;
+  max-width: calc(100% - 2rem); /* Leave space for margins around SVG */
+  max-height: calc(100% - 2rem); /* Prevent SVG from taking full height */
+  height: auto !important;
+  border-radius: 0 0 12px 12px; /* Only round bottom corners */
+  box-shadow: none; /* Remove shadow for a cleaner look */
+  background: #ffffff;
+  padding: 1rem 2rem 2rem; /* Less padding on top */
+  /* Ensure SVG is properly centered with constraints */
+  flex-shrink: 0;
+  align-self: center;
+  justify-self: center;
+}
+
+.mermaid-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  animation: mermaidPulse 2s infinite;
+}
+
+.mermaid-loading::before {
+  content: "⏳";
+  animation: mermaidSpin 1s linear infinite;
+}
+
+@keyframes mermaidPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes mermaidSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.mermaid-loaded {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.mermaid-error {
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  border: 1px solid #fca5a5;
+  color: #dc2626;
+  border-radius: 12px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  margin: 1rem 0;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-download-btn {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  color: white; /* Change color to white for better visibility */
+  border: none;
+  padding: 0.6rem;
+  border-radius: 50%;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(79, 70, 229, 0.3);
+  z-index: 100;
+  pointer-events: auto;
+  /* Position absolutely in the top right corner of SVG container */
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+}
+
+.mermaid-svg-container:hover .mermaid-download-btn {
+  opacity: 0.9;
+}
+
+.mermaid-download-btn:hover {
+  opacity: 1;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(79, 70, 229, 0.4);
+}
+
+.mermaid-download-btn:active {
+  transform: translateY(0);
+}
+
+.mermaid-download-btn > svg {
+  width: 20px; 
+  height: 20px;
+  fill: currentColor; /* Ensures the SVG inherits the button's text color */
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+}
+
+/* Mobile responsive styles for Mermaid */
+@media (max-width: 768px) {
+  .mermaid-container {
+    margin: 1.5rem 0;
+    border-radius: 12px;
+  }
+  
+  .mermaid-svg-container {
+    padding: 2.5rem 1.5rem 1.5rem; /* Keep top padding for button */
+    min-height: 200px;
+    border-radius: 8px;
+  }
+  
+  .mermaid-svg-container > svg:first-child {
+    padding: 1.5rem;
+    margin: 0 !important;
+    max-width: calc(100% - 2rem);
+  }
+  
+  .mermaid-loading {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
+  
+  .mermaid-download-btn {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    width: 36px;
+    height: 36px;
+    top: 10px;
+    right: 10px;
+  }
+  
+  .mermaid-download-btn > svg {
+    width: 18px;
+    height: 18px;
+    padding: 0 !important;
+    background: transparent !important;
   }
 }

@@ -12,6 +12,16 @@ coverImage: "./markdown-svgrepo-com.svg"
 
 ## 1. Headings
 
+
+```mermaid
+graph TD
+  A[Start] --> B{Is Markdown working?}
+  B -- Yes --> C[Great!]
+  B -- No --> D[Fix it!]
+```
+
+![wallhaven-d85ewm.png](./wallhaven-d85ewm.png "Optional title")
+
 # Heading 1
 ## Heading 2
 ### Heading 3

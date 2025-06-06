@@ -42,7 +42,9 @@ export default function Blog() {
 
   if (loading) {
     return (
-      <Layout title="Blog">
+      <Layout 
+        title="Blog"
+        headerBackground={`${import.meta.env.BASE_URL}background/default_blog.png`}>
         <div className={styles.blogContainer}>
           <div className={styles.loadingState}>
             <div className={styles.loadingIcon}>⏳</div>
@@ -56,7 +58,9 @@ export default function Blog() {
 
   if (error) {
     return (
-      <Layout title="Blog">
+      <Layout 
+        title="Blog"
+        headerBackground={`${import.meta.env.BASE_URL}background/default_blog.png`}>
         <div className={styles.blogContainer}>
           <div className={styles.errorState}>
             <div className={styles.errorIcon}>❌</div>
@@ -71,6 +75,7 @@ export default function Blog() {
   return (
     <Layout 
       title="Blog"
+      headerBackground={`${import.meta.env.BASE_URL}background/default_blog.png`}
       sidebarItems={sidebarItems}
       sidebarItemType="blog"
       onSidebarItemClick={handleSidebarItemClick}

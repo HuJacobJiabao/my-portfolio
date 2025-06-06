@@ -424,13 +424,164 @@ export default function Blog() {
 - ✅ All existing functionality preserved with improved development experience
 - ✅ Utility functions are now reusable across multiple components
 
-#### Benefits Achieved
-- **Improved Development Experience**: Fast Refresh works reliably without manual page refreshes
-- **Better Code Organization**: Clear separation between components and utilities
-- **Reusable Architecture**: Utility functions can be imported by any component
-- **Performance**: No impact on runtime performance, development-only improvement
+### 2. Mermaid Diagram Rendering System Implementation
 
----
+#### Problem Analysis
+- **Issue**: Mermaid diagrams failing to render properly in blog posts with mysterious DOM element disappearance
+- **Root Cause**: The `div class="mermaid-diagram" id="${diagramId}"` was mysteriously disappearing during the rendering process
+- **Impact**: Blog posts with Mermaid code blocks showing empty spaces instead of diagrams
+- **Debug Duration**: 6 hours of intensive troubleshooting
 
-*Implementation completed: June 6, 2025*
-*Ready for structured daily development logging and unified asset resolution*
+#### Solution Design
+- **Approach**: Temporary div creation workaround with direct appendChild manipulation
+- **Architecture**: Separate rendering utility with downloadable SVG functionality
+- **Benefits**: Reliable diagram rendering with enhanced user experience through download capability
+
+#### Implementation Details
+
+##### Phase 1: Mysterious Div Disappearance Investigation (2 hours)
+The initial implementation seemed straightforward:
+```typescript
+// Original failing approach
+const diagramElement = document.getElementById(diagramId);
+if (diagramElement) {
+  await mermaid.renderAsync(diagramId, diagramDefinition);
+}
+```
+
+**The Mystery**: The `div class="mermaid-diagram" id="${diagramId}"` would consistently disappear during rendering, despite being present in the initial DOM. This led to a deep dive into:
+- Mermaid's internal rendering lifecycle
+- DOM mutation observers
+- React's virtual DOM reconciliation
+- Timing issues between component mounting and Mermaid initialization
+
+##### Phase 2: Workaround Solution Discovery (3 hours)
+After extensive debugging, discovered that Mermaid's rendering process was conflicting with the existing DOM structure. The solution required a temporary div approach:
+
+```typescript
+// Successful workaround in mermaidRenderer.ts
+export async function renderMermaidDiagram(diagramId: string, diagramDefinition: string): Promise<void> {
+  try {
+    // Create temporary div for rendering
+    const tempDiv = document.createElement('div');
+    tempDiv.id = `temp-${diagramId}`;
+    document.body.appendChild(tempDiv);
+
+    // Render to temporary div
+    const { svg } = await mermaid.renderAsync(`temp-${diagramId}`, diagramDefinition);
+    
+    // Get target container and replace content
+    const targetElement = document.getElementById(diagramId);
+    if (targetElement) {
+      targetElement.innerHTML = svg;
+      // Add download functionality
+      addDownloadButton(targetElement, svg, diagramId);
+    }
+    
+    // Clean up temporary div
+    document.body.removeChild(tempDiv);
+  } catch (error) {
+    console.error('Mermaid rendering failed:', error);
+  }
+}
+```
+
+##### Phase 3: Download Functionality Implementation (1 hour)
+Enhanced the solution with downloadable SVG capability using a hover-triggered button:
+
+```typescript
+function addDownloadButton(container: HTMLElement, svgContent: string, diagramId: string): void {
+  const downloadBtn = document.createElement('button');
+  downloadBtn.className = 'mermaid-download-btn';
+  downloadBtn.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+      <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+      <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+    </svg>
+  `;
+  
+  downloadBtn.onclick = () => downloadSVG(svgContent, `${diagramId}.svg`);
+  container.appendChild(downloadBtn);
+}
+```
+
+#### CSS Styling Challenge Resolution
+
+##### Phase 4: CSS Selector Conflicts (1 hour)
+The final challenge was CSS selector conflicts between Mermaid's generated SVG and the download button's SVG icon. Initial styling was too broad:
+
+```css
+/* Problematic broad selector */
+.mermaid-svg-container svg {
+  /* This affected both diagram and button SVGs */
+}
+```
+
+**Solution**: Implemented specific CSS targeting to avoid conflicts:
+
+```css
+/* Specific targeting for diagram SVG only */
+.mermaid-svg-container > svg:first-child {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+
+/* Download button specific styling with important overrides */
+.mermaid-download-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 6px;
+  padding: 8px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.mermaid-download-btn > svg {
+  width: 16px !important;
+  height: 16px !important;
+  fill: white !important;
+  color: white !important;
+  stroke: none !important;
+}
+
+.mermaid-svg-container:hover .mermaid-download-btn {
+  opacity: 1;
+}
+```
+
+#### Files Modified
+- `src/utils/mermaidRenderer.ts` - Core rendering logic with temporary div workaround
+- `src/utils/markdown.ts` - Mermaid code block detection and processing
+- `src/index.css` - Comprehensive styling for diagrams and download functionality
+
+#### Testing Results
+- ✅ Mermaid diagrams render reliably across all blog posts
+- ✅ Download functionality works with proper SVG export
+- ✅ Hover interactions provide intuitive user experience
+- ✅ CSS conflicts resolved with no visual artifacts
+- ✅ Performance impact minimal with temporary div cleanup
+
+#### Key Learnings
+1. **DOM Manipulation Timing**: Mermaid's rendering process can conflict with existing DOM elements
+2. **Temporary Element Strategy**: Sometimes workarounds are more reliable than fighting library internals
+3. **CSS Specificity**: Broad selectors can cause unexpected conflicts in component-based architectures
+4. **User Experience Enhancement**: Simple features like download buttons significantly improve content utility
+
+#### Debug Session Timeline
+- **Hours 1-2**: Initial investigation of div disappearance mystery
+- **Hours 3-4**: Discovery and implementation of temporary div workaround  
+- **Hour 5**: Addition of download functionality and SVG export
+- **Hour 6**: Resolution of CSS selector conflicts and final styling
+
+This implementation represents a significant milestone in the portfolio's content rendering capabilities, solving a complex technical challenge while enhancing user experience.

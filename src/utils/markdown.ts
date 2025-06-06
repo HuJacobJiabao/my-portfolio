@@ -2,6 +2,7 @@ import { marked } from 'marked';
 import Prism from 'prismjs';
 import matter from 'gray-matter';
 import { Buffer } from 'buffer';
+import katex from 'katex';
 
 // Make Buffer available globally for gray-matter
 if (typeof window !== 'undefined') {
@@ -29,6 +30,101 @@ import 'prismjs/components/prism-go';
 
 // Import custom Night Owl theme
 import '../styles/prism-night-owl-theme.css';
+// Import KaTeX CSS for math rendering
+import 'katex/dist/katex.min.css';
+
+// We'll be using the mermaidRenderer.ts file for runtime rendering
+
+// Math rendering function using KaTeX
+function renderMath(text: string, displayMode: boolean = false): string {
+  try {
+    return katex.renderToString(text, {
+      displayMode,
+      throwOnError: false,
+      errorColor: '#cc0000',
+      strict: 'warn',
+      trust: false
+    });
+  } catch (error) {
+    console.warn('KaTeX rendering error:', error);
+    return `<span class="katex-error" title="Math rendering error">${text}</span>`;
+  }
+}
+
+// Process math equations in markdown content
+function processMathEquations(content: string): string {
+  // Process display math ($$...$$)
+  content = content.replace(/\$\$([^$]+?)\$\$/g, (_match, equation) => {
+    return renderMath(equation.trim(), true);
+  });
+  
+  // Process inline math ($...$) - but avoid already processed display math
+  content = content.replace(/(?<!\$)\$([^$\n]+?)\$(?!\$)/g, (_match, equation) => {
+    return renderMath(equation.trim(), false);
+  });
+  
+  return content;
+}
+
+// Process highlighted text (==text==)
+function processHighlightedText(content: string): string {
+  // Replace ==highlighted text== with <mark>highlighted text</mark>
+  return content.replace(/==([^=]+?)==/g, (_match, text) => {
+    return `<mark class="highlighted-text">${text.trim()}</mark>`;
+  });
+}
+
+// Footnote processing functions
+interface Footnote {
+  id: string;
+  content: string;
+}
+
+function processFootnotes(content: string): { content: string; footnotes: Footnote[] } {
+  const footnotes: Footnote[] = [];
+  const footnoteRefs = new Set<string>();
+  
+  // First pass: extract footnote definitions and collect references
+  const footnoteDefRegex = /^\[\^([^\]]+)\]: (.+)$/gm;
+  let match;
+  
+  while ((match = footnoteDefRegex.exec(content)) !== null) {
+    const [_, id, definition] = match;
+    footnotes.push({
+      id: id.trim(),
+      content: definition.trim()
+    });
+  }
+  
+  // Remove footnote definitions from content
+  content = content.replace(footnoteDefRegex, '');
+  
+  // Second pass: find all footnote references in the content
+  const footnoteRefRegex = /\[\^([^\]]+)\]/g;
+  let refMatch;
+  
+  while ((refMatch = footnoteRefRegex.exec(content)) !== null) {
+    const id = refMatch[1].trim();
+    footnoteRefs.add(id);
+  }
+  
+  // Replace footnote references with clickable links
+  content = content.replace(/\[\^([^\]]+)\]/g, (_match, id) => {
+    const trimmedId = id.trim();
+    const footnoteExists = footnotes.some(fn => fn.id === trimmedId);
+    
+    if (footnoteExists) {
+      return `<sup><a href="#footnote-${trimmedId}" id="footnote-ref-${trimmedId}" class="footnote-ref" title="Go to footnote">${trimmedId}</a></sup>`;
+    } else {
+      return `<sup><span class="footnote-error" title="Footnote not found">${trimmedId}</span></sup>`;
+    }
+  });
+  
+  // Filter footnotes to only include those that are referenced
+  const referencedFootnotes = footnotes.filter(fn => footnoteRefs.has(fn.id));
+  
+  return { content, footnotes: referencedFootnotes };
+}
 
 export interface TocItem {
   id: string;
@@ -67,6 +163,18 @@ export async function parseMarkdown(
       processedContent = processedContent.replace(regex, String(value));
     }
   });
+
+  // Process math equations before markdown parsing
+  processedContent = processMathEquations(processedContent);
+  
+  // Process highlighted text (must be done before footnotes to avoid interference)
+  processedContent = processHighlightedText(processedContent);
+  
+  // Process footnotes
+  const { content: contentWithFootnotes, footnotes } = processFootnotes(processedContent);
+  processedContent = contentWithFootnotes;
+  
+  // Store footnotes for later use when rendering the final HTML
   
   // Configure marked with custom renderer
   const renderer = {
@@ -101,6 +209,25 @@ export async function parseMarkdown(
       return `<img src="${resolvedHref}" alt="${text}"${titleAttr} loading="lazy" />`;
     },
     code({ text, lang }: { text: string; lang?: string }) {
+      // Special handling for mermaid diagrams
+      if (typeof lang === 'string' && lang.trim().toLowerCase() === 'mermaid') {
+          const cleanedText = (text || '').trim();
+          if (!cleanedText) {
+            return `<div class="mermaid-container"><div class="mermaid-error">Empty mermaid diagram.</div></div>`;
+          }
+
+          // debugger;
+          const diagramId = `mermaid-diagram-${Math.random().toString(36).substring(2, 11)}`;
+          return `
+            <div class="mermaid-container">
+              <div class="mermaid-diagram" id="${diagramId}">
+                <pre class="mermaid">${cleanedText}</pre>
+              </div>
+              <div class="mermaid-loading">Loading diagram...</div>
+            </div>
+          `;
+      }
+      
       // Map common language aliases (only for languages we've imported)
       const languageMap: { [key: string]: string } = {
         'js': 'javascript',
@@ -214,6 +341,24 @@ export async function parseMarkdown(
     
     // Post-process the HTML to resolve all relative asset paths
     let finalHtml = typeof html === 'string' ? html : '';
+    
+    // Append footnotes to the end of content if there are any
+    if (footnotes && footnotes.length > 0) {
+      const footnotesSection = `
+        <hr class="footnote-divider">
+        <section class="footnotes">
+          <h3 class="footnotes-title">Footnotes</h3>
+          <ol class="footnotes-list">
+            ${footnotes.map(fn => `
+              <li id="footnote-${fn.id}" class="footnote-item">
+                <p>${fn.content} <a href="#footnote-ref-${fn.id}" class="footnote-backref" title="Go back to text">↩</a></p>
+              </li>
+            `).join('')}
+          </ol>
+        </section>
+      `;
+      finalHtml += footnotesSection;
+    }
     
     if (assetMap && assetMap.size > 0) {
       // Replace all relative paths in HTML img src attributes

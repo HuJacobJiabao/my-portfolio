@@ -103,8 +103,8 @@
 
 .markdownContent code {
   /* Inline code styling - grey background */
-  background: #4a5568;
-  color: #d6deeb;
+  background-color: #2d3748;
+  color: #ffe066;
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
   border: 1px solid #5a6f81;
@@ -125,18 +125,72 @@
 }
 
 .markdownContent blockquote {
-  border-left: 4px solid #3498db;
-  background: #f8f9fa;
-  margin: 1.5rem 0;
-  padding: 1rem 1.5rem;
-  border-radius: 0 8px 8px 0;
+  position: relative;
+  margin: 1.5em 0;
+  padding: 1em 1.5em;
+  border-left: 4px solid #007acc;
+  background-color: #f5f8fa;
+  color: #333;
+  border-radius: 6px;
+  line-height: 1.6;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.markdownContent blockquote p {
-  margin: 0;
-  font-style: italic;
-  color: #34495e;
+.markdownContent blockquote::before {
+  content: "“";
+  font-size: 2.5em;
+  color: #007acc;
+  position: absolute;
+  top: -10px;
+  left: 10px;
+  line-height: 1;
 }
+
+.markdownContent blockquote footer {
+  display: block;
+  margin-top: 0.75em;
+  font-style: normal;
+  font-size: 0.9em;
+  color: #666;
+  text-align: right;
+}
+
+.markdownContent table {
+  width: 100%;
+  border-collapse: collapse; /* 让边框合并，避免双线 */
+  margin: 1.5em 0;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #f9fafb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  color: #1e293b;
+}
+
+.markdownContent th,
+.markdownContent td {
+  padding: 0.75em 1em;
+  border: 1px solid #d6deeb; /* 👈 每格都有边框，包含列线 */
+  text-align: left;
+}
+
+.markdownContent th {
+  background-color: #e2e8f0;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+
+
+.markdownContent td code {
+  background-color: #2d3748;
+  color: #ffe066;
+  padding: 0.2em 0.5em;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-family: "Source Code Pro", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
 
 /* Image styling to prevent overflow */
 .markdownContent img {
@@ -179,6 +233,126 @@
   overflow-wrap: normal;
 }
 
+/* Math equation styles in markdown content */
+.markdownContent .katex {
+  color: #2c3e50;
+}
+
+.markdownContent .katex-display {
+  background: rgba(100, 108, 255, 0.05);
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 2rem 0;
+  border: 1px solid rgba(100, 108, 255, 0.1);
+}
+
+.markdownContent .katex-error {
+  background-color: rgba(231, 76, 60, 0.1);
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  color: #e74c3c;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+/* Math equations within paragraphs */
+.markdownContent p .katex {
+  display: inline-block;
+  margin: 0 0.2rem;
+}
+
+/* Footnote styles */
+.markdownContent .footnote-ref {
+  color: #646cff;
+  font-size: 0.8em;
+  text-decoration: none;
+  vertical-align: super;
+  padding: 0 2px;
+  font-weight: 600;
+  opacity: 0.9;
+  transition: opacity 0.2s;
+}
+
+.markdownContent .footnote-ref:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.markdownContent .footnote-error {
+  color: #e74c3c;
+  font-size: 0.8em;
+  vertical-align: super;
+  padding: 0 2px;
+  font-weight: 600;
+}
+
+.markdownContent .footnote-divider {
+  margin: 2.5rem 0 1.5rem;
+  border: 0;
+  height: 1px;
+  background-color: #ecf0f1;
+  width: 50%;
+}
+
+.markdownContent .footnotes {
+  margin-top: 2rem;
+  font-size: 0.9rem;
+  color: #34495e;
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #ecf0f1;
+}
+
+.markdownContent .footnotes-title {
+  margin-top: 0;
+  font-size: 1.2rem;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.markdownContent .footnotes-list {
+  padding-left: 1.5rem;
+}
+
+.markdownContent .footnote-item {
+  margin-bottom: 0.75rem;
+}
+
+.markdownContent .footnote-item p {
+  margin: 0;
+  display: inline;
+}
+
+.markdownContent .footnote-backref {
+  color: #646cff;
+  text-decoration: none;
+  margin-left: 0.5rem;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.markdownContent .footnote-backref:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+/* Highlighted text in markdown content */
+.markdownContent mark.highlighted-text {
+  background-color: rgba(255, 230, 0, 0.3);
+  padding: 0.15em 0.3em;
+  border-radius: 3px;
+  color: #2c3e50;
+  box-shadow: 0 0 3px rgba(255, 230, 0, 0.4);
+  font-weight: inherit;
+  transition: background-color 0.2s;
+}
+
+.markdownContent mark.highlighted-text:hover {
+  background-color: rgba(255, 230, 0, 0.5);
+}
+
 @media (max-width: 768px) {
   .content {
     padding: 1.5rem;
@@ -211,5 +385,46 @@
   .markdownContent .code-block-container pre {
     font-size: 0.875rem; /* Slightly smaller font on mobile */
     padding: 1rem; /* Reduce padding on mobile */
+  }
+  
+  .markdownContent .footnotes {
+    padding: 1rem;
+    font-size: 0.85rem;
+  }
+  
+  .markdownContent .footnotes-title {
+    font-size: 1.1rem;
+  }
+  
+  .markdownContent .footnote-divider {
+    width: 70%;
+  }
+  
+  .markdownContent .mermaid-container {
+    margin: 1.5rem 0;
+    border-radius: 12px;
+  }
+  
+  .markdownContent .mermaid-diagram {
+    padding: 3rem 1.5rem; /* Increased padding even on mobile */
+    min-height: 200px; /* Increased minimum height */
+  }
+  
+  .markdownContent .mermaid-diagram svg {
+    padding: 1.5rem; /* Increased padding for mobile */
+    margin: 0 !important;
+    max-width: calc(100% - 2rem); /* Ensure margins on mobile too */
+  }
+  
+  .markdownContent .mermaid-loading {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
+  
+  .markdownContent .mermaid-download-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    top: 0.75rem;
+    right: 0.75rem;
   }
 }
