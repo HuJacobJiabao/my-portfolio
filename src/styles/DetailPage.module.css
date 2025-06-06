@@ -138,6 +138,19 @@
   color: #34495e;
 }
 
+/* Image styling to prevent overflow */
+.markdownContent img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5rem 0;
+  display: block;
+  object-fit: cover;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+
+
 /* Code block container integration */
 .markdownContent .code-block-container {
   margin: 1.5rem 0;

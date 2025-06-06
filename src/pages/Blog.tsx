@@ -26,9 +26,13 @@ export function generateIdFromTitle(title: string): string {
     .trim();
 }
 
-// Function to load blog posts dynamically
+// Function to load blog posts dynamically with asset resolution
 export async function loadBlogPosts(): Promise<BlogPost[]> {
+  // Load all markdown files
   const blogModules = import.meta.glob('../content/blogs/**/index.md', { query: '?raw', import: 'default' });
+  // Load ALL assets from entire content directory (global scope)
+  const assetModules = import.meta.glob('../content/**/*.{png,jpg,jpeg,gif,svg,webp}', { query: '?url', import: 'default' });
+  
   const posts: BlogPost[] = [];
 
   for (const [path, moduleLoader] of Object.entries(blogModules)) {
@@ -40,16 +44,63 @@ export async function loadBlogPosts(): Promise<BlogPost[]> {
       // Extract folder name from path for the link
       const pathParts = path.split('/');
       const folderName = pathParts[pathParts.length - 2]; // Get the folder name before index.md
+      const folderPath = pathParts.slice(0, -1).join('/'); // Get the folder path
+
+      // Resolve the cover image path
+      let resolvedImagePath: string | undefined;
+      
+      if (frontmatter.coverImage && frontmatter.coverImage !== 'default') {
+        const imagePath = frontmatter.coverImage;
+        
+        // Handle relative paths
+        let fullImagePath: string;
+        if (imagePath.startsWith('./')) {
+          // Same directory
+          fullImagePath = folderPath + '/' + imagePath.slice(2);
+        } else if (imagePath.startsWith('../')) {
+          // Parent directory - resolve relative path
+          const relativeParts = imagePath.split('/');
+          const baseParts = folderPath.split('/');
+          
+          let upLevels = 0;
+          const remainingParts: string[] = [];
+          
+          for (const part of relativeParts) {
+            if (part === '..') {
+              upLevels++;
+            } else if (part !== '.') {
+              remainingParts.push(part);
+            }
+          }
+          
+          const resolvedBaseParts = baseParts.slice(0, -upLevels);
+          fullImagePath = resolvedBaseParts.concat(remainingParts).join('/');
+        } else if (imagePath.startsWith('/')) {
+          // Absolute path from src root
+          fullImagePath = '../' + imagePath.slice(1);
+        } else {
+          // Relative to current folder
+          fullImagePath = folderPath + '/' + imagePath;
+        }
+
+        // Find matching asset module
+        const assetKey = Object.keys(assetModules).find(key => key === fullImagePath);
+        if (assetKey && assetModules[assetKey]) {
+          try {
+            resolvedImagePath = await assetModules[assetKey]() as string;
+          } catch (error) {
+            console.warn(`Could not load asset: ${fullImagePath}`, error);
+          }
+        }
+      }
 
       const post: BlogPost = {
         id: generateIdFromTitle(frontmatter.title || folderName),
         title: frontmatter.title || 'Untitled',
-        date: frontmatter.createTime || new Date().toISOString(), // Store precise timestamp
+        date: frontmatter.createTime || new Date().toISOString(),
         category: frontmatter.category || 'Uncategorized',
         description: frontmatter.description || 'No description available.',
-        image: frontmatter.coverImage && frontmatter.coverImage !== 'default' 
-          ? frontmatter.coverImage 
-          : undefined,
+        image: resolvedImagePath,
         link: `/my-portfolio/blog/${generateIdFromTitle(frontmatter.title || folderName)}`,
         tags: Array.isArray(frontmatter.tags) ? frontmatter.tags : []
       };

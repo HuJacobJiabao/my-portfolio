@@ -30,9 +30,6 @@ import 'prismjs/components/prism-go';
 // Import custom Night Owl theme
 import '../styles/prism-night-owl-theme.css';
 
-// Import date formatting utility
-import { formatDateForTemplate } from './dateFormatter';
-
 export interface TocItem {
   id: string;
   title: string;
@@ -44,7 +41,11 @@ export interface ParsedMarkdown {
   toc: TocItem[];
 }
 
-export async function parseMarkdown(content: string, removeMainTitle: boolean = false): Promise<ParsedMarkdown> {
+export async function parseMarkdown(
+  content: string, 
+  removeMainTitle: boolean = false,
+  assetMap?: Map<string, string> // Map of original paths to resolved asset URLs
+): Promise<ParsedMarkdown> {
   const toc: TocItem[] = [];
   let isFirstH1 = true;
   
@@ -58,9 +59,9 @@ export async function parseMarkdown(content: string, removeMainTitle: boolean = 
   Object.entries(frontmatter).forEach(([key, value]) => {
     const regex = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
     
-    // Special handling for createTime - format as yyyy-mm-dd for display using local time
+    // Special handling for createTime - format as yyyy-mm-dd for display
     if (key === 'createTime' && value) {
-      const formattedDate = formatDateForTemplate(value as string);
+      const formattedDate = new Date(value as string).toISOString().split('T')[0];
       processedContent = processedContent.replace(regex, formattedDate);
     } else {
       processedContent = processedContent.replace(regex, String(value));
@@ -90,6 +91,14 @@ export async function parseMarkdown(content: string, removeMainTitle: boolean = 
       });
 
       return `<h${depth} id="${id}">${text}</h${depth}>`;
+    },
+    image(token: any) {
+      const { href, title, text } = token;
+      // If we have an asset map and the href is in it, use the resolved URL
+      const resolvedHref = assetMap?.get(href) || href;
+      
+      const titleAttr = title ? ` title="${title}"` : '';
+      return `<img src="${resolvedHref}" alt="${text}"${titleAttr} loading="lazy" />`;
     },
     code({ text, lang }: { text: string; lang?: string }) {
       // Map common language aliases (only for languages we've imported)
@@ -203,8 +212,50 @@ export async function parseMarkdown(content: string, removeMainTitle: boolean = 
   try {
     const html = await marked.parse(processedContent);
     
+    // Post-process the HTML to resolve all relative asset paths
+    let finalHtml = typeof html === 'string' ? html : '';
+    
+    if (assetMap && assetMap.size > 0) {
+      // Replace all relative paths in HTML img src attributes
+      finalHtml = finalHtml.replace(
+        /<img([^>]*)\ssrc=["']([^"']*?)["']([^>]*)>/gi,
+        (_fullMatch, before, src, after) => {
+          const resolvedSrc = assetMap.get(src) || src;
+          return `<img${before} src="${resolvedSrc}"${after}>`;
+        }
+      );
+      
+      // Replace all relative paths in HTML a href attributes (for downloads, etc.)
+      finalHtml = finalHtml.replace(
+        /<a([^>]*)\shref=["']([^"']*?)["']([^>]*)>/gi,
+        (fullMatch, before, href, after) => {
+          // Only replace if it's a relative path that exists in our asset map
+          if (assetMap.has(href)) {
+            const resolvedHref = assetMap.get(href);
+            return `<a${before} href="${resolvedHref}"${after}>`;
+          }
+          return fullMatch;
+        }
+      );
+      
+      // Replace all relative paths in CSS url() functions within style attributes
+      finalHtml = finalHtml.replace(
+        /style=["']([^"']*?)["']/gi,
+        (_fullMatch, styleContent) => {
+          const updatedStyle = styleContent.replace(
+            /url\(["']?([^"')]*?)["']?\)/gi,
+            (_urlMatch: string, urlPath: string) => {
+              const resolvedUrl = assetMap.get(urlPath) || urlPath;
+              return `url("${resolvedUrl}")`;
+            }
+          );
+          return `style="${updatedStyle}"`;
+        }
+      );
+    }
+    
     return {
-      html: typeof html === 'string' ? html : '',
+      html: finalHtml,
       toc
     };
   } catch (error) {

@@ -5,7 +5,7 @@ createTime: "2025-06-06T07:40:23.016Z"
 description: "This is the default description for blog."
 tags: ["Hello", "world"]
 category: "default"
-coverImage: "wallhaven-d85ewm.png"
+coverImage: "./wallhaven-d85ewm.png"
 ---
 
 # {{title}}
@@ -40,6 +40,18 @@ Continue with additional sections as needed.
 - Key point 1
 - Key point 2
 - Key point 3
+
+<!-- Add an image here -->
+![Cover Image](./wallhaven-d85ewm.png)
+
+<!-- Cross-folder image reference - referencing an asset from projects folder -->
+![Project Asset](../../projects/test-asset-project-1/wallhaven-d85ewm.png)
+
+<!-- Use html to show an image -->
+<img src="./wallhaven-d85ewm.png" alt="Cover Image" style="width: 100%; height: auto;">
+
+<!-- Use html to show cross-folder image -->
+<img src="../../projects/test-asset-project-1/wallhaven-d85ewm.png" alt="Project Asset" style="width: 100%; height: auto;">
 
 ## Conclusion
 

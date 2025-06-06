@@ -53,6 +53,14 @@ npm run preview
 - `npm run preview` - Preview production build
 - `npm run lint` - Run ESLint
 
+#### Content Generation
+- `npm run generate <type> <name>` - Generate new blog posts or projects
+- `npm run g <type> <name>` - Shortcut for generate command
+
+#### Development Logging
+- `npm run log` - Create daily logs for today
+- `npm run log YYYY-MM-DD` - Create daily logs for specific date
+
 ### Project Structure
 
 ```
@@ -61,7 +69,13 @@ src/
 ├── pages/              # Page components
 ├── styles/             # CSS modules and global styles
 ├── utils/              # Utility functions
-└── config/             # Configuration files
+├── hooks/              # Custom React hooks
+├── config/             # Configuration files
+├── scripts/            # Development and automation scripts
+└── frame-logs/         # Daily development logs
+    └── YYYY-MM-DD/     # Date-based log directories
+        ├── change-log.md      # High-level daily changes
+        └── developer-log.md   # Detailed technical notes
 
 public/
 ├── content/            # Markdown content files
@@ -82,10 +96,48 @@ public/
 2. Add the project entry to `src/pages/Projects.tsx`
 3. Include project metadata (title, description, tags, etc.)
 
+#### Automated Content Generation
+Use the content generation script for faster setup:
+
+```bash
+# Generate a new blog post
+npm run g blog "My New Blog Post"
+
+# Generate a new project
+npm run g project "Awesome React App"
+```
+
+## 📊 Development Workflow
+
+### Daily Logging System
+The project uses a structured daily logging system under `src/frame-logs/`:
+
+```bash
+# Create today's log files
+npm run log
+
+# Create logs for a specific date
+npm run log 2025-06-07
+```
+
+This creates two files per day:
+- `change-log.md` - High-level summary of changes and accomplishments
+- `developer-log.md` - Detailed technical implementation notes
+
+### Log Structure Benefits
+- **Daily Focus**: Easy to see what was accomplished each day
+- **Separated Concerns**: Change summaries vs technical deep-dives
+- **Scalable**: Unlimited daily entries without file size issues
+- **Searchable**: Isolated content per day for targeted searches
+- **Team Friendly**: Clear progress tracking and review-friendly format
+
 ## 📋 Documentation
 
 - **[CHANGELOG.md](./CHANGELOG.md)** - Track all changes and feature additions
-- **[DEVELOPER_LOG.md](./DEVELOPER_LOG.md)** - Detailed technical implementation notes
+- **[Daily Logs](./src/frame-logs/)** - Structured daily development logs
+  - `src/frame-logs/YYYY-MM-DD/change-log.md` - High-level daily changes
+  - `src/frame-logs/YYYY-MM-DD/developer-log.md` - Detailed technical implementation notes
+- **[DEVELOPER_LOG.md](./DEVELOPER_LOG.md)** - Legacy developer log (see daily logs for current development)
 
 ## 🎯 Key Features Implementation
 
@@ -147,7 +199,11 @@ If TypeScript compilation fails:
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Update documentation (CHANGELOG.md, DEVELOPER_LOG.md)
+4. Update documentation:
+   - Add entry to `CHANGELOG.md` for user-facing changes
+   - Create or update daily logs in `src/frame-logs/YYYY-MM-DD/`
+   - Use `change-log.md` for high-level summaries
+   - Use `developer-log.md` for detailed technical notes
 5. Test thoroughly
 6. Submit a pull request
 

@@ -2,6 +2,22 @@
 
 This document tracks all major changes, features, and bug fixes made to the portfolio website project.
 
+## 📅 Daily Change Logs
+
+Starting June 6, 2025, detailed daily change logs are maintained in the `src/frame-logs/` directory:
+
+- **[June 6, 2025](./src/frame-logs/2025-06-06/change-log.md)** - Logging system restructure implementation
+- **[June 5, 2025](./src/frame-logs/2025-06-05/change-log.md)** - Multiple bug fixes and SPA routing
+- **[June 4, 2025](./src/frame-logs/2025-06-04/change-log.md)** - Code block fixes and performance optimizations
+
+For detailed technical implementation notes, see the corresponding `developer-log.md` files in each daily directory.
+
+---
+
+## 🗃️ Legacy Changelog
+
+*The following entries represent the historical changelog before the structured daily logging system was implemented.*
+
 ## [Unreleased] - 2025-06-05
 
 ### **Unrendered Page Header Bug** - RESOLVED ✅

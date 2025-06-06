@@ -5,6 +5,7 @@ import MarkdownContent from '../components/MarkdownContent';
 import { loadProjects, generateIdFromTitle as generateProjectIdFromTitle, type Project } from './Projects';
 import { loadBlogPosts, generateIdFromTitle as generateBlogIdFromTitle, type BlogPost } from './Blog';
 import { fetchMarkdownContent, parseMarkdown, type ParsedMarkdown } from '../utils/markdown';
+import { createAssetMapFromCache } from '../utils/assetResolver';
 import matter from 'gray-matter';
 import styles from '../styles/DetailPage.module.css';
 
@@ -205,6 +206,7 @@ export default function DetailPage() {
               // Check if this is the blog post we're looking for
               if (generatedId === contentItem.id) {
                 content = moduleContent;
+                markdownPath = path;
                 console.log('Found matching blog post:', path);
                 break;
               }
@@ -213,8 +215,10 @@ export default function DetailPage() {
             }
           }
           
-          if (content) {
-            const parsed = await parseMarkdown(content, true); // Remove main title
+          if (content && markdownPath) {
+            // Create asset map for this markdown file
+            const assetMap = await createAssetMapFromCache(markdownPath);
+            const parsed = await parseMarkdown(content, true, assetMap); // Remove main title, include asset map
             setMarkdownData(parsed);
             setLastUpdateTime(new Date().toLocaleDateString()); // Use current date as fallback
             return;
@@ -230,6 +234,7 @@ export default function DetailPage() {
           
           // Find the matching project content
           let content: string | null = null;
+          let markdownPath: string | null = null;
           for (const [path, moduleLoader] of Object.entries(srcProjectModules)) {
             try {
               const moduleContent = await moduleLoader() as string;
@@ -253,6 +258,7 @@ export default function DetailPage() {
               // Check if this is the project we're looking for
               if (generatedId === contentItem.id) {
                 content = moduleContent;
+                markdownPath = path;
                 console.log('Found matching project:', path);
                 break;
               }
@@ -261,8 +267,10 @@ export default function DetailPage() {
             }
           }
           
-          if (content) {
-            const parsed = await parseMarkdown(content, true); // Remove main title
+          if (content && markdownPath) {
+            // Create asset map for this markdown file
+            const assetMap = await createAssetMapFromCache(markdownPath);
+            const parsed = await parseMarkdown(content, true, assetMap); // Remove main title, include asset map
             setMarkdownData(parsed);
             setLastUpdateTime(new Date().toLocaleDateString()); // Use current date as fallback
             return;
@@ -287,7 +295,8 @@ export default function DetailPage() {
           }
           
           const content = await fetchMarkdownContent(markdownPath);
-          const parsed = await parseMarkdown(content, true); // Remove main title
+          // For public folder content, we can't resolve assets dynamically, so use empty asset map
+          const parsed = await parseMarkdown(content, true, new Map()); // Remove main title
           setMarkdownData(parsed);
         }
         
