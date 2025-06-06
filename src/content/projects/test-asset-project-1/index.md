@@ -1,95 +1,62 @@
 ---
-type: "project"
-title: "test asset project 1"
-createTime: "2025-06-06T11:02:20.808Z"
-description: "This is the default description for project."
-tags: ["Hello", "World"]
+type: "blog"
+title: "Test Asset 3"
+createTime: "2025-06-06T07:40:23.016Z"
+description: "This is the default description for blog."
+tags: ["Hello", "world"]
 category: "default"
 coverImage: "./wallhaven-d85ewm.png"
 ---
 
 # {{title}}
 
+## Introduction
+
+Write your introduction here. This section should provide context and explain what the blog post will cover.
+
 ## Overview
 
-Provide a comprehensive overview of the project. Explain what it does, why it was built, and what problems it solves.
+Provide a brief overview of the main topics or concepts you'll be discussing.
 
-## Technical Architecture
+## Main Content
 
-### Technology Stack
-List the main technologies used in this project:
-- **Frontend**: 
-- **Backend**: 
-- **Database**: 
-- **Deployment**: 
+### Section 1
 
-### Key Components
-Describe the main components and their responsibilities:
-- Component 1: Description
-- Component 2: Description
-- Component 3: Description
+Add your first main section here. Use clear headings and organize your content logically.
 
-## Key Features
-
-### Feature 1
-Describe the first major feature and its implementation.
-
-### Feature 2
-Describe the second major feature and its implementation.
-
-### Feature 3
-Continue with additional features as needed.
-
-## Implementation Details
-
-### Code Structure
-```typescript
-// Example of key implementation
-interface {{titleCamelCase}}Config {
-  // Configuration interface
+```javascript
+// Example code block
+function example() {
+  console.log("Add relevant code examples");
 }
 ```
 
-![wallhaven-d85ewm](./wallhaven-d85ewm.png)
+### Section 2
 
-<!-- write a table -->
-| 方法                            | 描述                                                                 | 是否推荐 |
-|---------------------------------|----------------------------------------------------------------------|----------|
-| 使用 `\\wsl$\` 映射路径         | 通过 Windows 网络路径访问 WSL 文件，并映射为驱动器供 Copilot 使用    | ✅ 可行   |
-| 使用 VS Code 的 WSL 模式       | 直接在 WSL 中打开项目，Copilot 与文件运行在同一环境，避免权限问题     | ✅ 推荐   |
-| Copilot 直接访问 `/home/xxx` 路径 | Windows 直接访问 WSL 本地路径，路径不兼容或权限不足，无法读取         | ❌ 不推荐 |
+Continue with additional sections as needed.
 
-<div class="alert-banner">
-  🚨 WSL 文件无法访问？请使用 VS Code 的 WSL 模式或映射路径解决！
-</div>
+## Key Takeaways
 
-### Challenges and Solutions
-Discuss any technical challenges you faced and how you solved them.
+- Key point 1
+- Key point 2
+- Key point 3
 
-## Performance Optimizations
+<!-- Add an image here -->
+![Cover Image](./wallhaven-d85ewm.png)
 
-Detail any performance improvements or optimizations you implemented.
+<!-- Cross-folder image reference - referencing an asset from projects folder -->
+![Project Asset](../../projects/test-asset-project-1/wallhaven-d85ewm.png)
 
-## Future Enhancements
+<!-- Use html to show an image -->
+<img src="./wallhaven-d85ewm.png" alt="Cover Image" style="width: 100%; height: auto;">
 
-### Planned Features
-- Feature 1: Description
-- Feature 2: Description
-- Feature 3: Description
-
-### Technical Improvements
-- Improvement 1: Description
-- Improvement 2: Description
-
-## Live Demo
-
-[View Live Demo]({{demoUrl}})
-[Source Code]({{sourceUrl}})
+<!-- Use html to show cross-folder image -->
+<img src="../../projects/test-asset-project-1/wallhaven-d85ewm.png" alt="Project Asset" style="width: 100%; height: auto;">
 
 ## Conclusion
 
-Summarize the project's impact, what you learned, and its significance in your portfolio.
+Summarize your main points and provide closing thoughts.
 
 ---
 
-*Published on: {{createTime}}*
+*Published on {{createTime}}*

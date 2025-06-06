@@ -45,9 +45,13 @@ export async function createAssetMap(markdownPath: string): Promise<Map<string, 
 function calculateRelativePaths(markdownFolderPath: string, assetPath: string): string[] {
   const relativePaths: string[] = [];
   
+  console.log(`Calculating relative paths from ${markdownFolderPath} to ${assetPath}`);
+  
   // Normalize paths by removing leading '../'
   const normalizeMarkdownPath = markdownFolderPath.replace(/^\.\.\//, '');
   const normalizeAssetPath = assetPath.replace(/^\.\.\//, '');
+  
+  console.log(`Normalized: ${normalizeMarkdownPath} -> ${normalizeAssetPath}`);
   
   const markdownParts = normalizeMarkdownPath.split('/');
   const assetParts = normalizeAssetPath.split('/');
@@ -59,6 +63,17 @@ function calculateRelativePaths(markdownFolderPath: string, assetPath: string): 
   if (markdownParts.join('/') === assetParts.slice(0, -1).join('/')) {
     relativePaths.push(`./${assetFilename}`);
     relativePaths.push(assetFilename);
+    console.log('Case 1: Same directory');
+    
+    // Also add the self-referencing pattern for same directory
+    // For projects/test-asset-project-1/, also match ../../projects/test-asset-project-1/
+    if (markdownParts.length >= 2) {
+      const parentDirName = markdownParts[markdownParts.length - 2]; // "projects"
+      const currentDirName = markdownParts[markdownParts.length - 1]; // "test-asset-project-1"
+      const selfRefPattern = `../../${parentDirName}/${currentDirName}/${assetFilename}`;
+      relativePaths.push(selfRefPattern);
+      console.log(`Case 1b: Self-reference pattern: ${selfRefPattern}`);
+    }
   }
   
   // Case 2: Asset is in a subdirectory
@@ -69,6 +84,7 @@ function calculateRelativePaths(markdownFolderPath: string, assetPath: string): 
     const relativePath = assetDir.substring(markdownDir.length + 1) + '/' + assetFilename;
     relativePaths.push(relativePath);
     relativePaths.push(`./${relativePath}`);
+    console.log('Case 2: Subdirectory');
   }
   
   // Case 3: Asset is in a parent or sibling directory
@@ -83,16 +99,35 @@ function calculateRelativePaths(markdownFolderPath: string, assetPath: string): 
     }
   }
   
-  if (commonParts.length > 0) {
+  if (commonParts.length >= 0) { 
     const upLevels = markdownParts.length - commonParts.length;
     const downPath = assetParts.slice(commonParts.length).join('/');
     
-    if (upLevels > 0 && downPath) {
+    if (upLevels >= 0 && downPath) { 
       const upPath = '../'.repeat(upLevels);
-      relativePaths.push(upPath + downPath);
+      const fullRelativePath = upPath + downPath;
+      relativePaths.push(fullRelativePath);
+      console.log(`Case 3: Parent/sibling directory, upLevels: ${upLevels}, downPath: ${downPath}, result: ${fullRelativePath}`);
     }
   }
   
+  // 新增：始终加入“从 markdown 文件夹到 asset 的相对路径”
+  try {
+    const from = [...markdownParts];
+    const to = [...assetParts.slice(0, -1), assetFilename];
+    let i = 0;
+    while (i < from.length && i < to.length && from[i] === to[i]) i++;
+    const up = from.length - i;
+    const down = to.slice(i);
+    const rel = '../'.repeat(up) + down.join('/');
+    if (rel && !relativePaths.includes(rel)) {
+      relativePaths.push(rel);
+    }
+  } catch (e) {
+    // ignore
+  }
+  
+  console.log(`Final relative paths: ${relativePaths}`);
   return relativePaths;
 }
 
@@ -139,12 +174,18 @@ export async function createAssetMapFromCache(markdownPath: string): Promise<Map
   const pathParts = markdownPath.split('/');
   const folderPath = pathParts.slice(0, -1).join('/');
   
+  console.log('Creating asset map for:', markdownPath);
+  console.log('Folder path:', folderPath);
+  console.log('Available assets:', Array.from(globalAssetCache.keys()));
+  
   for (const [assetPath, assetUrl] of globalAssetCache) {
     const relativePaths = calculateRelativePaths(folderPath, assetPath);
+    console.log(`Asset ${assetPath} -> relative paths:`, relativePaths);
     relativePaths.forEach(relativePath => {
       assetMap.set(relativePath, assetUrl);
     });
   }
   
+  console.log('Final asset map:', Array.from(assetMap.entries()));
   return assetMap;
 }

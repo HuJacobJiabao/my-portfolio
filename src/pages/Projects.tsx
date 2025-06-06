@@ -3,6 +3,7 @@ import Layout from '../components/Layout';
 import Card from '../components/Card';
 import styles from '../styles/Projects.module.css';
 import matter from 'gray-matter';
+import { createAssetMapFromCache } from '../utils/assetResolver';
 
 // Project interface
 export interface Project {
@@ -14,6 +15,7 @@ export interface Project {
   image?: string;
   link: string;
   tags: string[];
+  assetMap?: Map<string, string>;
 }
 
 // Function to generate ID from title
@@ -26,9 +28,13 @@ export function generateIdFromTitle(title: string): string {
     .trim();
 }
 
-// Function to load projects dynamically
+// Function to load projects dynamically with asset resolution
 export async function loadProjects(): Promise<Project[]> {
+  // Load all markdown files
   const projectModules = import.meta.glob('../content/projects/**/index.md', { query: '?raw', import: 'default' });
+  // Load ALL assets from entire content directory (global scope)
+  const assetModules = import.meta.glob('../content/**/*.{png,jpg,jpeg,gif,svg,webp}', { query: '?url', import: 'default' });
+  
   const projects: Project[] = [];
 
   for (const [path, moduleLoader] of Object.entries(projectModules)) {
@@ -40,6 +46,64 @@ export async function loadProjects(): Promise<Project[]> {
       // Extract folder name from path for the link
       const pathParts = path.split('/');
       const folderName = pathParts[pathParts.length - 2]; // Get the folder name before index.md
+      const folderPath = pathParts.slice(0, -1).join('/'); // Get the folder path
+
+      // Create asset map for this project to handle cross-folder references
+      const assetMap = await createAssetMapFromCache(path);
+
+      // Resolve the cover image path
+      let resolvedImagePath: string | undefined;
+      
+      if (frontmatter.coverImage && frontmatter.coverImage !== 'default') {
+        const imagePath = frontmatter.coverImage;
+        
+        // Try to resolve using the asset map first (for cross-folder references)
+        resolvedImagePath = assetMap.get(imagePath);
+        
+        // If not found in asset map, fall back to manual resolution
+        if (!resolvedImagePath) {
+          // Handle relative paths
+          let fullImagePath: string;
+        if (imagePath.startsWith('./')) {
+          // Same directory
+          fullImagePath = folderPath + '/' + imagePath.slice(2);
+        } else if (imagePath.startsWith('../')) {
+          // Parent directory - resolve relative path
+          const relativeParts = imagePath.split('/');
+          const baseParts = folderPath.split('/');
+          
+          let upLevels = 0;
+          const remainingParts: string[] = [];
+          
+          for (const part of relativeParts) {
+            if (part === '..') {
+              upLevels++;
+            } else if (part !== '.') {
+              remainingParts.push(part);
+            }
+          }
+          
+          const resolvedBaseParts = baseParts.slice(0, -upLevels);
+          fullImagePath = resolvedBaseParts.concat(remainingParts).join('/');
+        } else if (imagePath.startsWith('/')) {
+          // Absolute path from src root
+          fullImagePath = '../' + imagePath.slice(1);
+        } else {
+          // Relative to current folder
+          fullImagePath = folderPath + '/' + imagePath;
+        }
+
+        // Find matching asset module
+        const assetKey = Object.keys(assetModules).find(key => key === fullImagePath);
+        if (assetKey && assetModules[assetKey]) {
+          try {
+            resolvedImagePath = await assetModules[assetKey]() as string;
+          } catch (error) {
+            console.warn(`Could not load asset: ${fullImagePath}`, error);
+          }
+        }
+        }
+      }
 
       const project: Project = {
         id: generateIdFromTitle(frontmatter.title || folderName),
@@ -47,11 +111,10 @@ export async function loadProjects(): Promise<Project[]> {
         date: frontmatter.createTime || new Date().toISOString(), // Store precise timestamp
         category: frontmatter.category || 'Uncategorized',
         description: frontmatter.description || 'No description available.',
-        image: frontmatter.coverImage && frontmatter.coverImage !== 'default' 
-          ? frontmatter.coverImage 
-          : undefined,
+        image: resolvedImagePath,
         link: `/my-portfolio/project/${generateIdFromTitle(frontmatter.title || folderName)}`,
-        tags: Array.isArray(frontmatter.tags) ? frontmatter.tags : []
+        tags: Array.isArray(frontmatter.tags) ? frontmatter.tags : [],
+        assetMap: assetMap
       };
 
       console.log('Created project:', {
@@ -60,6 +123,7 @@ export async function loadProjects(): Promise<Project[]> {
         title: frontmatter.title,
         generatedId: generateIdFromTitle(frontmatter.title || folderName),
         link: project.link,
+        assetMapSize: assetMap.size,
         project
       });
 
