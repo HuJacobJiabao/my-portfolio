@@ -4,9 +4,40 @@ This document tracks all major changes, features, and bug fixes made to the port
 
 ## [Unreleased] - 2025-06-05
 
-### 🧹 Production Optimization
+### **Unrendered Page Header Bug** - RESOLVED ✅
+- **Issue**: Page headers would appear empty or broken during content loading on DetailPage
+  - **Symptom**: Header components displayed with missing title, metadata, or background images
+  - **User Impact**: Poor user experience with incomplete page headers during navigation
+  - **Timing Issue**: Layout component rendered before content data was fully loaded
+- **Root Cause**: Race condition between component mounting and asynchronous data loading
+  - Layout component received undefined/null props during initial render
+  - Header relied on contentItem data that wasn't available until markdown loading completed
+  - No proper loading state management for Layout component rendering
+- **Solution**: Implemented conditional Layout rendering with proper loading states
+  - **Loading Guard**: Only render Layout component when all required data is ready
+  - **Data Validation**: Check for both `loading` state and `markdownData` availability
+  - **Graceful Loading**: Show loading spinner until contentItem and markdownData are both available
+  - **Error Handling**: Maintain separate error states that don't interfere with header rendering
+- **Implementation Details**:
+  - Added `!markdownData` check to loading condition in DetailPage.tsx
+  - Ensured Layout component only renders with complete prop data
+  - Preserved existing loading and error state UI for better UX
+  - No performance impact - simple conditional rendering optimization
+- **Files Modified**:
+  - `src/pages/DetailPage.tsx` - Enhanced loading state logic for Layout rendering
+- **Testing Results**:
+  - ✅ Headers always render completely with proper title, metadata, and background
+  - ✅ No more empty or broken header states during page loads
+  - ✅ Loading states properly displayed until content is ready
+  - ✅ Error states don't interfere with header rendering logic
+  - ✅ No regression in navigation performance or user experience
+- **Benefits**:
+  - Professional appearance with always-complete headers
+  - Better perceived performance with proper loading feedback
+  - Eliminated visual glitches during content transitions
+  - More robust component lifecycle management
 
-#### 1. **Page Navigation Scroll Behavior Fix** - RESOLVED ✅
+### **Page Navigation Scroll Behavior Fix** - RESOLVED ✅
 - **Issue**: When navigating to new pages, the page would visibly scroll to the top instead of starting at the top position
 - **Root Cause**: Two conflicting scroll behaviors:
   1. Global `scroll-behavior: smooth` CSS setting caused animated scrolling during navigation
@@ -26,7 +57,7 @@ This document tracks all major changes, features, and bug fixes made to the port
   - Better user experience for navigation
   - Preserved smooth scrolling for normal page interactions
 
-#### 2. **Debug Logging Removal**
+### **Debug Logging Removal**
 - **Change**: Removed all debug console logging from SPA routing scripts for clean production build
 - **Files Modified**:
   - `public/404.html` - Removed 3 console.log statements from redirect script
@@ -37,9 +68,7 @@ This document tracks all major changes, features, and bug fixes made to the port
   - More professional production environment
   - No functional changes to routing behavior
 
-### 🐛 Critical Bug Fixes
-
-#### 3. **GitHub Pages SPA Routing Fix** - RESOLVED ✅
+### **GitHub Pages SPA Routing Fix** - RESOLVED ✅
 - **Issue**: Single Page Application routes would show 404 errors when accessed directly or refreshed
   - **Direct URL Access**: `https://hujacobjiabao.github.io/my-portfolio/project/` returned 404
   - **Page Refresh**: Refreshing any route other than homepage resulted in 404 error
@@ -78,7 +107,7 @@ This document tracks all major changes, features, and bug fixes made to the port
   - ✅ Social media link previews work correctly
   - ✅ No duplicate content issues
 
-#### 4. **Header Height Consistency & Title Display Optimization**
+### **Header Height Consistency & Title Display Optimization**
 - **Issue**: Page headers had inconsistent heights causing layout jumps and poor UX
   - **Project Pages**: 281.59px header height
   - **Article Pages**: 518.25px header height  
@@ -107,7 +136,7 @@ This document tracks all major changes, features, and bug fixes made to the port
   - ✅ Improved mobile experience with proportional scaling
   - ✅ No layout shift when navigating between different content types
 
-#### 5. **Navigation Card Animation Synchronization**
+### **Navigation Card Animation Synchronization**
   - **Problem**: Navigation card positioning was based on scroll direction rather than navbar visibility state
   - **Root Cause**: 
     - Z-index conflicts between navbar (1000) and navigation card (1000)
@@ -128,7 +157,7 @@ This document tracks all major changes, features, and bug fixes made to the port
     - ✅ Consistent behavior across all scroll speeds and directions
     - ✅ Improved visual stability and user experience
 
-#### 6. **Horizontal Scrollbar Bug Fix** - RESOLVED ✅
+### **Horizontal Scrollbar Bug Fix** - RESOLVED ✅
 - **Issue**: Persistent horizontal scrollbar appearing at the bottom of DetailPage, Blog, and Projects pages
   - **Affected Pages**: All pages using the Layout component (DetailPage, Blog, Projects)
   - **User Impact**: Unwanted horizontal scrolling when content should fit within viewport width

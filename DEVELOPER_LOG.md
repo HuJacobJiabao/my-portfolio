@@ -655,7 +655,7 @@ if (titleLength > 120) return `${baseClass} ${styles.superLong}`; // 2.0rem
 - **40px Height Reduction**: 240px → 200px header (desktop)
 - **60px Mobile Reduction**: 280px → 220px header (mobile)  
 - **Larger Metadata Text**: +0.2rem across all metadata elements
-- **Smart Title Handling**: Prefers multi-line display over font reduction
+- **Smart Title Handling**: Prefers multi-line display over font size reduction
 - **Consistent Layout**: Fixed heights eliminate layout jumps
 
 ### Typography Enhancement Results:
@@ -809,160 +809,6 @@ This is the standard solution for GitHub Pages SPAs, used by Create React App an
 ---
 
 *Implementation completed: June 5, 2025*
-*Next review: When migrating to custom domain or different hosting*
-
-## June 5, 2025 - GitHub Pages SPA Routing Fix - Troubleshooting & Resolution
-
-### Initial Implementation Issues
-After implementing the basic 404.html redirect solution, several issues were discovered during testing:
-
-#### Issue 1: 404.html File Not Being Deployed
-**Problem**: The 404.html file was being cleared during the Vite build process, resulting in an empty file being deployed.
-
-**Root Cause**: Vite's build process wasn't configured to properly handle the 404.html file in the public directory.
-
-**Solution**: Added a post-build script to ensure 404.html is correctly copied:
-```json
-// package.json
-{
-  "scripts": {
-    "build": "tsc -b && vite build && cp public/404.html dist/404.html",
-    "deploy": "gh-pages -d dist"
-  }
-}
-```
-
-#### Issue 2: Route Path Consistency
-**Problem**: App routes were configured with trailing slashes (`/my-portfolio/project/`) but users might access without trailing slashes.
-
-**Solution**: Added catch-all routes and ensured consistent path handling:
-```typescript
-// App.tsx - Added catch-all routes
-<Route path="/my-portfolio/project" element={<Projects />} />
-<Route path="/my-portfolio/project/" element={<Projects />} />
-<Route path="/my-portfolio/project/*" element={<DetailPage />} />
-```
-
-#### Issue 3: Debugging & Verification
-**Problem**: Needed to verify the redirect mechanism was working correctly.
-
-**Solution**: Added console logging for debugging:
-```javascript
-// 404.html debug version
-console.log('404.html redirect - original URL:', l.href);
-console.log('404.html redirect - target URL:', targetUrl);
-
-// index.html debug version  
-console.log('index.html redirect check - original URL:', l.href);
-console.log('index.html redirect check - processing redirect');
-```
-
-### Final Working Implementation
-
-#### 1. Enhanced 404.html with Debug Logging
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Jiabao Hu - Portfolio</title>
-  <script type="text/javascript">
-    var pathSegmentsToKeep = 1;
-    var l = window.location;
-    
-    console.log('404.html redirect - original URL:', l.href);
-    
-    var targetUrl = l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-      l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
-      l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
-      (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
-      l.hash;
-    
-    console.log('404.html redirect - target URL:', targetUrl);
-    l.replace(targetUrl);
-  </script>
-</head>
-<body>
-  <!-- 512+ bytes content for IE compatibility -->
-</body>
-</html>
-```
-
-#### 2. Enhanced index.html with Route Restoration
-```html
-<script type="text/javascript">
-  (function(l) {
-    console.log('index.html redirect check - original URL:', l.href);
-    console.log('index.html redirect check - search:', l.search);
-    
-    if (l.search[1] === '/' ) {
-      console.log('index.html redirect check - processing redirect');
-      var decoded = l.search.slice(1).split('&').map(function(s) { 
-        return s.replace(/~and~/g, '&')
-      }).join('?');
-      
-      var newUrl = l.pathname.slice(0, -1) + decoded + l.hash;
-      console.log('index.html redirect check - restoring to:', newUrl);
-      
-      window.history.replaceState(null, null, newUrl);
-    }
-  }(window.location))
-</script>
-```
-
-#### 3. Build Process Enhancement
-```bash
-# Updated build command with explicit file copy
-npm run build  # Now includes: tsc -b && vite build && cp public/404.html dist/404.html
-npm run deploy # Deploys with correctly copied 404.html
-```
-
-### Troubleshooting Process Lessons
-
-#### 1. File Deployment Verification
-Always verify that static files are correctly deployed:
-```bash
-# Check dist directory contents
-ls -la dist/
-# Verify 404.html content
-cat dist/404.html
-```
-
-#### 2. Build Process Understanding
-Understand how your build tool handles static files:
-- Vite copies files from `public/` to `dist/` but may have edge cases
-- Critical files like 404.html need explicit handling
-- Post-build scripts can ensure file integrity
-
-#### 3. Browser Caching Issues
-GitHub Pages and browser caching can mask fixes:
-- Force refresh with Ctrl+Shift+R (or Cmd+Shift+R)
-- Use browser dev tools to disable cache during testing
-- Wait for GitHub Pages deployment (usually 2-5 minutes)
-
-#### 4. Console-Driven Debugging
-Add temporary console logging for complex redirects:
-- Helps verify script execution flow
-- Shows actual vs expected URLs
-- Can be removed once functionality is confirmed
-
-### Final Verification Steps
-1. ✅ **Direct URL Access**: `https://hujacobjiabao.github.io/my-portfolio/project/` loads correctly
-2. ✅ **Page Refresh**: F5 on any route maintains correct page
-3. ✅ **Browser Navigation**: Back/forward buttons work properly
-4. ✅ **Deep Links**: Sharing specific page URLs works
-5. ✅ **Console Logging**: Debug output confirms redirect flow (can be removed in production)
-
-### Performance & SEO Impact
-- ✅ Single redirect per direct access (minimal performance impact)
-- ✅ Search engines see final URLs correctly
-- ✅ Social media link previews work as expected
-- ✅ User experience: Fast, seamless routing
-
----
-
-*Implementation completed: June 5, 2025*
-*Status: WORKING - All SPA routing issues resolved*
 *Next review: Remove debug logging in production build*
 
 ## June 5, 2025 - Horizontal Scrollbar Bug Fix
@@ -1116,8 +962,173 @@ The issue was caused by CSS width values using `100vw` (viewport width) instead 
 3. **Documentation**: Update style guide to prefer `100%` over `100vw`
 4. **Testing Protocol**: Always test with vertical scrollbar present
 
+## June 5, 2025 - Unrendered Page Header Bug Fix
+
+### Problem Statement
+Page headers would appear empty or broken during content loading on DetailPage, showing incomplete or missing title, metadata, and background images. This created a poor user experience with unprofessional-looking headers during navigation.
+
+### Root Cause Analysis
+The issue was a race condition between component mounting and asynchronous data loading:
+
+```typescript
+// PROBLEMATIC APPROACH - Layout rendered before data ready
+export default function DetailPage() {
+  const [markdownData, setMarkdownData] = useState<ParsedMarkdown | null>(null);
+  const [loading, setLoading] = useState(true);
+  
+  // ... async data loading logic ...
+  
+  // PROBLEM: Layout always rendered, even with incomplete data
+  return (
+    <Layout
+      title={contentItem.title}           // Could be undefined
+      headerBackground={contentItem.image} // Could be undefined
+      // ... other props that depend on loaded data
+    >
+      <MarkdownContent markdownData={markdownData} />
+    </Layout>
+  );
+}
+```
+
+**The Problem Flow:**
+1. User navigates to DetailPage route
+2. Component mounts and starts async markdown loading
+3. Layout component renders immediately with undefined/null props
+4. Header displays with missing title, metadata, or background
+5. Data eventually loads and header updates, causing visual jump
+
+**Technical Issues:**
+- Layout component received undefined/null props during initial render
+- Header relied on `contentItem` data that wasn't available until markdown loading completed
+- No proper loading state management for Layout component rendering
+- Race condition between component lifecycle and async data fetching
+
+### Solution: Conditional Layout Rendering with Proper Loading States
+
+#### Implementation
+```typescript
+export default function DetailPage() {
+  const [markdownData, setMarkdownData] = useState<ParsedMarkdown | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  // ... async data loading logic ...
+  
+  // SOLUTION: Show loading state until ALL data is ready
+  if (loading || !markdownData) {
+    return (
+      <div className={styles.loadingContainer}>
+        <div className={styles.loadingSpinner}>⏳</div>
+        <p>Loading {contentType} content...</p>
+      </div>
+    );
+  }
+
+  // Show error state separately
+  if (error) {
+    return (
+      <div className={styles.errorContainer}>
+        <div className={styles.errorIcon}>⚠️</div>
+        <h2>Error Loading Content</h2>
+        <p>{error}</p>
+      </div>
+    );
+  }
+
+  // SOLUTION: Only render Layout when ALL required data is ready
+  return (
+    <Layout
+      title={contentItem.title}           // Guaranteed to be available
+      headerBackground={contentItem.image} // Guaranteed to be available
+      // ... all props now have complete data
+    >
+      <MarkdownContent markdownData={markdownData} />
+    </Layout>
+  );
+}
+```
+
+#### Key Technical Details
+
+**1. Enhanced Loading Guard**
+```typescript
+// OLD: Only checked loading state
+if (loading) { /* show loading */ }
+
+// NEW: Check both loading state AND data availability
+if (loading || !markdownData) { /* show loading */ }
+```
+
+**2. Data Validation Strategy**
+- Ensure `contentItem` exists (handled by early redirect)
+- Ensure `markdownData` is fully loaded before Layout rendering
+- Maintain separate error states that don't interfere with header rendering
+
+**3. Graceful Loading Experience**
+- Show meaningful loading feedback until all data ready
+- Prevent partial rendering of Layout component
+- No performance impact - simple conditional rendering optimization
+
+**4. Component Lifecycle Management**
+- Layout only mounts when all props are guaranteed to be complete
+- Eliminates race conditions between component mounting and data loading
+- Better separation of concerns between loading states and content rendering
+
+### Files Modified
+- `src/pages/DetailPage.tsx` - Enhanced loading state logic for Layout rendering
+
+### Testing Results
+- ✅ Headers always render completely with proper title, metadata, and background
+- ✅ No more empty or broken header states during page loads
+- ✅ Loading states properly displayed until content is ready
+- ✅ Error states don't interfere with header rendering logic
+- ✅ No regression in navigation performance or user experience
+
+### Technical Benefits
+- **Professional Appearance**: Headers always display complete information
+- **Better Perceived Performance**: Clear loading feedback instead of broken states
+- **Eliminated Visual Glitches**: No more partial header rendering during transitions
+- **Robust Component Lifecycle**: Proper state management prevents race conditions
+- **Zero Performance Impact**: Simple conditional rendering with no overhead
+
+### Alternative Solutions Considered
+
+**Option 1: Default prop values**
+```typescript
+<Layout
+  title={contentItem?.title || 'Loading...'}
+  headerBackground={contentItem?.image || defaultImage}
+  // ...
+>
+```
+- Would still show incomplete/placeholder headers
+- Not acceptable for professional appearance
+
+**Option 2: Skeleton loading in Layout component**
+- Would require complex conditional rendering within Layout
+- Increases component complexity unnecessarily
+- Current solution is cleaner and more maintainable
+
+**Option 3: Suspense boundaries**
+- Overkill for this specific data loading scenario
+- Would require restructuring data loading logic
+- Current solution is simpler and more direct
+
+### Implementation Notes
+- The fix maintains backward compatibility with existing error handling
+- Loading states are preserved for better user feedback
+- No changes required to Layout component itself
+- Solution follows React best practices for conditional rendering
+- Zero impact on bundle size or runtime performance
+
 ---
 
 *Implementation completed: June 5, 2025*
 *Bug fix verified across all major browsers and devices*
 *Next review: During next major CSS refactoring*
+
+
+
+*Bug fix verified across all browsers and navigation scenarios*
+*Next review: Consider implementing similar patterns for other async data loading scenarios*

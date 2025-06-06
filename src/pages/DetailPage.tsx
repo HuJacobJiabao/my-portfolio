@@ -37,6 +37,29 @@ export default function DetailPage() {
     ? projects.find(p => p.id === id)
     : blogPosts.find(b => b.id === id);
 
+  // Create sidebar items from table of contents (memoized)
+  const sidebarItems = useMemo(() => {
+    return markdownData?.toc.map(item => ({
+      title: item.title,
+      id: item.id,
+      level: item.level
+    })) || [];
+  }, [markdownData?.toc]);
+
+  // Memoized callback for sidebar item clicks
+  const handleSidebarItemClick = useCallback((index: number) => {
+    const item = sidebarItems[index];
+    if (item?.id) {
+      const element = document.getElementById(item.id);
+      if (element) {
+        element.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    }
+  }, [sidebarItems]);
+
   // Function to check which section is currently in view
   const updateActiveSection = useCallback(() => {
     if (!markdownData?.toc.length) return;
@@ -128,44 +151,28 @@ export default function DetailPage() {
     return <Navigate to={redirectPath} replace />;
   }
 
-  // Create sidebar items from table of contents (memoized)
-  const sidebarItems = useMemo(() => {
-    return markdownData?.toc.map(item => ({
-      title: item.title,
-      id: item.id,
-      level: item.level
-    })) || [];
-  }, [markdownData?.toc]);
+  // Show loading state until all data is ready
+  if (loading || !markdownData) {
+    return (
+      <div className={styles.loadingContainer}>
+        <div className={styles.loadingSpinner}>⏳</div>
+        <p>Loading {contentType} content...</p>
+      </div>
+    );
+  }
 
-  // Memoized callback for sidebar item clicks
-  const handleSidebarItemClick = useCallback((index: number) => {
-    const item = sidebarItems[index];
-    if (item?.id) {
-      const element = document.getElementById(item.id);
-      if (element) {
-        element.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
-        });
-      }
-    }
-  }, [sidebarItems]);
+  // Show error state
+  if (error) {
+    return (
+      <div className={styles.errorContainer}>
+        <div className={styles.errorIcon}>⚠️</div>
+        <h2>Error Loading Content</h2>
+        <p>{error}</p>
+      </div>
+    );
+  }
 
-  // Memoized markdown content props to prevent unnecessary re-renders
-  const markdownContentProps = useMemo(() => {
-    if (!markdownData || !contentItem) return null;
-    
-    return {
-      markdownData,
-      contentItemTitle: contentItem.title,
-      contentItemDate: new Date(contentItem.date).toLocaleDateString(),
-      contentItemTags: contentItem.tags,
-      contentType,
-      contentItemCategory: contentItem.category,
-      contentItemLastUpdate: lastUpdateTime
-    };
-  }, [markdownData, contentItem, contentType, lastUpdateTime]);
-
+  // Only render Layout when all data is ready
   return (
     <Layout
       title={contentItem.title}
@@ -174,35 +181,18 @@ export default function DetailPage() {
       sidebarItemType="toc"
       onSidebarItemClick={handleSidebarItemClick}
       activeItemId={activeItemId}
-      contentItemDate={markdownContentProps?.contentItemDate}
-      contentItemTags={markdownContentProps?.contentItemTags}
+      contentItemDate={new Date(contentItem.date).toLocaleDateString()}
+      contentItemTags={contentItem.tags}
       contentType={contentType}
-      contentItemCategory={markdownContentProps?.contentItemCategory}
-      contentItemLastUpdate={markdownContentProps?.contentItemLastUpdate || undefined}
+      contentItemCategory={contentItem.category}
+      contentItemLastUpdate={lastUpdateTime || undefined}
     >
       <div className={styles.detailPage}>
-        {loading && (
-          <div className={styles.loading}>
-            <div className={styles.loadingSpinner}>⏳</div>
-            <p>Loading {contentType} content...</p>
-          </div>
-        )}
-        
-        {error && (
-          <div className={styles.error}>
-            <div className={styles.errorIcon}>⚠️</div>
-            <h2>Error Loading Content</h2>
-            <p>{error}</p>
-          </div>
-        )}
-        
-        {markdownData && !loading && !error && (
-          <div className={styles.content}>
-            <MarkdownContent
-              markdownData={markdownData}
-            />
-          </div>
-        )}
+        <div className={styles.content}>
+          <MarkdownContent
+            markdownData={markdownData}
+          />
+        </div>
       </div>
     </Layout>
   );
