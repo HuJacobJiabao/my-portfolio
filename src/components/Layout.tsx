@@ -5,6 +5,7 @@ import Sidebar from './Sidebar';
 import Footer from './Footer';
 import styles from '../styles/Layout.module.css';
 import ScrollToTop from './ScrollToTop';
+import { formatDateForDisplay } from '../utils/dateFormatter';
 
 interface LayoutProps {
   children: ReactNode;
@@ -81,12 +82,12 @@ export default function Layout({
                     </div>
                     <div className={styles.metaItem}>
                       <span className={styles.metaLabel}>Created:</span>
-                      <span className={styles.metaValue}>{contentItemDate}</span>
+                      <span className={styles.metaValue}>{formatDateForDisplay(contentItemDate)}</span>
                     </div>
                     {contentItemLastUpdate && (
                       <div className={styles.metaItem}>
                         <span className={styles.metaLabel}>Last Update:</span>
-                        <span className={styles.metaValue}>{contentItemLastUpdate}</span>
+                        <span className={styles.metaValue}>{formatDateForDisplay(contentItemLastUpdate)}</span>
                       </div>
                     )}
                   </div>

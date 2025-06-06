@@ -1,12 +1,12 @@
-import { useRef, useState, useMemo } from 'react';
+import { useRef, useState, useMemo, useEffect } from 'react';
 import Layout from '../components/Layout';
 import TimelineItem from '../components/TimelineItem';
 import Pagination from '../components/Pagination';
 import styles from '../styles/Archive.module.css';
 
 // Import data from other pages - in a real app, this would come from a shared data source
-import { blogPosts } from './Blog';
-import { projects } from './Projects';
+import { loadBlogPosts, type BlogPost } from './Blog';
+import { loadProjects, type Project } from './Projects';
 
 // Combined archive item interface
 interface ArchiveItem {
@@ -25,9 +25,36 @@ const ITEMS_PER_PAGE = 12;
 
 export default function Archive() {
   const [currentPage, setCurrentPage] = useState(1);
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Load blog posts and projects on component mount
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        const [blogData, projectData] = await Promise.all([
+          loadBlogPosts(),
+          loadProjects()
+        ]);
+        setBlogPosts(blogData);
+        setProjects(projectData);
+        console.log('Archive data loaded:', { blogs: blogData.length, projects: projectData.length });
+      } catch (err) {
+        console.error('Error loading archive data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
 
   // Combine and sort all items by date (newest first)
   const allArchiveItems = useMemo<ArchiveItem[]>(() => {
+    if (loading) return [];
+    
     const combined: ArchiveItem[] = [
       // Add blog posts
       ...blogPosts.map(post => ({
@@ -55,7 +82,7 @@ export default function Archive() {
 
     // Sort by date (newest first)
     return combined.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }, []);
+  }, [blogPosts, projects, loading]);
 
   // Calculate pagination
   const totalPages = Math.ceil(allArchiveItems.length / ITEMS_PER_PAGE);
@@ -103,6 +130,22 @@ export default function Archive() {
   };
 
   const sidebarItems = sidebarYears.map(yearItem => ({ title: yearItem.title }));
+
+  // Show loading state while blog posts are being loaded
+  if (loading) {
+    return (
+      <Layout title="Archive">
+        <div className={styles.archiveContainer}>
+          <div className={styles.archiveHeader}>
+            <h1 className={styles.archiveTitle}>
+              <span className={styles.emojiIcon}>📚</span>
+              Loading Archive...
+            </h1>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout 

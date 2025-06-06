@@ -2,10 +2,10 @@
 type: "project"
 title: "{{title}}"
 createTime: "{{createTime}}"
-description: "{{description}}"
-tags: {{tags}}
-category: "{{category}}"
-coverImage: "{{coverImage}}"
+description: "This is the default description for project."
+tags: ["Hello", "World"]
+category: "default"
+coverImage: "default"
 ---
 
 # {{title}}
@@ -79,4 +79,4 @@ Summarize the project's impact, what you learned, and its significance in your p
 
 ---
 
-*Project completed: {{createTime}}*
+*Published on: {{createTime}}*

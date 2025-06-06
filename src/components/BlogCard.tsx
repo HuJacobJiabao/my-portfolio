@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import styles from '../styles/BlogCard.module.css';
+import { formatDateForDisplay } from '../utils/dateFormatter';
 
 interface BlogCardProps {
   title: string;
@@ -22,15 +23,23 @@ export default function BlogCard({
 }: BlogCardProps) {
   const navigate = useNavigate();
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    console.log('BlogCard clicked:', { title, link });
+    
     if (link) {
-      // Check if it's an internal link (starts with /my-portfolio/)
-      if (link.startsWith('/my-portfolio/')) {
-        navigate(link);
-      } else {
-        // External link - open in new tab
-        window.open(link, '_blank', 'noopener noreferrer');
-      }
+      // Extract the ID from the link
+      const linkParts = link.split('/');
+      const id = linkParts[linkParts.length - 1];
+      console.log('Navigating to blog post:', id);
+      
+      // Use navigate to go to the blog detail page
+      const targetPath = `/my-portfolio/blog/${id}`;
+      navigate(targetPath);
+    } else {
+      console.log('No link provided for blog card');
     }
   };
 
@@ -54,7 +63,7 @@ export default function BlogCard({
             {date && (
               <span className={styles.cardDate}>
                 <i className="fas fa-calendar"></i>
-                {date}
+                {formatDateForDisplay(date)}
               </span>
             )}
             {category && (

@@ -2,9 +2,10 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, Navigate, useLocation } from 'react-router-dom';
 import Layout from '../components/Layout';
 import MarkdownContent from '../components/MarkdownContent';
-import { projects } from './Projects';
-import { blogPosts } from './Blog';
+import { loadProjects, generateIdFromTitle as generateProjectIdFromTitle, type Project } from './Projects';
+import { loadBlogPosts, generateIdFromTitle as generateBlogIdFromTitle, type BlogPost } from './Blog';
 import { fetchMarkdownContent, parseMarkdown, type ParsedMarkdown } from '../utils/markdown';
+import matter from 'gray-matter';
 import styles from '../styles/DetailPage.module.css';
 
 type ContentType = 'project' | 'blog';
@@ -28,14 +29,66 @@ export default function DetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [activeItemId, setActiveItemId] = useState<string>('');
   const [lastUpdateTime, setLastUpdateTime] = useState<string | null>(null);
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const [blogPostsLoading, setBlogPostsLoading] = useState(true);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [projectsLoading, setProjectsLoading] = useState(true);
+
+  // Load blog posts on component mount
+  useEffect(() => {
+    const loadPosts = async () => {
+      try {
+        setBlogPostsLoading(true);
+        const posts = await loadBlogPosts();
+        setBlogPosts(posts);
+        console.log('Blog posts loaded in DetailPage:', posts);
+      } catch (err) {
+        console.error('Error loading blog posts:', err);
+      } finally {
+        setBlogPostsLoading(false);
+      }
+    };
+
+    loadPosts();
+  }, []);
+
+  // Load projects on component mount
+  useEffect(() => {
+    const loadProjectsData = async () => {
+      try {
+        setProjectsLoading(true);
+        const projectsData = await loadProjects();
+        setProjects(projectsData);
+        console.log('Projects loaded in DetailPage:', projectsData);
+      } catch (err) {
+        console.error('Error loading projects:', err);
+      } finally {
+        setProjectsLoading(false);
+      }
+    };
+
+    loadProjectsData();
+  }, []);
 
   // Determine if this is a project or blog based on the URL path
   const contentType: ContentType = location.pathname.includes('/project/') ? 'project' : 'blog';
   
-  // Find the content item (project or blog post)
-  const contentItem: ContentItem | undefined = contentType === 'project' 
-    ? projects.find(p => p.id === id)
-    : blogPosts.find(b => b.id === id);
+  // Find the content item (project or blog post) - but only after both blog posts and projects are loaded
+  const contentItem: ContentItem | undefined = useMemo(() => {
+    if (contentType === 'project') {
+      // For projects, wait until they're loaded
+      if (projectsLoading) return undefined;
+      const found = projects.find(p => p.id === id);
+      console.log('Looking for project with id:', id, 'Found:', found, 'Available projects:', projects.map(p => p.id));
+      return found;
+    } else {
+      // For blog posts, wait until they're loaded
+      if (blogPostsLoading) return undefined;
+      const found = blogPosts.find(b => b.id === id);
+      console.log('Looking for blog post with id:', id, 'Found:', found, 'Available posts:', blogPosts.map(p => p.id));
+      return found;
+    }
+  }, [contentType, id, blogPosts, blogPostsLoading, projects, projectsLoading]);
 
   // Create sidebar items from table of contents (memoized)
   const sidebarItems = useMemo(() => {
@@ -116,24 +169,128 @@ export default function DetailPage() {
         setLoading(true);
         setError(null);
         
-        const markdownPath = `${import.meta.env.BASE_URL}content/${contentType}s/${contentItem.id}.md`;
+        console.log('Loading content for:', {
+          contentType,
+          contentItemId: contentItem.id,
+          contentItem
+        });
         
-        // Get file last modified time
-        try {
-          const headResponse = await fetch(markdownPath, { method: 'HEAD' });
-          const lastModified = headResponse.headers.get('Last-Modified');
-          if (lastModified) {
-            setLastUpdateTime(new Date(lastModified).toLocaleDateString());
+        // For blog posts, we need to find the folder and load index.md
+        // For projects, we also use dynamic loading now
+        let markdownPath: string | null = null;
+        
+        if (contentType === 'blog') {
+          // Try to load from src/content/blogs folder structure first
+          const srcContentModules = import.meta.glob('../content/blogs/**/index.md', { query: '?raw', import: 'default' });
+          
+          console.log('Available blog modules:', Object.keys(srcContentModules));
+          
+          // Find the matching blog post content
+          let content: string | null = null;
+          for (const [path, moduleLoader] of Object.entries(srcContentModules)) {
+            try {
+              const moduleContent = await moduleLoader() as string;
+              const parsed = matter(moduleContent);
+              const frontmatter = parsed.data;
+              
+              const generatedId = generateBlogIdFromTitle(frontmatter.title);
+              console.log('Checking blog post:', {
+                path,
+                title: frontmatter.title,
+                generatedId,
+                targetId: contentItem.id,
+                matches: generatedId === contentItem.id
+              });
+              
+              // Check if this is the blog post we're looking for
+              if (generatedId === contentItem.id) {
+                content = moduleContent;
+                console.log('Found matching blog post:', path);
+                break;
+              }
+            } catch (error) {
+              console.warn(`Error checking blog post ${path}:`, error);
+            }
           }
-        } catch (headError) {
-          console.warn('Could not get last modified time:', headError);
-          setLastUpdateTime(null);
+          
+          if (content) {
+            const parsed = await parseMarkdown(content, true); // Remove main title
+            setMarkdownData(parsed);
+            setLastUpdateTime(new Date().toLocaleDateString()); // Use current date as fallback
+            return;
+          } else {
+            // Fallback to public content path
+            markdownPath = `${import.meta.env.BASE_URL}content/${contentType}s/${contentItem.id}.md`;
+          }
+        } else {
+          // For projects, try to load from src/content/projects folder structure first
+          const srcProjectModules = import.meta.glob('../content/projects/**/index.md', { query: '?raw', import: 'default' });
+          
+          console.log('Available project modules:', Object.keys(srcProjectModules));
+          
+          // Find the matching project content
+          let content: string | null = null;
+          for (const [path, moduleLoader] of Object.entries(srcProjectModules)) {
+            try {
+              const moduleContent = await moduleLoader() as string;
+              const parsed = matter(moduleContent);
+              const frontmatter = parsed.data;
+              
+              // Extract folder name from path for ID generation
+              const pathParts = path.split('/');
+              const folderName = pathParts[pathParts.length - 2];
+              const generatedId = generateProjectIdFromTitle(frontmatter.title || folderName);
+              
+              console.log('Checking project:', {
+                path,
+                title: frontmatter.title,
+                folderName,
+                generatedId,
+                targetId: contentItem.id,
+                matches: generatedId === contentItem.id
+              });
+              
+              // Check if this is the project we're looking for
+              if (generatedId === contentItem.id) {
+                content = moduleContent;
+                console.log('Found matching project:', path);
+                break;
+              }
+            } catch (error) {
+              console.warn(`Error checking project ${path}:`, error);
+            }
+          }
+          
+          if (content) {
+            const parsed = await parseMarkdown(content, true); // Remove main title
+            setMarkdownData(parsed);
+            setLastUpdateTime(new Date().toLocaleDateString()); // Use current date as fallback
+            return;
+          } else {
+            // Fallback to public content path
+            markdownPath = `${import.meta.env.BASE_URL}content/${contentType}s/${contentItem.id}.md`;
+          }
         }
         
-        const content = await fetchMarkdownContent(markdownPath);
-        const parsed = await parseMarkdown(content, true); // Remove main title
+        // Load from public folder (fallback or projects)
+        if (markdownPath) {
+          // Get file last modified time
+          try {
+            const headResponse = await fetch(markdownPath, { method: 'HEAD' });
+            const lastModified = headResponse.headers.get('Last-Modified');
+            if (lastModified) {
+              setLastUpdateTime(new Date(lastModified).toLocaleDateString());
+            }
+          } catch (headError) {
+            console.warn('Could not get last modified time:', headError);
+            setLastUpdateTime(null);
+          }
+          
+          const content = await fetchMarkdownContent(markdownPath);
+          const parsed = await parseMarkdown(content, true); // Remove main title
+          setMarkdownData(parsed);
+        }
         
-        setMarkdownData(parsed);
       } catch (err) {
         console.error('Error loading content:', err);
         setError('Failed to load content');
@@ -145,14 +302,16 @@ export default function DetailPage() {
     loadContent();
   }, [contentItem, contentType]);
 
-  // If content not found, redirect to appropriate page
-  if (!contentItem) {
+  // If content not found, redirect to appropriate page (but wait for content to load first)
+  const isContentLoading = contentType === 'project' ? projectsLoading : blogPostsLoading;
+  if (!isContentLoading && !contentItem) {
     const redirectPath = contentType === 'project' ? '/my-portfolio/project/' : '/my-portfolio/blog/';
+    console.log('Content item not found, redirecting to:', redirectPath);
     return <Navigate to={redirectPath} replace />;
   }
 
   // Show loading state until all data is ready
-  if (loading || !markdownData) {
+  if (loading || !markdownData || isContentLoading) {
     return (
       <div className={styles.loadingContainer}>
         <div className={styles.loadingSpinner}>⏳</div>
@@ -168,6 +327,16 @@ export default function DetailPage() {
         <div className={styles.errorIcon}>⚠️</div>
         <h2>Error Loading Content</h2>
         <p>{error}</p>
+      </div>
+    );
+  }
+
+  // Ensure contentItem is available before rendering
+  if (!contentItem) {
+    return (
+      <div className={styles.loadingContainer}>
+        <div className={styles.loadingSpinner}>⏳</div>
+        <p>Loading {contentType} content...</p>
       </div>
     );
   }

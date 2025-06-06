@@ -1,19 +1,18 @@
 ---
+type: "blog"
 title: "Building an Advanced Table of Contents Navigation with Nested Hierarchy and Sticky Behavior"
-date: "2025-06-04"
+createTime: "2025-06-04"
 description: "A deep dive into implementing a sophisticated TOC navigation component with nested hierarchy, visual connection lines, progressive indentation, and sticky positioning in React and CSS."
-author: "Jiabao Hu"
 tags: ["React", "CSS", "UI/UX", "Navigation", "Frontend Development"]
 category: "Frontend Development"
-readTime: "12 min"
-cover: "/default_cover.jpg"
+coverImage: "/default_cover.jpg"
 ---
 
-# Building an Advanced Table of Contents Navigation with Nested Hierarchy and Sticky Behavior
+# {{title}}
 
 When building a portfolio website with extensive documentation and blog posts, having an intuitive and visually appealing Table of Contents (TOC) navigation becomes crucial for user experience. Recently, I implemented a sophisticated TOC component that transforms from a flat structure to a nested hierarchical system with visual parent-child relationships, progressive indentation, and sticky positioning. Here's how I solved the challenges and built this advanced navigation system.
 
-## The Challenge: From Flat to Hierarchical
+## Hello
 
 Initially, my TOC was a simple flat list that showed all headings in a linear fashion. While functional, it lacked visual hierarchy and made it difficult for users to understand the document structure. The main challenges I needed to address were:
 

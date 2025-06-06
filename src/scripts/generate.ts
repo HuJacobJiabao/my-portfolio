@@ -2,6 +2,21 @@
 
 import fs from 'fs';
 import path from 'path';
+function updateFrontmatter(content: string, title: string): string {
+  const now = new Date();
+  const preciseTimestamp = now.toISOString(); // Precise timestamp for frontmatter
+  
+  // Only replace frontmatter placeholders, not body content
+  let updatedContent = content;
+  
+  // Replace title in frontmatter only
+  updatedContent = updatedContent.replace(/^title: "\{\{title\}\}"/m, `title: "${title}"`);
+  
+  // Replace createTime in frontmatter with precise timestamp
+  updatedContent = updatedContent.replace(/^createTime: "\{\{createTime\}\}"/m, `createTime: "${preciseTimestamp}"`);
+  
+  return updatedContent;
+}
 
 // ANSI color codes
 const colors = {
@@ -65,15 +80,10 @@ function sanitizeFilename(name: string): string {
     .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
 }
 
-function updateCreateTime(content: string): string {
-  const now = new Date().toISOString();
-  return content.replace(/createTime: "{{createTime}}"/, `createTime: "${now}"`);
-}
-
 async function generateContent(type: 'blog' | 'project', articleName: string) {
   const projectRoot = process.cwd();
   const templatesDir = path.join(projectRoot, 'src', 'scripts', 'templates');
-  const contentDir = path.join(projectRoot, 'public', 'content', type === 'blog' ? 'blogs' : 'projects');
+  const contentDir = path.join(projectRoot, 'src', 'content', type === 'blog' ? 'blogs' : 'projects');
   
   // Sanitize the article name for use as folder name
   const folderName = sanitizeFilename(articleName);
@@ -104,11 +114,11 @@ async function generateContent(type: 'blog' | 'project', articleName: string) {
   // Read template content
   const templateContent = fs.readFileSync(templatePath, 'utf-8');
   
-  // Update createTime in the template
-  const updatedContent = updateCreateTime(templateContent);
+  // Update only frontmatter placeholders
+  const updatedContent = updateFrontmatter(templateContent, articleName);
   
-  // Copy template to article folder with article name
-  const articleFilePath = path.join(articleDir, `${folderName}.md`);
+  // Copy template to article folder as index.md
+  const articleFilePath = path.join(articleDir, 'index.md');
   fs.writeFileSync(articleFilePath, updatedContent, 'utf-8');
   
   // Convert to relative paths for display

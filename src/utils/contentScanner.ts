@@ -1,3 +1,5 @@
+import { formatDateForDisplay } from './dateFormatter';
+
 export interface ContentMetadata {
   type: 'blog' | 'project';
   title: string;
@@ -170,11 +172,11 @@ export class ContentScanner {
       const markdownContent = await response.text();
       const { metadata } = parseFrontmatter(markdownContent);
       
-      // Convert createTime to standard date format
-      let date = new Date().toISOString().split('T')[0];
+      // Convert createTime to standard date format using local time
+      let date = formatDateForDisplay(new Date());
       if (metadata.createTime) {
         try {
-          date = new Date(metadata.createTime).toISOString().split('T')[0];
+          date = formatDateForDisplay(metadata.createTime);
         } catch (e) {
           // Keep default date if parsing fails
         }

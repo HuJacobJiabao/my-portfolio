@@ -1,5 +1,12 @@
 import { marked } from 'marked';
 import Prism from 'prismjs';
+import matter from 'gray-matter';
+import { Buffer } from 'buffer';
+
+// Make Buffer available globally for gray-matter
+if (typeof window !== 'undefined') {
+  window.Buffer = Buffer;
+}
 
 // Import essential language support (avoiding problematic dependencies)
 import 'prismjs/components/prism-markup'; // Must be loaded first for HTML/XML
@@ -23,6 +30,9 @@ import 'prismjs/components/prism-go';
 // Import custom Night Owl theme
 import '../styles/prism-night-owl-theme.css';
 
+// Import date formatting utility
+import { formatDateForTemplate } from './dateFormatter';
+
 export interface TocItem {
   id: string;
   title: string;
@@ -37,6 +47,25 @@ export interface ParsedMarkdown {
 export async function parseMarkdown(content: string, removeMainTitle: boolean = false): Promise<ParsedMarkdown> {
   const toc: TocItem[] = [];
   let isFirstH1 = true;
+  
+  // Parse frontmatter and body using gray-matter
+  const parsed = matter(content);
+  const frontmatter = parsed.data;
+  const bodyContent = parsed.content;
+  
+  // Process template variables in body content using frontmatter values
+  let processedContent = bodyContent;
+  Object.entries(frontmatter).forEach(([key, value]) => {
+    const regex = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
+    
+    // Special handling for createTime - format as yyyy-mm-dd for display using local time
+    if (key === 'createTime' && value) {
+      const formattedDate = formatDateForTemplate(value as string);
+      processedContent = processedContent.replace(regex, formattedDate);
+    } else {
+      processedContent = processedContent.replace(regex, String(value));
+    }
+  });
   
   // Configure marked with custom renderer
   const renderer = {
@@ -172,7 +201,7 @@ export async function parseMarkdown(content: string, removeMainTitle: boolean = 
   });
 
   try {
-    const html = await marked.parse(content);
+    const html = await marked.parse(processedContent);
     
     return {
       html: typeof html === 'string' ? html : '',

@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import styles from '../styles/TimelineItem.module.css';
+import { formatDateForDisplay } from '../utils/dateFormatter';
 
 interface TimelineItemProps {
   title: string;
@@ -55,7 +56,7 @@ export default function TimelineItem({
         <div className={styles.itemMeta}>
           <span className={styles.itemDate}>
             <i className="fas fa-calendar"></i>
-            {date}
+            {formatDateForDisplay(date)}
           </span>
           {category && (
             <span className={styles.itemCategory}>

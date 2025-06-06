@@ -2,10 +2,10 @@
 type: "blog"
 title: "{{title}}"
 createTime: "{{createTime}}"
-description: "{{description}}"
-tags: {{tags}}
-category: "{{category}}"
-coverImage: "{{coverImage}}"
+description: "This is the default description for blog."
+tags: ["Hello", "world"]
+category: "default"
+coverImage: "default"
 ---
 
 # {{title}}

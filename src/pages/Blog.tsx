@@ -1,63 +1,101 @@
-import { useRef } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import BlogCard from '../components/BlogCard';
 import styles from '../styles/Blog.module.css';
+import matter from 'gray-matter';
 
-// Blog data - add your real blog posts here
-export const blogPosts: Array<{
+// Blog post interface
+export interface BlogPost {
   id: string;
   title: string;
   date: string;
   category: string;
   description: string;
-  image?: string; // Make image optional
+  image?: string;
   link: string;
   tags: string[];
-}> = [
-  {
-    id: 'building-advanced-toc-navigation',
-    title: 'Building an Advanced Table of Contents Navigation with Nested Hierarchy and Sticky Behavior',
-    date: '2025-06-04',
-    category: 'Frontend Development',
-    description: 'When building a portfolio website with extensive documentation and blog posts, having an intuitive and visually appealing Table of Contents navigation becomes crucial...',
-    // image: undefined, // Will use default_cover.jpg
-    link: '/my-portfolio/blog/building-advanced-toc-navigation',
-    tags: ['React', 'CSS', 'UI/UX', 'Navigation', 'Frontend Development']
-  },
-  {
-    id: 'my-journey-into-web-development',
-    title: 'My Journey into Web Development',
-    date: '2024-01-15',
-    category: 'Personal',
-    description: 'Sharing my experience learning web development, from HTML basics to modern React applications.',
-    image: import.meta.env.BASE_URL + "default_cover.jpg", // Will use default_cover.jpg
-    link: '/my-portfolio/blog/my-journey-into-web-development',
-    tags: ['web development', 'career', 'learning', 'react']
-  },
-  {
-    id: 'understanding-react-hooks',
-    title: 'Understanding React Hooks',
-    date: '2024-01-22',
-    category: 'Tutorial',
-    description: 'A comprehensive guide to React Hooks, covering useState, useEffect, custom hooks, and best practices.',
-    // image: undefined, // Will use default_cover.jpg
-    link: '/my-portfolio/blog/understanding-react-hooks',
-    tags: ['react', 'hooks', 'javascript', 'tutorial']
-  },
-  {
-    id: 'building-responsive-layouts-css-grid',
-    title: 'Building Responsive Layouts with CSS Grid',
-    date: '2024-01-29',
-    category: 'Tutorial',
-    description: 'Learn how to create flexible, responsive layouts using CSS Grid with practical examples and techniques.',
-    // image: undefined, // Will use default_cover.jpg
-    link: '/my-portfolio/blog/building-responsive-layouts-css-grid',
-    tags: ['css', 'grid', 'responsive design', 'layout']
+}
+
+// Function to generate ID from title
+export function generateIdFromTitle(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '') // Remove special characters except spaces and hyphens
+    .replace(/\s+/g, '-')     // Replace spaces with hyphens
+    .replace(/-+/g, '-')      // Replace multiple hyphens with single hyphen
+    .trim();
+}
+
+// Function to load blog posts dynamically
+export async function loadBlogPosts(): Promise<BlogPost[]> {
+  const blogModules = import.meta.glob('../content/blogs/**/index.md', { query: '?raw', import: 'default' });
+  const posts: BlogPost[] = [];
+
+  for (const [path, moduleLoader] of Object.entries(blogModules)) {
+    try {
+      const content = await moduleLoader() as string;
+      const parsed = matter(content);
+      const frontmatter = parsed.data;
+
+      // Extract folder name from path for the link
+      const pathParts = path.split('/');
+      const folderName = pathParts[pathParts.length - 2]; // Get the folder name before index.md
+
+      const post: BlogPost = {
+        id: generateIdFromTitle(frontmatter.title || folderName),
+        title: frontmatter.title || 'Untitled',
+        date: frontmatter.createTime || new Date().toISOString(), // Store precise timestamp
+        category: frontmatter.category || 'Uncategorized',
+        description: frontmatter.description || 'No description available.',
+        image: frontmatter.coverImage && frontmatter.coverImage !== 'default' 
+          ? frontmatter.coverImage 
+          : undefined,
+        link: `/my-portfolio/blog/${generateIdFromTitle(frontmatter.title || folderName)}`,
+        tags: Array.isArray(frontmatter.tags) ? frontmatter.tags : []
+      };
+
+      console.log('Created blog post:', {
+        path,
+        folderName,
+        title: frontmatter.title,
+        generatedId: generateIdFromTitle(frontmatter.title || folderName),
+        link: post.link,
+        post
+      });
+
+      posts.push(post);
+    } catch (error) {
+      console.error(`Error loading blog post from ${path}:`, error);
+    }
   }
-];
+
+  // Sort posts by date (newest first)
+  return posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+}
 
 export default function Blog() {
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Load blog posts on component mount
+  useEffect(() => {
+    const loadPosts = async () => {
+      try {
+        setLoading(true);
+        const posts = await loadBlogPosts();
+        setBlogPosts(posts);
+      } catch (err) {
+        console.error('Error loading blog posts:', err);
+        setError('Failed to load blog posts');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadPosts();
+  }, []);
 
   const handleSidebarItemClick = (index: number) => {
     if (cardRefs.current[index]) {
@@ -70,6 +108,34 @@ export default function Blog() {
   };
 
   const sidebarItems = blogPosts.map(post => ({ title: post.title }));
+
+  if (loading) {
+    return (
+      <Layout title="Blog">
+        <div className={styles.blogContainer}>
+          <div className={styles.loadingState}>
+            <div className={styles.loadingIcon}>⏳</div>
+            <h2>Loading Blog Posts...</h2>
+            <p>Please wait while we fetch the latest content.</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (error) {
+    return (
+      <Layout title="Blog">
+        <div className={styles.blogContainer}>
+          <div className={styles.errorState}>
+            <div className={styles.errorIcon}>❌</div>
+            <h2>Error Loading Blog Posts</h2>
+            <p>{error}</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout 
@@ -89,7 +155,7 @@ export default function Blog() {
           <div className={styles.blogGrid}>
             {blogPosts.map((post, index) => (
               <div 
-                key={index}
+                key={post.id}
                 ref={el => { cardRefs.current[index] = el; }}
                 className={styles.blogCardWrapper}
               >

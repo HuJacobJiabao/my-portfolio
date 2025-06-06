@@ -6,4 +6,15 @@ import yaml from '@rollup/plugin-yaml'
 export default defineConfig({
   base: '/my-portfolio/',
   plugins: [react(), yaml()],
+  define: {
+    global: 'globalThis',
+  },
+  optimizeDeps: {
+    include: ['gray-matter']
+  },
+  resolve: {
+    alias: {
+      buffer: 'buffer',
+    },
+  },
 })
