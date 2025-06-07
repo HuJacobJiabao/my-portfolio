@@ -48,7 +48,6 @@ export const renderMermaidDiagrams = async (): Promise<void> => {
     const mermaidPre = container.querySelector('pre.mermaid') as HTMLPreElement;
 
 
-
     if (!diagramDiv || !loadingDiv || !mermaidPre) {
       if (loadingDiv) loadingDiv.textContent = 'Error: Invalid container structure.';
       continue;
@@ -62,23 +61,22 @@ export const renderMermaidDiagrams = async (): Promise<void> => {
       continue;
     }
 
+    // Clean up whitespace and normalize line endings
+    const cleanCode = code.replace(/^\s+|\s+$/g, '').replace(/\r\n/g, '\n');
+
     try {
-      const { svg, bindFunctions } = await mermaid.render(id, code);
-      
-      console.log(`✅ SVG generated for ${id}`);
-
-      // Clear the container
+      // Clear the container before rendering
       diagramDiv.innerHTML = '';
-      
-      // Create a temporary container to parse the SVG string
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = svg;
-      const svgElement = tempDiv.querySelector('svg');
 
-      // Create wrapper div with mermaid-diagram class for proper CSS targeting
-      const wrapper = document.createElement('div');
-      wrapper.className = 'mermaid-diagram';
-      
+      // Render directly into the diagram container
+      const { svg, bindFunctions } = await mermaid.render(id, cleanCode, diagramDiv);
+
+      // Remove Mermaid's auto-generated container if present
+      document.getElementById(`d${id}`)?.remove();
+
+      // Grab the generated SVG element
+      const svgElement = diagramDiv.querySelector('svg');
+
       if (svgElement) {
         // Extract viewBox dimensions and set explicit width/height
         const viewBox = svgElement.getAttribute('viewBox');
@@ -126,25 +124,26 @@ export const renderMermaidDiagrams = async (): Promise<void> => {
         // Add button directly to SVG container
         svgContainer.appendChild(downloadBtn);
         
-        // Add SVG container to wrapper
-        wrapper.appendChild(svgContainer);
-        
-        // Then append the wrapper to the container
-        container.appendChild(wrapper);
-        console.log(`✅ SVG wrapper with banner appended to container for ${id}`);
+        // Append generated SVG container back to the diagram div
+        diagramDiv.appendChild(svgContainer);
+        console.log(`✅ SVG rendered for ${id}`);
 
         svgElement.style.display = 'block';
         svgElement.style.visibility = 'visible';
         svgElement.style.opacity = '1';
         svgElement.style.maxWidth = '100%';
         svgElement.style.height = 'auto';
+
+        // Apply Mermaid interactions if available
+        if (bindFunctions) {
+          try {
+            bindFunctions(svgContainer);
+          } catch (bindError) {
+            console.warn(`⚠️ Failed to bind functions for ${id}:`, bindError);
+          }
+        }
       }
 
-      // Apply bindFunctions to the SVG container since SVG is now there
-      if (bindFunctions) {
-        const svgContainer = wrapper.querySelector('.mermaid-svg-container');
-        if (svgContainer) bindFunctions(svgContainer);
-      }
       loadingDiv.style.display = 'none';
     } catch (error: any) {
       console.error(`Error rendering diagram ${id}:`, error);
