@@ -5,12 +5,12 @@ createTime: "2025-06-06T15:22:00.000Z"
 description: "A demonstration of markdown math equation functionality."
 tags: ["Markdown", "Footnotes", "Demo"]
 category: "Documentation"
-coverImage: "default"
+coverImage: "default    "
 ---
 
 # Math Equations Demo
-![hl](../../projects/test-project-1/default_blog.png)
 
+This is a demonstration of math equation rendering using KaTeX.
 $$
 \begin{bmatrix}
 a & b \\
@@ -26,9 +26,6 @@ ax + by \\
 cx + dy
 \end{bmatrix}
 $$
-
-This is a demonstration of math equation rendering using KaTeX.
-
 ## Inline Math
 
 Here's an inline math equation: $E = mc^2$ which is Einstein's famous equation.

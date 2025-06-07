@@ -52,64 +52,91 @@ function renderMath(text: string, displayMode: boolean = false): string {
   }
 }
 
-// Process highlighted text (==text==)
-function processHighlightedText(content: string): string {
-  // Replace ==highlighted text== with <mark>highlighted text</mark>
-  return content.replace(/==([^=]+?)==/g, (_match, text) => {
-    return `<mark class="highlighted-text">${text.trim()}</mark>`;
-  });
-}
+
 
 // Footnote processing functions
 interface Footnote {
   id: string;
   content: string;
+  originalId?: string;
 }
 
-function processFootnotes(content: string): { content: string; footnotes: Footnote[] } {
-  const footnotes: Footnote[] = [];
-  const footnoteRefs = new Set<string>();
+async function processFootnotes(content: string): Promise<{ content: string; footnotes: Footnote[] }> {
+  const footnoteDefinitions = new Map<string, string>();
+  const footnoteOrder: string[] = [];
   
-  // First pass: extract footnote definitions and collect references
+  // First pass: extract footnote definitions
   const footnoteDefRegex = /^\[\^([^\]]+)\]: (.+)$/gm;
   let match;
   
   while ((match = footnoteDefRegex.exec(content)) !== null) {
     const [_, id, definition] = match;
-    footnotes.push({
-      id: id.trim(),
-      content: definition.trim()
-    });
+    footnoteDefinitions.set(id.trim(), definition.trim());
   }
   
   // Remove footnote definitions from content
   content = content.replace(footnoteDefRegex, '');
   
-  // Second pass: find all footnote references in the content
+  // Second pass: find all footnote references in order of appearance
   const footnoteRefRegex = /\[\^([^\]]+)\]/g;
   let refMatch;
   
   while ((refMatch = footnoteRefRegex.exec(content)) !== null) {
     const id = refMatch[1].trim();
-    footnoteRefs.add(id);
+    if (footnoteDefinitions.has(id) && !footnoteOrder.includes(id)) {
+      footnoteOrder.push(id);
+    }
   }
   
-  // Replace footnote references with clickable links
+  // Replace footnote references with clickable links using sequential numbers
+  const footnoteIdToNumber = new Map<string, number>();
+  footnoteOrder.forEach((id, index) => {
+    footnoteIdToNumber.set(id, index + 1);
+  });
+
   content = content.replace(/\[\^([^\]]+)\]/g, (_match, id) => {
     const trimmedId = id.trim();
-    const footnoteExists = footnotes.some(fn => fn.id === trimmedId);
+    const footnoteExists = footnoteDefinitions.has(trimmedId);
+    const footnoteNumber = footnoteIdToNumber.get(trimmedId);
     
-    if (footnoteExists) {
-      return `<sup><a href="#footnote-${trimmedId}" id="footnote-ref-${trimmedId}" class="footnote-ref" title="Go to footnote">${trimmedId}</a></sup>`;
+    if (footnoteExists && footnoteNumber) {
+      return `<sup><a href="#footnote-${footnoteNumber}" id="footnote-ref-${footnoteNumber}-${trimmedId}" class="footnote-ref" title="Go to footnote">${footnoteNumber}</a></sup>`;
     } else {
       return `<sup><span class="footnote-error" title="Footnote not found">${trimmedId}</span></sup>`;
     }
   });
   
-  // Filter footnotes to only include those that are referenced
-  const referencedFootnotes = footnotes.filter(fn => footnoteRefs.has(fn.id));
+  // Process footnote definitions in order of appearance
+  const footnotes: Footnote[] = [];
+  for (let i = 0; i < footnoteOrder.length; i++) {
+    const id = footnoteOrder[i];
+    const definition = footnoteDefinitions.get(id);
+    const number = i + 1;
+    
+    if (definition) {
+      // Process the footnote definition content to support markdown formatting
+      let processedContent = definition;
+      
+      // Process math equations in footnote content
+      processedContent = processedContent.replace(/\$\$([^$]+?)\$\$/g, (_, math) => {
+        return renderMath(math.trim(), true);
+      });
+      processedContent = processedContent.replace(/\$([^$]+?)\$/g, (_, math) => {
+        return renderMath(math.trim(), false);
+      });
+      
+      // Process inline markdown formatting
+      processedContent = await marked.parseInline(processedContent);
+      
+      footnotes.push({
+        id: number.toString(),
+        content: processedContent,
+        originalId: id
+      });
+    }
+  }
   
-  return { content, footnotes: referencedFootnotes };
+  return { content, footnotes };
 }
 
 function processDefinitionLists(content: string): string {
@@ -185,18 +212,10 @@ export async function parseMarkdown(
     processedContent = processedContent.replace(regex, String(value));
   });
 
-  // Process highlighted text (must be done before footnotes to avoid interference)
-  processedContent = processHighlightedText(processedContent);
-
+  // STEP 1: Process definition lists first
   processedContent = processDefinitionLists(processedContent);
-
   
-  // Process footnotes
-  const { content: contentWithFootnotes, footnotes } = processFootnotes(processedContent);
-  processedContent = contentWithFootnotes;
-  
-  // STEP 1: Process math equations with placeholders, but avoid processing math inside code blocks
-  // We need to be careful not to process math that's inside code blocks
+  // STEP 2: Process math equations with placeholders, avoiding code blocks
   const mathPlaceholders: Map<string, string> = new Map();
   
   // Create a more sophisticated math processing that avoids code blocks
@@ -298,6 +317,36 @@ export async function parseMarkdown(
   }
   
   processedContent = processMathOutsideCodeBlocks(processedContent);
+  
+  // STEP 3: Process highlighted text with placeholders to avoid interference with marked.js
+  const highlightPlaceholders: Map<string, string> = new Map();
+  let highlightCounter = 0;
+  
+  // First collect all highlight matches
+  const highlightMatches: Array<{ match: string; text: string; placeholderId: string }> = [];
+  const highlightRegex = /==([^=]+?)==/g;
+  let match;
+  
+  while ((match = highlightRegex.exec(processedContent)) !== null) {
+    const placeholderId = `HIGHLIGHT_${highlightCounter++}_${Math.random().toString(36).substr(2, 9)}`;
+    highlightMatches.push({
+      match: match[0],
+      text: match[1].trim(),
+      placeholderId
+    });
+  }
+  
+  // Process each highlight text as inline markdown and store in placeholders
+  for (const { match, text, placeholderId } of highlightMatches) {
+    const processedText = await marked.parseInline(text);
+    const highlightHtml = `<mark class="highlighted-text">${processedText}</mark>`;
+    highlightPlaceholders.set(placeholderId, highlightHtml);
+    processedContent = processedContent.replace(match, `<!-- ${placeholderId} -->`);
+  }
+  
+  // STEP 4: Process footnotes
+  const { content: contentWithFootnotes, footnotes } = await processFootnotes(processedContent);
+  processedContent = contentWithFootnotes;
   
   // Configure marked with custom renderer
   const renderer = {
@@ -477,6 +526,16 @@ export async function parseMarkdown(
       return match; // fallback to original placeholder if not found
     });
     
+    // STEP 3: Restore highlight text
+    finalHtml = finalHtml.replace(/<!-- (HIGHLIGHT_[a-z0-9_]+) -->/g, (match, placeholderId) => {
+      const highlightHtml = highlightPlaceholders.get(placeholderId);
+      if (highlightHtml) {
+        return highlightHtml;
+      }
+      console.warn('Highlight placeholder not found:', match, placeholderId);
+      return match; // fallback to original placeholder if not found
+    });
+    
     // Append footnotes to the end of content if there are any
     if (footnotes && footnotes.length > 0) {
       const footnotesSection = `
@@ -486,7 +545,7 @@ export async function parseMarkdown(
           <ol class="footnotes-list">
             ${footnotes.map(fn => `
               <li id="footnote-${fn.id}" class="footnote-item">
-                <p>${fn.content} <a href="#footnote-ref-${fn.id}" class="footnote-backref" title="Go back to text">↩</a></p>
+                <p>${fn.content} <a href="#footnote-ref-${fn.id}-${fn.originalId || fn.id}" class="footnote-backref" title="Go back to text">↩</a></p>
               </li>
             `).join('')}
           </ol>

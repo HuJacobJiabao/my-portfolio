@@ -12,6 +12,9 @@ coverImage: "./markdown-svgrepo-com.svg"
 
 This page demonstrates how to use ==highlighted text== in Markdown.
 
+**==test==**
+==**test**==
+
 ## Basic Highlighting
 
 You can highlight text using double equals signs:
