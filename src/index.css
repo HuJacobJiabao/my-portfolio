@@ -18,11 +18,8 @@ html {
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-he  .mermaid-svg-container {
-    padding: 2.5rem 1.5rem; /* Reduced padding on mobile, but keep space for button */
-    min-height: 200px;
-    border-radius: 8px;
-  }nt-weight: 400;
+  line-height: 1.5;
+  font-weight: 400;
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
@@ -195,29 +192,35 @@ blockquote blockquote blockquote {
 }
 
 /* ==============================================
-   KaTeX Math Equation Styles
+   MathJax Math Equation Styles
    ============================================== */
 
-/* KaTeX math equations */
-.katex {
+/* MathJax math equations */
+mjx-container {
   font-size: 1.1em;
   color: inherit;
-}
-
-.katex-display {
-  margin: 1.5rem 0;
-  text-align: center;
   overflow-x: auto;
   overflow-y: hidden;
 }
 
-.katex-display .katex {
+mjx-container[display="true"] {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+mjx-container[display="false"] {
   display: inline-block;
-  white-space: nowrap;
+}
+
+/* Math placeholder styles (for SSR or loading states) */
+.math-placeholder {
+  font-family: 'Computer Modern', 'Latin Modern Math', serif;
+  font-style: italic;
+  color: #666;
 }
 
 /* Error handling for math equations */
-.katex-error {
+.math-error {
   color: #e74c3c;
   background-color: rgba(231, 76, 60, 0.1);
   padding: 0.2rem 0.4rem;
@@ -229,11 +232,11 @@ blockquote blockquote blockquote {
 
 /* Responsive math equations */
 @media (max-width: 768px) {
-  .katex {
+  mjx-container {
     font-size: 1em;
   }
   
-  .katex-display {
+  mjx-container[display="true"] {
     margin: 1rem 0;
     padding: 0 0.5rem;
   }
@@ -241,10 +244,14 @@ blockquote blockquote blockquote {
 
 /* Light mode adjustments */
 @media (prefers-color-scheme: light) {
-  .katex-error {
+  .math-error {
     color: #c0392b;
     background-color: rgba(192, 57, 43, 0.08);
     border-color: rgba(192, 57, 43, 0.2);
+  }
+  
+  .math-placeholder {
+    color: #888;
   }
 }
 
@@ -253,7 +260,7 @@ blockquote blockquote blockquote {
    ============================================== */
 
 mark.highlighted-text {
-  background-color: rgba(255, 255, 0, 0.4);
+  background-color: rgba(254, 240, 138, 0.8);
   padding: 0 2px;
   border-radius: 3px;
   font-weight: inherit;
@@ -263,7 +270,7 @@ mark.highlighted-text {
 /* Light mode */
 @media (prefers-color-scheme: light) {
   mark.highlighted-text {
-    background-color: rgba(255, 230, 0, 0.5);
+    background-color: rgba(254, 240, 138, 0.8);
     box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
   }
 }
@@ -468,3 +475,65 @@ mark.highlighted-text {
     background: transparent !important;
   }
 }
+
+/* =======================
+   Definition List Styles
+   ======================= */
+
+.definition-list {
+  margin: 0.5rem;
+}
+
+.definition-list dt {
+  font-style: italic;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: 1.2rem;
+}
+
+.definition-list dd {
+  margin: 0.5rem;
+  margin-left: 2rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Inline formatting */
+.definition-list em {
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.definition-list strong {
+  font-weight: bold;
+  color: #fff;
+}
+
+.definition-list code {
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.95em;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+
+/* Light theme */
+@media (prefers-color-scheme: light) {
+  .definition-list dt {
+    color: #333;
+  }
+
+  .definition-list dd {
+    color: #444;
+  }
+
+  .definition-list code {
+    background: #f3f4f6;
+    color: #111;
+  }
+
+}
+
+

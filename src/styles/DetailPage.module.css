@@ -160,10 +160,8 @@
   border-collapse: collapse; /* 让边框合并，避免双线 */
   margin: 1.5em 0;
   font-size: 0.95rem;
-  border-radius: 8px;
   overflow: hidden;
   background-color: #f9fafb;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   color: #1e293b;
 }
 
@@ -189,6 +187,72 @@
   border-radius: 4px;
   font-size: 0.85rem;
   font-family: "Source Code Pro", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+th[align="left"],
+td[align="left"] {
+  text-align: left;
+}
+th[align="center"],
+td[align="center"] {
+  text-align: center;
+}
+th[align="right"],
+td[align="right"] {
+  text-align: right;
+}
+
+@media (max-width: 768px) {
+  .markdownContent table,
+  .markdownContent thead,
+  .markdownContent tbody,
+  .markdownContent th,
+  .markdownContent td,
+  .markdownContent tr {
+    display: block;
+    width: 100%;
+  }
+
+  .markdownContent thead {
+    display: none; /* 隐藏表头，移动端用 data-label 显示 */
+  }
+
+  .markdownContent tr {
+    margin-bottom: 1rem;
+    border: 1px solid #d6deeb;
+    border-radius: 6px;
+    background-color: #ffffff;
+    padding: 0.5rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+
+  .markdownContent td {
+    position: relative;
+    padding-left: 50%;
+    text-align: left !important;
+    border: none;
+    border-bottom: 1px solid #e2e8f0;
+    background-color: #f9fafb;
+  }
+
+  .markdownContent td:last-child {
+    border-bottom: none;
+  }
+
+  .markdownContent td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 1em;
+    top: 0.75em;
+    font-weight: 600;
+    color: #334155;
+    white-space: nowrap;
+    font-size: 0.9rem;
+  }
+
+  .markdownContent td code {
+    font-size: 0.8rem;
+  }
 }
 
 
@@ -233,20 +297,21 @@
   overflow-wrap: normal;
 }
 
-/* Math equation styles in markdown content */
-.markdownContent .katex {
+/* Math equation styles in markdown content - MathJax SVG */
+.markdownContent mjx-container {
   color: #2c3e50;
 }
 
-.markdownContent .katex-display {
+.markdownContent mjx-container[display="true"] {
   background: rgba(100, 108, 255, 0.05);
   border-radius: 8px;
   padding: 1rem;
   margin: 2rem 0;
   border: 1px solid rgba(100, 108, 255, 0.1);
+  text-align: center;
 }
 
-.markdownContent .katex-error {
+.markdownContent .math-error {
   background-color: rgba(231, 76, 60, 0.1);
   border: 1px solid rgba(231, 76, 60, 0.3);
   color: #e74c3c;
@@ -257,7 +322,7 @@
 }
 
 /* Math equations within paragraphs */
-.markdownContent p .katex {
+.markdownContent p mjx-container {
   display: inline-block;
   margin: 0 0.2rem;
 }
@@ -426,5 +491,32 @@
     font-size: 0.8rem;
     top: 0.75rem;
     right: 0.75rem;
+  }
+}
+
+/* Published date styling - positioned in bottom right corner */
+.publishedDate {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e2e8f0;
+  text-align: right;
+  color: #64748b;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.publishedDate em {
+  color: #64748b;
+}
+
+/* Dark mode support for published date */
+@media (prefers-color-scheme: dark) {
+  .publishedDate {
+    border-top-color: #374151;
+    color: #9ca3af;
+  }
+  
+  .publishedDate em {
+    color: #9ca3af;
   }
 }

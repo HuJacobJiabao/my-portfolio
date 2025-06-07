@@ -39,10 +39,17 @@ const MarkdownContent = React.memo<MarkdownContentProps>(({
   }, [markdownData.html]);
 
   return (
-    <div 
-      className={styles.markdownContent}
-      dangerouslySetInnerHTML={{ __html: markdownData.html }}
-    />
+    <>
+      <div 
+        className={styles.markdownContent}
+        dangerouslySetInnerHTML={{ __html: markdownData.html }}
+      />
+      {markdownData.createTime && (
+        <div className={styles.publishedDate}>
+          <em>Published on {new Date(markdownData.createTime).toISOString().split('T')[0]}</em>
+        </div>
+      )}
+    </>
   );
 });
 

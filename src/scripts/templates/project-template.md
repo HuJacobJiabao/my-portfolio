@@ -76,7 +76,3 @@ Detail any performance improvements or optimizations you implemented.
 ## Conclusion
 
 Summarize the project's impact, what you learned, and its significance in your portfolio.
-
----
-
-*Published on: {{createTime}}*

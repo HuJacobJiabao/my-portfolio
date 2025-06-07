@@ -1,15 +1,14 @@
 ---
 type: "blog"
-title: "math-demo"
-createTime: "2025-06-06T15:26:56.508Z"
-description: "This is the default description for blog."
-tags: ["Hello", "world"]
-category: "default"
-coverImage: "default"
+title: "Math Demo"
+createTime: "2025-06-06T15:22:00.000Z"
+description: "A demonstration of markdown math equation functionality."
+tags: ["Markdown", "Footnotes", "Demo"]
+category: "Documentation"
+coverImage: "./markdown-svgrepo-com.svg"
 ---
 
-# {{title}}
-
+# Math Equations Demo
 
 This is a demonstration of math equation rendering using KaTeX.
 
@@ -27,8 +26,9 @@ $$
 \frac{d}{dx}\left[ \int_{a}^{x} f(u) \, du\right] = f(x)
 $$
 
-Another example with matrices:
+Another example with matrices but it is not supported in KaTeX:
 
+```latex
 $$
 \begin{pmatrix}
 a & b \\
@@ -44,6 +44,7 @@ ax + by \\
 cx + dy
 \end{pmatrix}
 $$
+```
 
 ## Greek Letters and Symbols
 
@@ -75,7 +76,3 @@ $$
 $$
 
 This demonstrates the KaTeX integration working properly!
-
----
-
-*Published on {{createTime}}*

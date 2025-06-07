@@ -27,8 +27,3 @@ Description of another change made.
 1. **Immediate**: What needs to be done next
 2. **Short-term**: Near-future development priorities
 3. **Long-term**: Strategic development goals
-
----
-
-*Log created: {{displayDate}}*
-*Development status: In progress*

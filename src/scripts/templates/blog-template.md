@@ -44,7 +44,3 @@ Continue with additional sections as needed.
 ## Conclusion
 
 Summarize your main points and provide closing thoughts.
-
----
-
-*Published on {{createTime}}*

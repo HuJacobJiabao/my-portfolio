@@ -27,6 +27,7 @@ import 'prismjs/components/prism-cpp';
 import 'prismjs/components/prism-sql';
 import 'prismjs/components/prism-rust';
 import 'prismjs/components/prism-go';
+import 'prismjs/components/prism-latex';
 
 // Import custom Night Owl theme
 import '../styles/prism-night-owl-theme.css';
@@ -49,21 +50,6 @@ function renderMath(text: string, displayMode: boolean = false): string {
     console.warn('KaTeX rendering error:', error);
     return `<span class="katex-error" title="Math rendering error">${text}</span>`;
   }
-}
-
-// Process math equations in markdown content
-function processMathEquations(content: string): string {
-  // Process display math ($$...$$)
-  content = content.replace(/\$\$([^$]+?)\$\$/g, (_match, equation) => {
-    return renderMath(equation.trim(), true);
-  });
-  
-  // Process inline math ($...$) - but avoid already processed display math
-  content = content.replace(/(?<!\$)\$([^$\n]+?)\$(?!\$)/g, (_match, equation) => {
-    return renderMath(equation.trim(), false);
-  });
-  
-  return content;
 }
 
 // Process highlighted text (==text==)
@@ -126,6 +112,42 @@ function processFootnotes(content: string): { content: string; footnotes: Footno
   return { content, footnotes: referencedFootnotes };
 }
 
+function processDefinitionLists(content: string): string {
+  const lines = content.split('\n');
+  const result: string[] = [];
+
+  let i = 0;
+  while (i < lines.length) {
+    const termLine = lines[i];
+    const nextLine = lines[i + 1] || '';
+
+    // 检测 Definition List 的起始格式
+    if (termLine.trim() !== '' && nextLine.trim().startsWith(':')) {
+      const dt = marked.parseInline(termLine.trim());
+      const ddList: string[] = [];
+
+      // 向下收集连续的定义项
+      while (i + 1 < lines.length && lines[i + 1].trim().startsWith(':')) {
+        const raw = lines[i + 1].trim().replace(/^:\s*/, '');
+        const parsed = marked.parseInline(raw);
+        ddList.push(`<dd>${parsed}</dd>`);
+        i++;
+      }
+
+      result.push('<dl class="definition-list">');
+      result.push(`<dt>${dt}</dt>`);
+      result.push(...ddList);
+      result.push('</dl>');
+      i++;
+    } else {
+      result.push(termLine);
+      i++;
+    }
+  }
+
+  return result.join('\n');
+}
+
 export interface TocItem {
   id: string;
   title: string;
@@ -135,6 +157,7 @@ export interface TocItem {
 export interface ParsedMarkdown {
   html: string;
   toc: TocItem[];
+  createTime?: string;
 }
 
 export async function parseMarkdown(
@@ -153,28 +176,128 @@ export async function parseMarkdown(
   // Process template variables in body content using frontmatter values
   let processedContent = bodyContent;
   Object.entries(frontmatter).forEach(([key, value]) => {
-    const regex = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
-    
-    // Special handling for createTime - format as yyyy-mm-dd for display
-    if (key === 'createTime' && value) {
-      const formattedDate = new Date(value as string).toISOString().split('T')[0];
-      processedContent = processedContent.replace(regex, formattedDate);
-    } else {
-      processedContent = processedContent.replace(regex, String(value));
+    // Skip createTime as we'll handle it separately in the component
+    if (key === 'createTime') {
+      return;
     }
+    
+    const regex = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
+    processedContent = processedContent.replace(regex, String(value));
   });
 
-  // Process math equations before markdown parsing
-  processedContent = processMathEquations(processedContent);
-  
   // Process highlighted text (must be done before footnotes to avoid interference)
   processedContent = processHighlightedText(processedContent);
+
+  processedContent = processDefinitionLists(processedContent);
+
   
   // Process footnotes
   const { content: contentWithFootnotes, footnotes } = processFootnotes(processedContent);
   processedContent = contentWithFootnotes;
   
-  // Store footnotes for later use when rendering the final HTML
+  // STEP 1: Process math equations with placeholders, but avoid processing math inside code blocks
+  // We need to be careful not to process math that's inside code blocks
+  const mathPlaceholders: Map<string, string> = new Map();
+  
+  // Create a more sophisticated math processing that avoids code blocks
+  function processMathOutsideCodeBlocks(content: string): string {
+    // Split content by code blocks and inline code to avoid processing math inside them
+    const parts: Array<{content: string, isCode: boolean}> = [];
+    
+    // First, split by fenced code blocks
+    const codeBlockRegex = /```[\s\S]*?```/g;
+    let lastIndex = 0;
+    let match;
+    
+    while ((match = codeBlockRegex.exec(content)) !== null) {
+      // Add content before code block
+      if (match.index > lastIndex) {
+        parts.push({
+          content: content.slice(lastIndex, match.index),
+          isCode: false
+        });
+      }
+      // Add code block
+      parts.push({
+        content: match[0],
+        isCode: true
+      });
+      lastIndex = match.index + match[0].length;
+    }
+    
+    // Add remaining content
+    if (lastIndex < content.length) {
+      parts.push({
+        content: content.slice(lastIndex),
+        isCode: false
+      });
+    }
+    
+    // Now process each non-code part for inline code and math
+    return parts.map(part => {
+      if (part.isCode) {
+        return part.content; // Don't process math in code blocks
+      }
+      
+      // For non-code parts, split by inline code and process math
+      const inlineCodeRegex = /`([^`\n]+?)`/g;
+      const subParts: Array<{content: string, isCode: boolean}> = [];
+      let subLastIndex = 0;
+      let subMatch;
+      
+      while ((subMatch = inlineCodeRegex.exec(part.content)) !== null) {
+        // Add content before inline code
+        if (subMatch.index > subLastIndex) {
+          subParts.push({
+            content: part.content.slice(subLastIndex, subMatch.index),
+            isCode: false
+          });
+        }
+        // Add inline code
+        subParts.push({
+          content: subMatch[0],
+          isCode: true
+        });
+        subLastIndex = subMatch.index + subMatch[0].length;
+      }
+      
+      // Add remaining content
+      if (subLastIndex < part.content.length) {
+        subParts.push({
+          content: part.content.slice(subLastIndex),
+          isCode: false
+        });
+      }
+      
+      // Process math only in non-code subparts
+      return subParts.map(subPart => {
+        if (subPart.isCode) {
+          return subPart.content; // Don't process math in inline code
+        }
+        
+        // Process math in this non-code content
+        let mathProcessedContent = subPart.content;
+        
+        // Process display math ($$...$$)
+        mathProcessedContent = mathProcessedContent.replace(/\$\$([\s\S]*?)\$\$/g, (_match, equation) => {
+          const placeholderId = `MATH_DISPLAY_${Math.random().toString(36).substring(2, 11)}`;
+          mathPlaceholders.set(placeholderId, renderMath(equation.trim(), true));
+          return `<!-- ${placeholderId} -->`;
+        });
+        
+        // Process inline math ($...$) - avoid already processed display math
+        mathProcessedContent = mathProcessedContent.replace(/(?<!\$)\$([^$\n]+?)\$(?!\$)/g, (_match, equation) => {
+          const placeholderId = `MATH_INLINE_${Math.random().toString(36).substring(2, 11)}`;
+          mathPlaceholders.set(placeholderId, renderMath(equation.trim(), false));
+          return `<!-- ${placeholderId} -->`;
+        });
+        
+        return mathProcessedContent;
+      }).join('');
+    }).join('');
+  }
+  
+  processedContent = processMathOutsideCodeBlocks(processedContent);
   
   // Configure marked with custom renderer
   const renderer = {
@@ -250,7 +373,9 @@ export async function parseMarkdown(
         'rust': 'rust',
         'rs': 'rust',
         'go': 'go',
-        'golang': 'go'
+        'golang': 'go',
+        'latex': 'latex',
+        'tex': 'latex'
       };
 
       const normalizedLang = lang ? languageMap[lang.toLowerCase()] || lang.toLowerCase() : 'text';
@@ -342,6 +467,16 @@ export async function parseMarkdown(
     // Post-process the HTML to resolve all relative asset paths
     let finalHtml = typeof html === 'string' ? html : '';
     
+    // STEP 2: Restore math equations
+    finalHtml = finalHtml.replace(/<!-- (MATH_(?:DISPLAY|INLINE)_[a-z0-9]+) -->/g, (match, placeholderId) => {
+      const mathHtml = mathPlaceholders.get(placeholderId);
+      if (mathHtml) {
+        return mathHtml;
+      }
+      console.warn('Math placeholder not found:', match, placeholderId);
+      return match; // fallback to original placeholder if not found
+    });
+    
     // Append footnotes to the end of content if there are any
     if (footnotes && footnotes.length > 0) {
       const footnotesSection = `
@@ -401,13 +536,15 @@ export async function parseMarkdown(
     
     return {
       html: finalHtml,
-      toc
+      toc,
+      createTime: frontmatter.createTime
     };
   } catch (error) {
     console.error('Error parsing markdown:', error);
     return {
       html: '<p>Error parsing markdown content</p>',
-      toc: []
+      toc: [],
+      createTime: undefined
     };
   }
 }
