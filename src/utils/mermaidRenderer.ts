@@ -77,14 +77,17 @@ export const renderMermaidDiagrams = async (): Promise<void> => {
       
       console.log(`✅ SVG generated for ${id}`);
 
-      // Clear the diagram container and hide the original code
+      // Clear the container
       diagramDiv.innerHTML = '';
-      mermaidPre.style.display = 'none'; // Hide the original code block
       
       // Create a temporary container to parse the SVG string
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = svg;
       const svgElement = tempDiv.querySelector('svg');
+
+      // Create wrapper div with mermaid-diagram class for proper CSS targeting
+      const wrapper = document.createElement('div');
+      wrapper.className = 'mermaid-diagram';
       
       if (svgElement) {
         // Extract viewBox dimensions and set explicit width/height
@@ -133,10 +136,12 @@ export const renderMermaidDiagrams = async (): Promise<void> => {
         // Add button directly to SVG container
         svgContainer.appendChild(downloadBtn);
         
-        // Add SVG container to diagram div
-        diagramDiv.appendChild(svgContainer);
+        // Add SVG container to wrapper
+        wrapper.appendChild(svgContainer);
         
-        console.log(`✅ SVG container appended to diagram div for ${id}`);
+        // Then append the wrapper to the container
+        container.appendChild(wrapper);
+        console.log(`✅ SVG wrapper with banner appended to container for ${id}`);
 
         svgElement.style.display = 'block';
         svgElement.style.visibility = 'visible';
@@ -147,10 +152,11 @@ export const renderMermaidDiagrams = async (): Promise<void> => {
 
       // Apply bindFunctions to the SVG container since SVG is now there
       if (bindFunctions) {
-        const svgContainer = diagramDiv.querySelector('.mermaid-svg-container');
+        const svgContainer = wrapper.querySelector('.mermaid-svg-container');
         if (svgContainer) bindFunctions(svgContainer);
       }
       loadingDiv.style.display = 'none';
+      mermaidPre.style.display = 'none';
     } catch (error: any) {
       // CRITICAL: Remove Mermaid's automatically inserted div even on error
       document.getElementById(`d${id}`)?.remove();
