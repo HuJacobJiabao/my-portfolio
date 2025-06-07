@@ -106,6 +106,8 @@
   background-color: #2d3748;
   color: #ffe066;
   padding: 0.25rem;
+  padding-left: 0.1rem;
+  padding-right: 0.1rem;
   border-radius: 4px;
   border: 1px solid #5a6f81;
   font-family: "Source Code Pro", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
@@ -123,6 +125,51 @@
   color: inherit;
   padding: 0;
 }
+
+/* 整体样式 */
+dl {
+  font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+  font-size: 1rem;
+  line-height: 1.75;
+  margin: 2rem 0;
+  padding: 0;
+}
+
+/* 定义项（Term） */
+dt {
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.05rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.3rem;
+}
+
+/* 解释内容（Definition） */
+dd {
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+/* 相邻 dd 间距紧凑 */
+dt + dd + dd {
+  margin-top: -0.5rem;
+}
+
+/* 行内代码 */
+dd code, dt code {
+  background-color: #1f2937;
+  color: #facc15;
+  font-family: "JetBrains Mono", monospace;
+  padding: 0.2em 0.5em;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+/* Katex 渲染的数学公式字体统一 */
+dd .katex, dt .katex {
+  font-size: 1.05em;
+}
+
 
 .markdownContent blockquote {
   position: relative;
@@ -345,19 +392,62 @@ td[align="right"] {
 }
 
 
-.markdownContent .footnotes-list {
-  padding-left: 1rem;
-  margin-top: 1.5rem;
-  padding-top: 0;
-  padding-bottom: 1rem;
-  line-height: 1.2;
+.markdownContent :global(.footnotes-sep) {
+  border: none;
+  height: 1px;
+  margin: 2em 0 1em;
 }
 
-.markdownContent .footnotes-list p{
-  padding-left: 1rem;
-  margin-top: 1.5rem;
-  padding-top: 0;
-  padding-bottom: 1rem;
+.markdownContent :global(.footnotes) {
+  border-top: linear-gradient(to right, #7a1212 0%, #7a1212 40%, transparent 100%);
+  border-radius: 8px;
+  font-size: 0.8rem;
+  line-height: 1.65;
+}
+
+/* Footnote list styles */
+.markdownContent :global(.footnotes-list) {
+  margin: 0;
+  padding-left: 1.5rem;
+  list-style-type: decimal;
+}
+
+.markdownContent :global(.footnote-item) {
+  margin-top: 0.5rem;
+  padding-left: 0.5rem;
+  line-height: 0.5;
+  color: #64748b;
+}
+
+:global(.footnotes) code {
+  font-size: 0.8rem;
+}
+
+.markdownContent :global(.footnote-item) :global(p) {
+  margin: 0.25rem 0;
+  line-height: 1.5;
+  display: inline;
+}
+
+.markdownContent :global(.footnote-item) :global(p:first-child) {
+  margin-top: 0;
+}
+
+.markdownContent :global(.footnote-item) :global(p:last-child) {
+  margin-bottom: 0;
+}
+
+
+/* Footnote back reference links */
+.markdownContent :global(.footnote-backref) {
+  margin-left: 0.5em;
+  text-decoration: none;
+  font-size: 0.85em;
+  color: #646cff;
+}
+
+.markdownContent :global(.footnote-backref):hover {
+  text-decoration: underline;
 }
 
 /* Highlighted text in markdown content */
