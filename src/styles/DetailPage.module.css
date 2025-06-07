@@ -105,7 +105,7 @@
   /* Inline code styling - grey background */
   background-color: #2d3748;
   color: #ffe066;
-  padding: 0.25rem 0.5rem;
+  padding: 0.25rem;
   border-radius: 4px;
   border: 1px solid #5a6f81;
   font-family: "Source Code Pro", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
@@ -297,12 +297,13 @@ td[align="right"] {
   overflow-wrap: normal;
 }
 
-/* Math equation styles in markdown content - MathJax SVG */
-.markdownContent mjx-container {
+/* Math equation styles in markdown content - KaTeX */
+.markdownContent .katex {
   color: #2c3e50;
 }
 
-.markdownContent mjx-container[display="true"] {
+.markdownContent .math-display,
+.markdownContent .katex-display {
   background: rgba(100, 108, 255, 0.05);
   border-radius: 8px;
   padding: 1rem;
@@ -322,85 +323,41 @@ td[align="right"] {
 }
 
 /* Math equations within paragraphs */
-.markdownContent p mjx-container {
-  display: inline-block;
-  margin: 0 0.2rem;
+.markdownContent p .math-inline,
+.markdownContent p .katex {
+  display: inline;
+  margin: 0 0.1em;
+  vertical-align: baseline;
+  font-size: 1.1em; /* Make inline math larger */
 }
 
-/* Footnote styles */
-.markdownContent .footnote-ref {
-  color: #646cff;
-  font-size: 0.8em;
-  text-decoration: none;
-  vertical-align: super;
-  padding: 0 2px;
-  font-weight: 600;
-  opacity: 0.9;
-  transition: opacity 0.2s;
+.markdownContent .math-inline {
+  display: inline;
+  vertical-align: baseline;
+  margin: 0 0.1em;
+  font-size: 1.1em; /* Make inline math larger */
 }
 
-.markdownContent .footnote-ref:hover {
-  opacity: 1;
-  text-decoration: underline;
+.markdownContent .math-inline .katex {
+  display: inline;
+  vertical-align: baseline;
+  font-size: 1.1em; /* Ensure KaTeX inherits the larger size */
 }
 
-.markdownContent .footnote-error {
-  color: #e74c3c;
-  font-size: 0.8em;
-  vertical-align: super;
-  padding: 0 2px;
-  font-weight: 600;
-}
-
-.markdownContent .footnote-divider {
-  margin: 2.5rem 0 1.5rem;
-  border: 0;
-  height: 1px;
-  background-color: #ecf0f1;
-  width: 50%;
-}
-
-.markdownContent .footnotes {
-  margin-top: 2rem;
-  font-size: 0.9rem;
-  color: #34495e;
-  background-color: #f8f9fa;
-  padding: 1.5rem;
-  border-radius: 8px;
-  border: 1px solid #ecf0f1;
-}
-
-.markdownContent .footnotes-title {
-  margin-top: 0;
-  font-size: 1.2rem;
-  color: #2c3e50;
-  font-weight: 600;
-}
 
 .markdownContent .footnotes-list {
-  padding-left: 1.5rem;
+  padding-left: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 0;
+  padding-bottom: 1rem;
+  line-height: 1.2;
 }
 
-.markdownContent .footnote-item {
-  margin-bottom: 0.75rem;
-}
-
-.markdownContent .footnote-item p {
-  margin: 0;
-  display: inline;
-}
-
-.markdownContent .footnote-backref {
-  color: #646cff;
-  text-decoration: none;
-  margin-left: 0.5rem;
-  font-weight: 600;
-  transition: opacity 0.2s;
-}
-
-.markdownContent .footnote-backref:hover {
-  opacity: 0.8;
-  text-decoration: underline;
+.markdownContent .footnotes-list p{
+  padding-left: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 0;
+  padding-bottom: 1rem;
 }
 
 /* Highlighted text in markdown content */
@@ -450,19 +407,6 @@ td[align="right"] {
   .markdownContent .code-block-container pre {
     font-size: 0.875rem; /* Slightly smaller font on mobile */
     padding: 1rem; /* Reduce padding on mobile */
-  }
-  
-  .markdownContent .footnotes {
-    padding: 1rem;
-    font-size: 0.85rem;
-  }
-  
-  .markdownContent .footnotes-title {
-    font-size: 1.1rem;
-  }
-  
-  .markdownContent .footnote-divider {
-    width: 70%;
   }
   
   .markdownContent .mermaid-container {

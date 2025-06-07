@@ -1,4 +1,7 @@
-import { marked } from 'marked';
+import MarkdownIt from 'markdown-it';
+import markdownItFootnote from 'markdown-it-footnote';
+import markdownItMark from 'markdown-it-mark';
+import markdownItDeflist from 'markdown-it-deflist';
 import Prism from 'prismjs';
 import matter from 'gray-matter';
 import { Buffer } from 'buffer';
@@ -34,147 +37,6 @@ import '../styles/prism-night-owl-theme.css';
 // Import KaTeX CSS for math rendering
 import 'katex/dist/katex.min.css';
 
-// We'll be using the mermaidRenderer.ts file for runtime rendering
-
-// Math rendering function using KaTeX
-function renderMath(text: string, displayMode: boolean = false): string {
-  try {
-    return katex.renderToString(text, {
-      displayMode,
-      throwOnError: false,
-      errorColor: '#cc0000',
-      strict: 'warn',
-      trust: false
-    });
-  } catch (error) {
-    console.warn('KaTeX rendering error:', error);
-    return `<span class="katex-error" title="Math rendering error">${text}</span>`;
-  }
-}
-
-
-
-// Footnote processing functions
-interface Footnote {
-  id: string;
-  content: string;
-  originalId?: string;
-}
-
-async function processFootnotes(content: string): Promise<{ content: string; footnotes: Footnote[] }> {
-  const footnoteDefinitions = new Map<string, string>();
-  const footnoteOrder: string[] = [];
-  
-  // First pass: extract footnote definitions
-  const footnoteDefRegex = /^\[\^([^\]]+)\]: (.+)$/gm;
-  let match;
-  
-  while ((match = footnoteDefRegex.exec(content)) !== null) {
-    const [_, id, definition] = match;
-    footnoteDefinitions.set(id.trim(), definition.trim());
-  }
-  
-  // Remove footnote definitions from content
-  content = content.replace(footnoteDefRegex, '');
-  
-  // Second pass: find all footnote references in order of appearance
-  const footnoteRefRegex = /\[\^([^\]]+)\]/g;
-  let refMatch;
-  
-  while ((refMatch = footnoteRefRegex.exec(content)) !== null) {
-    const id = refMatch[1].trim();
-    if (footnoteDefinitions.has(id) && !footnoteOrder.includes(id)) {
-      footnoteOrder.push(id);
-    }
-  }
-  
-  // Replace footnote references with clickable links using sequential numbers
-  const footnoteIdToNumber = new Map<string, number>();
-  footnoteOrder.forEach((id, index) => {
-    footnoteIdToNumber.set(id, index + 1);
-  });
-
-  content = content.replace(/\[\^([^\]]+)\]/g, (_match, id) => {
-    const trimmedId = id.trim();
-    const footnoteExists = footnoteDefinitions.has(trimmedId);
-    const footnoteNumber = footnoteIdToNumber.get(trimmedId);
-    
-    if (footnoteExists && footnoteNumber) {
-      return `<sup><a href="#footnote-${footnoteNumber}" id="footnote-ref-${footnoteNumber}-${trimmedId}" class="footnote-ref" title="Go to footnote">${footnoteNumber}</a></sup>`;
-    } else {
-      return `<sup><span class="footnote-error" title="Footnote not found">${trimmedId}</span></sup>`;
-    }
-  });
-  
-  // Process footnote definitions in order of appearance
-  const footnotes: Footnote[] = [];
-  for (let i = 0; i < footnoteOrder.length; i++) {
-    const id = footnoteOrder[i];
-    const definition = footnoteDefinitions.get(id);
-    const number = i + 1;
-    
-    if (definition) {
-      // Process the footnote definition content to support markdown formatting
-      let processedContent = definition;
-      
-      // Process math equations in footnote content
-      processedContent = processedContent.replace(/\$\$([^$]+?)\$\$/g, (_, math) => {
-        return renderMath(math.trim(), true);
-      });
-      processedContent = processedContent.replace(/\$([^$]+?)\$/g, (_, math) => {
-        return renderMath(math.trim(), false);
-      });
-      
-      // Process inline markdown formatting
-      processedContent = await marked.parseInline(processedContent);
-      
-      footnotes.push({
-        id: number.toString(),
-        content: processedContent,
-        originalId: id
-      });
-    }
-  }
-  
-  return { content, footnotes };
-}
-
-function processDefinitionLists(content: string): string {
-  const lines = content.split('\n');
-  const result: string[] = [];
-
-  let i = 0;
-  while (i < lines.length) {
-    const termLine = lines[i];
-    const nextLine = lines[i + 1] || '';
-
-    // 检测 Definition List 的起始格式
-    if (termLine.trim() !== '' && nextLine.trim().startsWith(':')) {
-      const dt = marked.parseInline(termLine.trim());
-      const ddList: string[] = [];
-
-      // 向下收集连续的定义项
-      while (i + 1 < lines.length && lines[i + 1].trim().startsWith(':')) {
-        const raw = lines[i + 1].trim().replace(/^:\s*/, '');
-        const parsed = marked.parseInline(raw);
-        ddList.push(`<dd>${parsed}</dd>`);
-        i++;
-      }
-
-      result.push('<dl class="definition-list">');
-      result.push(`<dt>${dt}</dt>`);
-      result.push(...ddList);
-      result.push('</dl>');
-      i++;
-    } else {
-      result.push(termLine);
-      i++;
-    }
-  }
-
-  return result.join('\n');
-}
-
 export interface TocItem {
   id: string;
   title: string;
@@ -187,297 +49,249 @@ export interface ParsedMarkdown {
   createTime?: string;
 }
 
-export async function parseMarkdown(
-  content: string, 
-  removeMainTitle: boolean = false,
-  assetMap?: Map<string, string> // Map of original paths to resolved asset URLs
-): Promise<ParsedMarkdown> {
-  const toc: TocItem[] = [];
-  let isFirstH1 = true;
-  
-  // Parse frontmatter and body using gray-matter
-  const parsed = matter(content);
-  const frontmatter = parsed.data;
-  const bodyContent = parsed.content;
-  
-  // Process template variables in body content using frontmatter values
-  let processedContent = bodyContent;
-  Object.entries(frontmatter).forEach(([key, value]) => {
-    // Skip createTime as we'll handle it separately in the component
-    if (key === 'createTime') {
-      return;
+// Custom secure KaTeX plugin for markdown-it
+function customKatexPlugin(md: MarkdownIt) {
+  // Inline math: $...$
+  md.inline.ruler.before('escape', 'math_inline', function(state, silent) {
+    const start = state.pos;
+    if (state.src.charAt(start) !== '$') {
+      return false;
     }
     
-    const regex = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
-    processedContent = processedContent.replace(regex, String(value));
+    // Find closing $
+    let end = start + 1;
+    while (end < state.src.length && state.src.charAt(end) !== '$') {
+      if (state.src.charAt(end) === '\\') {
+        end++; // Skip escaped character
+      }
+      end++;
+    }
+    
+    if (end >= state.src.length) {
+      return false; // No closing $
+    }
+    
+    const content = state.src.slice(start + 1, end);
+    
+    if (!silent) {
+      const token = state.push('math_inline', 'math', 0);
+      token.content = content;
+      token.markup = '$';
+    }
+    
+    state.pos = end + 1;
+    return true;
+  });
+  
+  // Block math: $$...$$
+  md.block.ruler.before('fence', 'math_block', function(state, start, end, silent) {
+    const marker = '$$';
+    let pos = state.bMarks[start] + state.tShift[start];
+    let max = state.eMarks[start];
+    
+    if (pos + marker.length > max) {
+      return false;
+    }
+    
+    if (state.src.slice(pos, pos + marker.length) !== marker) {
+      return false;
+    }
+    
+    pos += marker.length;
+    let firstLine = state.src.slice(pos, max).trim();
+    
+    if (firstLine.endsWith(marker)) {
+      // Single line: $$content$$
+      firstLine = firstLine.slice(0, -marker.length).trim();
+      if (!silent) {
+        const token = state.push('math_block', 'math', 0);
+        token.content = firstLine;
+        token.markup = marker;
+        token.map = [start, start + 1];
+      }
+      state.line = start + 1;
+      return true;
+    }
+    
+    // Multi-line block
+    let nextLine = start + 1;
+    let content = firstLine + '\n';
+    
+    while (nextLine < end) {
+      pos = state.bMarks[nextLine] + state.tShift[nextLine];
+      max = state.eMarks[nextLine];
+      
+      const line = state.src.slice(pos, max);
+      if (line.trim() === marker) {
+        if (!silent) {
+          const token = state.push('math_block', 'math', 0);
+          token.content = content.trim();
+          token.markup = marker;
+          token.map = [start, nextLine + 1];
+        }
+        state.line = nextLine + 1;
+        return true;
+      }
+      
+      content += line + '\n';
+      nextLine++;
+    }
+    
+    return false;
+  });
+  
+  // Renderer for inline math
+  md.renderer.rules.math_inline = function(tokens, idx) {
+    const token = tokens[idx];
+    try {
+      // Sanitize input to prevent XSS
+      const sanitizedContent = token.content
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+      
+      const rendered = katex.renderToString(sanitizedContent, {
+        displayMode: false,
+        throwOnError: false,
+        errorColor: '#cc0000',
+        strict: 'warn',
+        trust: false, // Disable \url and other potentially dangerous commands
+        maxSize: 10, // Limit size to prevent DoS
+        maxExpand: 1000 // Limit macro expansion
+      });
+      return `<span class="math math-inline">${rendered}</span>`;
+    } catch (error) {
+      console.warn('KaTeX inline rendering error:', error);
+      return `<span class="math-error" title="Math rendering error">${token.content}</span>`;
+    }
+  };
+  
+  // Renderer for block math
+  md.renderer.rules.math_block = function(tokens, idx) {
+    const token = tokens[idx];
+    try {
+      // Sanitize input to prevent XSS
+      const sanitizedContent = token.content
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+      
+      const rendered = katex.renderToString(sanitizedContent, {
+        displayMode: true,
+        throwOnError: false,
+        errorColor: '#cc0000',
+        strict: 'warn',
+        trust: false, // Disable \url and other potentially dangerous commands
+        maxSize: 20, // Allow larger size for display mode
+        maxExpand: 1000 // Limit macro expansion
+      });
+      return `<div class="math math-display">${rendered}</div>`;
+    } catch (error) {
+      console.warn('KaTeX block rendering error:', error);
+      return `<div class="math-error" title="Math rendering error"><pre>${token.content}</pre></div>`;
+    }
+  };
+}
+
+// Initialize markdown-it with plugins
+function createMarkdownParser() {
+  const md = new MarkdownIt({
+    html: true,
+    breaks: true,
+    linkify: true,
+    typographer: true,
   });
 
-  // STEP 1: Process definition lists first
-  processedContent = processDefinitionLists(processedContent);
-  
-  // STEP 2: Process math equations with placeholders, avoiding code blocks
-  const mathPlaceholders: Map<string, string> = new Map();
-  
-  // Create a more sophisticated math processing that avoids code blocks
-  function processMathOutsideCodeBlocks(content: string): string {
-    // Split content by code blocks and inline code to avoid processing math inside them
-    const parts: Array<{content: string, isCode: boolean}> = [];
+  // Add plugins
+  md.use(markdownItFootnote);
+  md.use(markdownItMark);
+  md.use(customKatexPlugin);
+  md.use(markdownItDeflist);
+
+  return md;
+}
+
+// Custom renderer for code blocks with syntax highlighting
+function customCodeRenderer(md: MarkdownIt, toc: TocItem[]) {
+  // Override fence renderer for code blocks
+  md.renderer.rules.fence = function(tokens, idx) {
+    const token = tokens[idx];
+    const info = token.info ? token.info.trim() : '';
+    const langName = info.split(/\s+/g)[0];
     
-    // First, split by fenced code blocks
-    const codeBlockRegex = /```[\s\S]*?```/g;
-    let lastIndex = 0;
-    let match;
-    
-    while ((match = codeBlockRegex.exec(content)) !== null) {
-      // Add content before code block
-      if (match.index > lastIndex) {
-        parts.push({
-          content: content.slice(lastIndex, match.index),
-          isCode: false
-        });
+    // Special handling for mermaid diagrams
+    if (langName.toLowerCase() === 'mermaid') {
+      const cleanedContent = token.content.trim();
+      if (!cleanedContent) {
+        return '<div class="mermaid-container"><div class="mermaid-error">Empty mermaid diagram.</div></div>';
       }
-      // Add code block
-      parts.push({
-        content: match[0],
-        isCode: true
-      });
-      lastIndex = match.index + match[0].length;
+
+      const diagramId = `mermaid-diagram-${Math.random().toString(36).substring(2, 11)}`;
+      return `
+        <div class="mermaid-container">
+          <div class="mermaid-diagram" id="${diagramId}">
+            <pre class="mermaid">${cleanedContent}</pre>
+          </div>
+          <div class="mermaid-loading">Loading diagram...</div>
+        </div>
+      `;
     }
+
+    // Map common language aliases
+    const languageMap: { [key: string]: string } = {
+      'js': 'javascript',
+      'ts': 'typescript',
+      'jsx': 'jsx',
+      'tsx': 'tsx',
+      'css': 'css',
+      'json': 'json',
+      'bash': 'bash',
+      'shell': 'bash',
+      'sh': 'bash',
+      'md': 'markdown',
+      'yaml': 'yaml',
+      'yml': 'yaml',
+      'html': 'markup',
+      'xml': 'markup',
+      'py': 'python',
+      'c++': 'cpp',
+      'sql': 'sql',
+      'rust': 'rust',
+      'rs': 'rust',
+      'go': 'go',
+      'golang': 'go',
+      'latex': 'latex',
+      'tex': 'latex'
+    };
+
+    const normalizedLang = langName ? languageMap[langName.toLowerCase()] || langName.toLowerCase() : 'text';
+    const displayLang = langName || 'text';
     
-    // Add remaining content
-    if (lastIndex < content.length) {
-      parts.push({
-        content: content.slice(lastIndex),
-        isCode: false
-      });
-    }
-    
-    // Now process each non-code part for inline code and math
-    return parts.map(part => {
-      if (part.isCode) {
-        return part.content; // Don't process math in code blocks
-      }
-      
-      // For non-code parts, split by inline code and process math
-      const inlineCodeRegex = /`([^`\n]+?)`/g;
-      const subParts: Array<{content: string, isCode: boolean}> = [];
-      let subLastIndex = 0;
-      let subMatch;
-      
-      while ((subMatch = inlineCodeRegex.exec(part.content)) !== null) {
-        // Add content before inline code
-        if (subMatch.index > subLastIndex) {
-          subParts.push({
-            content: part.content.slice(subLastIndex, subMatch.index),
-            isCode: false
-          });
-        }
-        // Add inline code
-        subParts.push({
-          content: subMatch[0],
-          isCode: true
-        });
-        subLastIndex = subMatch.index + subMatch[0].length;
-      }
-      
-      // Add remaining content
-      if (subLastIndex < part.content.length) {
-        subParts.push({
-          content: part.content.slice(subLastIndex),
-          isCode: false
-        });
-      }
-      
-      // Process math only in non-code subparts
-      return subParts.map(subPart => {
-        if (subPart.isCode) {
-          return subPart.content; // Don't process math in inline code
-        }
-        
-        // Process math in this non-code content
-        let mathProcessedContent = subPart.content;
-        
-        // Process display math ($$...$$)
-        mathProcessedContent = mathProcessedContent.replace(/\$\$([\s\S]*?)\$\$/g, (_match, equation) => {
-          const placeholderId = `MATH_DISPLAY_${Math.random().toString(36).substring(2, 11)}`;
-          mathPlaceholders.set(placeholderId, renderMath(equation.trim(), true));
-          return `<!-- ${placeholderId} -->`;
-        });
-        
-        // Process inline math ($...$) - avoid already processed display math
-        mathProcessedContent = mathProcessedContent.replace(/(?<!\$)\$([^$\n]+?)\$(?!\$)/g, (_match, equation) => {
-          const placeholderId = `MATH_INLINE_${Math.random().toString(36).substring(2, 11)}`;
-          mathPlaceholders.set(placeholderId, renderMath(equation.trim(), false));
-          return `<!-- ${placeholderId} -->`;
-        });
-        
-        return mathProcessedContent;
-      }).join('');
-    }).join('');
-  }
-  
-  processedContent = processMathOutsideCodeBlocks(processedContent);
-  
-  // STEP 3: Process highlighted text with placeholders to avoid interference with marked.js
-  const highlightPlaceholders: Map<string, string> = new Map();
-  let highlightCounter = 0;
-  
-  // First collect all highlight matches
-  const highlightMatches: Array<{ match: string; text: string; placeholderId: string }> = [];
-  const highlightRegex = /==([^=]+?)==/g;
-  let match;
-  
-  while ((match = highlightRegex.exec(processedContent)) !== null) {
-    const placeholderId = `HIGHLIGHT_${highlightCounter++}_${Math.random().toString(36).substr(2, 9)}`;
-    highlightMatches.push({
-      match: match[0],
-      text: match[1].trim(),
-      placeholderId
-    });
-  }
-  
-  // Process each highlight text as inline markdown and store in placeholders
-  for (const { match, text, placeholderId } of highlightMatches) {
-    const processedText = await marked.parseInline(text);
-    const highlightHtml = `<mark class="highlighted-text">${processedText}</mark>`;
-    highlightPlaceholders.set(placeholderId, highlightHtml);
-    processedContent = processedContent.replace(match, `<!-- ${placeholderId} -->`);
-  }
-  
-  // STEP 4: Process footnotes
-  const { content: contentWithFootnotes, footnotes } = await processFootnotes(processedContent);
-  processedContent = contentWithFootnotes;
-  
-  // Configure marked with custom renderer
-  const renderer = {
-    heading({ tokens, depth }: { tokens: any[]; depth: number }) {
-      const text = tokens.map(token => token.raw || token.text || '').join('');
-      const id = text
-        .toLowerCase()
-        .replace(/[^\w\s-]/g, '')
-        .replace(/\s+/g, '-')
-        .trim();
-      
-      // Skip the first H1 if removeMainTitle is true
-      if (removeMainTitle && depth === 1 && isFirstH1) {
-        isFirstH1 = false;
-        return '';
-      }
-      
-      toc.push({
-        id,
-        title: text,
-        level: depth
-      });
-
-      return `<h${depth} id="${id}">${text}</h${depth}>`;
-    },
-    image(token: any) {
-      const { href, title, text } = token;
-      // If we have an asset map and the href is in it, use the resolved URL
-      const resolvedHref = assetMap?.get(href) || href;
-      
-      const titleAttr = title ? ` title="${title}"` : '';
-      return `<img src="${resolvedHref}" alt="${text}"${titleAttr} loading="lazy" />`;
-    },
-    code({ text, lang }: { text: string; lang?: string }) {
-      // Special handling for mermaid diagrams
-      if (typeof lang === 'string' && lang.trim().toLowerCase() === 'mermaid') {
-          const cleanedText = (text || '').trim();
-          if (!cleanedText) {
-            return `<div class="mermaid-container"><div class="mermaid-error">Empty mermaid diagram.</div></div>`;
-          }
-
-          // debugger;
-          const diagramId = `mermaid-diagram-${Math.random().toString(36).substring(2, 11)}`;
-          return `
-            <div class="mermaid-container">
-              <div class="mermaid-diagram" id="${diagramId}">
-                <pre class="mermaid">${cleanedText}</pre>
-              </div>
-              <div class="mermaid-loading">Loading diagram...</div>
-            </div>
-          `;
-      }
-      
-      // Map common language aliases (only for languages we've imported)
-      const languageMap: { [key: string]: string } = {
-        'js': 'javascript',
-        'ts': 'typescript',
-        'jsx': 'jsx',
-        'tsx': 'tsx',
-        'css': 'css',
-        'json': 'json',
-        'bash': 'bash',
-        'shell': 'bash',
-        'sh': 'bash',
-        'md': 'markdown',
-        'yaml': 'yaml',
-        'yml': 'yaml',
-        'html': 'markup',
-        'xml': 'markup',
-        'py': 'python',
-        'c++': 'cpp',
-        'sql': 'sql',
-        'rust': 'rust',
-        'rs': 'rust',
-        'go': 'go',
-        'golang': 'go',
-        'latex': 'latex',
-        'tex': 'latex'
-      };
-
-      const normalizedLang = lang ? languageMap[lang.toLowerCase()] || lang.toLowerCase() : 'text';
-      const displayLang = lang || 'text';
-      
-      try {
-        // Always try to highlight with Prism if language is available
-        if (normalizedLang && Prism.languages[normalizedLang]) {
-          const highlighted = Prism.highlight(text, Prism.languages[normalizedLang], normalizedLang);
-          return `
-            <div class="code-block-container">
-              <div class="code-block-banner">
-                <div class="code-block-controls">
-                  <button class="code-block-toggle" title="Toggle code block">
-                    <span class="toggle-icon">▼</span>
-                  </button>
-                  <span class="code-block-language">${displayLang}</span>
-                </div>
-                <button class="code-block-copy" title="Copy">
-                  <span class="copy-icon">📄</span>
+    try {
+      // Try to highlight with Prism if language is available
+      if (normalizedLang && Prism.languages[normalizedLang]) {
+        const highlighted = Prism.highlight(token.content, Prism.languages[normalizedLang], normalizedLang);
+        return `
+          <div class="code-block-container">
+            <div class="code-block-banner">
+              <div class="code-block-controls">
+                <button class="code-block-toggle" title="Toggle code block">
+                  <span class="toggle-icon">▼</span>
                 </button>
+                <span class="code-block-language">${displayLang}</span>
               </div>
-              <pre class="language-${normalizedLang} code-block-content"><code class="language-${normalizedLang}">${highlighted}</code></pre>
+              <button class="code-block-copy" title="Copy">
+                <span class="copy-icon">📄</span>
+              </button>
             </div>
-          `;
-        } else {
-          // Fallback: escape HTML and return with basic styling
-          const escapedText = text
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#39;');
-          return `
-            <div class="code-block-container">
-              <div class="code-block-banner">
-                <div class="code-block-controls">
-                  <button class="code-block-toggle" title="Toggle code block">
-                    <span class="toggle-icon">▼</span>
-                  </button>
-                  <span class="code-block-language">${displayLang}</span>
-                </div>
-                <button class="code-block-copy" title="Copy">
-                  <span class="copy-icon">📄</span>
-                </button>
-              </div>
-              <pre class="language-text code-block-content"><code class="language-text">${escapedText}</code></pre>
-            </div>
-          `;
-        }
-      } catch (error) {
-        console.warn(`Failed to highlight code for language: ${normalizedLang}`, error);
-        const escapedText = text
+            <pre class="language-${normalizedLang} code-block-content"><code class="language-${normalizedLang}">${highlighted}</code></pre>
+          </div>
+        `;
+      } else {
+        // Fallback: escape HTML and return with basic styling
+        const escapedContent = token.content
           .replace(/&/g, '&amp;')
           .replace(/</g, '&lt;')
           .replace(/>/g, '&gt;')
@@ -493,82 +307,140 @@ export async function parseMarkdown(
                 <span class="code-block-language">${displayLang}</span>
               </div>
               <button class="code-block-copy" title="Copy">
-                <span class="copy-icon">📋</span>
+                <span class="copy-icon">📄</span>
               </button>
             </div>
-            <pre class="language-text code-block-content"><code class="language-text">${escapedText}</code></pre>
+            <pre class="language-text code-block-content"><code class="language-text">${escapedContent}</code></pre>
           </div>
         `;
       }
+    } catch (error) {
+      console.warn(`Failed to highlight code for language: ${normalizedLang}`, error);
+      const escapedContent = token.content
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+      return `
+        <div class="code-block-container">
+          <div class="code-block-banner">
+            <div class="code-block-controls">
+              <button class="code-block-toggle" title="Toggle code block">
+                <span class="toggle-icon">▼</span>
+              </button>
+              <span class="code-block-language">${displayLang}</span>
+            </div>
+            <button class="code-block-copy" title="Copy">
+              <span class="copy-icon">📋</span>
+            </button>
+          </div>
+          <pre class="language-text code-block-content"><code class="language-text">${escapedContent}</code></pre>
+        </div>
+      `;
     }
   };
 
-  // Configure marked options
-  marked.use({
-    renderer,
-    gfm: true,
-    breaks: true
-  });
+  // Override heading renderer to generate TOC
+  md.renderer.rules.heading_open = function(tokens, idx) {
+    const token = tokens[idx];
+    const level = parseInt(token.tag.substring(1));
+    
+    // Get the heading text from the next token
+    const textToken = tokens[idx + 1];
+    const text = textToken && textToken.type === 'inline' ? textToken.content : '';
+    
+    // Generate ID from text
+    const id = text
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .trim();
+    
+    // Add to TOC
+    toc.push({
+      id,
+      title: text,
+      level
+    });
 
-  try {
-    const html = await marked.parse(processedContent);
+    // Add id attribute to the token
+    token.attrSet('id', id);
     
-    // Post-process the HTML to resolve all relative asset paths
-    let finalHtml = typeof html === 'string' ? html : '';
+    return `<${token.tag} id="${id}">`;
+  };
+
+  // Override image renderer to support asset mapping
+  md.renderer.rules.image = function(tokens, idx, options, env, renderer) {
+    const token = tokens[idx];
+    const srcIndex = token.attrIndex('src');
     
-    // STEP 2: Restore math equations
-    finalHtml = finalHtml.replace(/<!-- (MATH_(?:DISPLAY|INLINE)_[a-z0-9]+) -->/g, (match, placeholderId) => {
-      const mathHtml = mathPlaceholders.get(placeholderId);
-      if (mathHtml) {
-        return mathHtml;
-      }
-      console.warn('Math placeholder not found:', match, placeholderId);
-      return match; // fallback to original placeholder if not found
-    });
-    
-    // STEP 3: Restore highlight text
-    finalHtml = finalHtml.replace(/<!-- (HIGHLIGHT_[a-z0-9_]+) -->/g, (match, placeholderId) => {
-      const highlightHtml = highlightPlaceholders.get(placeholderId);
-      if (highlightHtml) {
-        return highlightHtml;
-      }
-      console.warn('Highlight placeholder not found:', match, placeholderId);
-      return match; // fallback to original placeholder if not found
-    });
-    
-    // Append footnotes to the end of content if there are any
-    if (footnotes && footnotes.length > 0) {
-      const footnotesSection = `
-        <hr class="footnote-divider">
-        <section class="footnotes">
-          <h3 class="footnotes-title">Footnotes</h3>
-          <ol class="footnotes-list">
-            ${footnotes.map(fn => `
-              <li id="footnote-${fn.id}" class="footnote-item">
-                <p>${fn.content} <a href="#footnote-ref-${fn.id}-${fn.originalId || fn.id}" class="footnote-backref" title="Go back to text">↩</a></p>
-              </li>
-            `).join('')}
-          </ol>
-        </section>
-      `;
-      finalHtml += footnotesSection;
+    if (srcIndex >= 0 && env.assetMap) {
+      const src = token.attrs![srcIndex][1];
+      const resolvedSrc = env.assetMap.get(src) || src;
+      token.attrs![srcIndex][1] = resolvedSrc;
     }
     
-    if (assetMap && assetMap.size > 0) {
-      // Replace all relative paths in HTML img src attributes
-      finalHtml = finalHtml.replace(
-        /<img([^>]*)\ssrc=["']([^"']*?)["']([^>]*)>/gi,
-        (_fullMatch, before, src, after) => {
-          const resolvedSrc = assetMap.get(src) || src;
-          return `<img${before} src="${resolvedSrc}"${after}>`;
-        }
-      );
+    // Add loading="lazy" attribute
+    token.attrSet('loading', 'lazy');
+    
+    return renderer.renderToken(tokens, idx, options);
+  };
+
+  return md;
+}
+
+export async function parseMarkdown(
+  content: string, 
+  removeMainTitle: boolean = false,
+  assetMap?: Map<string, string>
+): Promise<ParsedMarkdown> {
+  const toc: TocItem[] = [];
+  
+  // Parse frontmatter and body using gray-matter
+  const parsed = matter(content);
+  const frontmatter = parsed.data;
+  let bodyContent = parsed.content;
+  
+  // Process template variables in body content using frontmatter values
+  Object.entries(frontmatter).forEach(([key, value]) => {
+    // Skip createTime as we'll handle it separately in the component
+    if (key === 'createTime') {
+      return;
+    }
+    
+    const regex = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
+    bodyContent = bodyContent.replace(regex, String(value));
+  });
+
+  // Create markdown parser with custom renderers
+  const md = createMarkdownParser();
+  customCodeRenderer(md, toc);
+
+  // Set up environment for asset mapping
+  const env = {
+    assetMap
+  };
+
+  try {
+    // Parse markdown content
+    let html = md.render(bodyContent, env);
+    
+    // Remove first H1 if requested
+    if (removeMainTitle && toc.length > 0 && toc[0].level === 1) {
+      // Remove the first heading from TOC
+      toc.shift();
       
-      // Replace all relative paths in HTML a href attributes (for downloads, etc.)
-      finalHtml = finalHtml.replace(
+      // Remove the first H1 from HTML
+      html = html.replace(/<h1[^>]*>.*?<\/h1>/, '');
+    }
+    
+    // Post-process for asset mapping if provided
+    if (assetMap && assetMap.size > 0) {
+      // Replace relative paths in HTML a href attributes
+      html = html.replace(
         /<a([^>]*)\shref=["']([^"']*?)["']([^>]*)>/gi,
         (fullMatch, before, href, after) => {
-          // Only replace if it's a relative path that exists in our asset map
           if (assetMap.has(href)) {
             const resolvedHref = assetMap.get(href);
             return `<a${before} href="${resolvedHref}"${after}>`;
@@ -577,8 +449,8 @@ export async function parseMarkdown(
         }
       );
       
-      // Replace all relative paths in CSS url() functions within style attributes
-      finalHtml = finalHtml.replace(
+      // Replace relative paths in CSS url() functions within style attributes
+      html = html.replace(
         /style=["']([^"']*?)["']/gi,
         (_fullMatch, styleContent) => {
           const updatedStyle = styleContent.replace(
@@ -594,7 +466,7 @@ export async function parseMarkdown(
     }
     
     return {
-      html: finalHtml,
+      html,
       toc,
       createTime: frontmatter.createTime
     };
