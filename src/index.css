@@ -303,7 +303,7 @@ mark.highlighted-text {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 3rem;
+  padding: 0; /* Remove padding for precise button positioning */
   min-height: 300px;
   background: #ffffff;
   border: 1px solid #e2e8f0;
@@ -397,7 +397,7 @@ mark.highlighted-text {
   box-shadow: 0 2px 4px rgba(79, 70, 229, 0.3);
   z-index: 100;
   pointer-events: auto;
-  /* Position absolutely in the top right corner of SVG container */
+  /* Position absolutely relative to mermaid-container, not SVG container */
   position: absolute;
   top: 12px;
   right: 12px;
@@ -405,7 +405,7 @@ mark.highlighted-text {
   height: 40px;
 }
 
-.mermaid-svg-container:hover .mermaid-download-btn {
+.mermaid-diagram:hover .mermaid-download-btn {
   opacity: 0.9;
 }
 

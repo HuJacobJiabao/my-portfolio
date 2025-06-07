@@ -129,12 +129,11 @@ export const renderMermaidDiagrams = async (): Promise<void> => {
         downloadBtn.addEventListener('click', () => {
           downloadSvg(svg, `${id || 'mermaid-diagram'}.svg`);
         });
-        
-        // Add SVG to container
-        svgContainer.appendChild(svgElement);
-        
+
         // Add button directly to SVG container
         svgContainer.appendChild(downloadBtn);
+        // Add SVG to container
+        svgContainer.appendChild(svgElement);
         
         // Add SVG container to wrapper
         wrapper.appendChild(svgContainer);
