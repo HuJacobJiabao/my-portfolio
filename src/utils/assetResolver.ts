@@ -111,6 +111,20 @@ function calculateRelativePaths(markdownFolderPath: string, assetPath: string): 
     }
   }
   
+  // Case 4: Additional sibling directory patterns for same content type
+  // For projects/folder1/ accessing projects/folder2/, also generate ../folder2/ pattern
+  if (markdownParts.length >= 2 && assetParts.length >= 3) {
+    const markdownContentType = markdownParts[markdownParts.length - 2]; // e.g., "projects"
+    const assetContentType = assetParts[assetParts.length - 3]; // e.g., "projects"
+    
+    if (markdownContentType === assetContentType) {
+      const assetFolderName = assetParts[assetParts.length - 2]; // e.g., "test-project-1"
+      const siblingPattern = `../${assetFolderName}/${assetFilename}`;
+      relativePaths.push(siblingPattern);
+      console.log(`Case 4: Sibling directory pattern: ${siblingPattern}`);
+    }
+  }
+  
   // 新增：始终加入“从 markdown 文件夹到 asset 的相对路径”
   try {
     const from = [...markdownParts];

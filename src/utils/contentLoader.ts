@@ -55,47 +55,52 @@ export async function loadBlogPosts(): Promise<BlogPost[]> {
       // Resolve the cover image path
       let resolvedImagePath: string | undefined;
       
-      if (frontmatter.coverImage && frontmatter.coverImage !== 'default') {
-        const imagePath = frontmatter.coverImage;
-        
-        // Handle relative paths
-        let fullImagePath: string;
-        if (imagePath.startsWith('./')) {
-          // Same directory
-          fullImagePath = folderPath + '/' + imagePath.slice(2);
-        } else if (imagePath.startsWith('../')) {
-          // Parent directory - resolve relative path
-          const relativeParts = imagePath.split('/');
-          const baseParts = folderPath.split('/');
-          
-          let upLevels = 0;
-          const remainingParts: string[] = [];
-          
-          for (const part of relativeParts) {
-            if (part === '..') {
-              upLevels++;
-            } else if (part !== '.') {
-              remainingParts.push(part);
-            }
-          }
-          
-          const resolvedBaseParts = baseParts.slice(0, -upLevels);
-          fullImagePath = resolvedBaseParts.concat(remainingParts).join('/');
-        } else if (imagePath.startsWith('/')) {
-          // Absolute path from src root
-          fullImagePath = '../' + imagePath.slice(1);
+      if (frontmatter.coverImage) {
+        if (frontmatter.coverImage === 'default') {
+          // Use the default cover image
+          resolvedImagePath = `${import.meta.env.BASE_URL}default_cover.jpg`;
         } else {
-          // Relative to current folder
-          fullImagePath = folderPath + '/' + imagePath;
-        }
+          const imagePath = frontmatter.coverImage;
+        
+          // Handle relative paths
+          let fullImagePath: string;
+          if (imagePath.startsWith('./')) {
+            // Same directory
+            fullImagePath = folderPath + '/' + imagePath.slice(2);
+          } else if (imagePath.startsWith('../')) {
+            // Parent directory - resolve relative path
+            const relativeParts = imagePath.split('/');
+            const baseParts = folderPath.split('/');
+            
+            let upLevels = 0;
+            const remainingParts: string[] = [];
+            
+            for (const part of relativeParts) {
+              if (part === '..') {
+                upLevels++;
+              } else if (part !== '.') {
+                remainingParts.push(part);
+              }
+            }
+            
+            const resolvedBaseParts = baseParts.slice(0, -upLevels);
+            fullImagePath = resolvedBaseParts.concat(remainingParts).join('/');
+          } else if (imagePath.startsWith('/')) {
+            // Absolute path from src root
+            fullImagePath = '../' + imagePath.slice(1);
+          } else {
+            // Relative to current folder
+            fullImagePath = folderPath + '/' + imagePath;
+          }
 
-        // Find matching asset module
-        const assetKey = Object.keys(assetModules).find(key => key === fullImagePath);
-        if (assetKey && assetModules[assetKey]) {
-          try {
-            resolvedImagePath = await assetModules[assetKey]() as string;
-          } catch (error) {
-            console.warn(`Could not load asset: ${fullImagePath}`, error);
+          // Find matching asset module
+          const assetKey = Object.keys(assetModules).find(key => key === fullImagePath);
+          if (assetKey && assetModules[assetKey]) {
+            try {
+              resolvedImagePath = await assetModules[assetKey]() as string;
+            } catch (error) {
+              console.warn(`Could not load asset: ${fullImagePath}`, error);
+            }
           }
         }
       }
@@ -158,14 +163,18 @@ export async function loadProjects(): Promise<Project[]> {
       // Resolve the cover image path
       let resolvedImagePath: string | undefined;
       
-      if (frontmatter.coverImage && frontmatter.coverImage !== 'default') {
-        const imagePath = frontmatter.coverImage;
+      if (frontmatter.coverImage) {
+        if (frontmatter.coverImage === 'default') {
+          // Use the default cover image
+          resolvedImagePath = `${import.meta.env.BASE_URL}default_cover.jpg`;
+        } else {
+          const imagePath = frontmatter.coverImage;
         
-        // Try to resolve using the asset map first (for cross-folder references)
-        resolvedImagePath = assetMap.get(imagePath);
+          // Try to resolve using the asset map first (for cross-folder references)
+          resolvedImagePath = assetMap.get(imagePath);
         
-        // If not found in asset map, fall back to manual resolution
-        if (!resolvedImagePath) {
+          // If not found in asset map, fall back to manual resolution
+          if (!resolvedImagePath) {
           // Handle relative paths
           let fullImagePath: string;
         if (imagePath.startsWith('./')) {
@@ -207,6 +216,7 @@ export async function loadProjects(): Promise<Project[]> {
           }
         }
         }
+      }
       }
 
       const project: Project = {

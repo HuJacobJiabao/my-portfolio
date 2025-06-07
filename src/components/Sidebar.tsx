@@ -327,6 +327,9 @@ const Sidebar: React.FC<SidebarProps> = React.memo(({
   // Determine what to show in navigation based on context
   const showItems = items.length > 0 && itemType;
 
+  // Determine if we should show the navigation card at all
+  const shouldShowNavigationCard = showItems || (!itemType && sections.length > 0);
+
   // Prepare TOC items without automatic numbering
   const preparedItems = itemType === 'toc' && items ? prepareTocItems(items) : items;
 
@@ -356,86 +359,88 @@ const Sidebar: React.FC<SidebarProps> = React.memo(({
       </div>
 
       {/* Navigation Card with sticky behavior */}
-      <div style={{ position: 'relative' }}>
-        {/* Placeholder to maintain layout when sticky */}
-        {isSticky && cardWidth && (
+      {shouldShowNavigationCard && (
+        <div style={{ position: 'relative' }}>
+          {/* Placeholder to maintain layout when sticky */}
+          {isSticky && cardWidth && (
+            <div 
+              ref={placeholderRef}
+              style={{ 
+                height: '250px', // Approximate height to maintain layout
+                width: `${cardWidth}px`
+              }} 
+            />
+          )}
+          
           <div 
-            ref={placeholderRef}
-            style={{ 
-              height: '250px', // Approximate height to maintain layout
-              width: `${cardWidth}px`
-            }} 
-          />
-        )}
-        
-        <div 
-          ref={navigationCardRef}
-          className={`${styles.navigationCard} ${isSticky ? styles.stickyNavigationCard : ''}`}
-          style={isSticky && cardWidth && cardLeft !== null ? {
-            position: 'fixed',
-            top: (() => {
-              // More precise positioning based on navbar visibility
-              if (navbarVisible) {
-                // Navbar is visible, leave space for it
-                return '80px';
-              } else {
-                // Navbar is hidden, use minimal top space
-                return '20px';
-              }
-            })(),
-            left: `${cardLeft}px`,
-            width: `${cardWidth}px`,
-            zIndex: 1001, // Higher than navbar to avoid conflicts
-            boxSizing: 'border-box',
-            transition: 'top 0.3s ease' // Smooth transition synchronized with navbar
-          } : undefined}
-        >
-        {showItems ? (
-          <>
-            <h4>{itemType === 'project' ? 'Projects' : itemType === 'blog' ? 'Blog Posts' : itemType === 'toc' ? 'Catalog' : 'Archive Items'}</h4>
-            <nav className={styles.navList}>
-              {itemType === 'toc' ? (
-                // Enhanced TOC with nested structure and visual hierarchy
-                <div className={styles.tocContainer}>
-                  {renderNestedTOC(preparedItems || [])}
-                </div>
-              ) : (
-                // Default rendering for other item types
-                items?.map((item, index) => (
+            ref={navigationCardRef}
+            className={`${styles.navigationCard} ${isSticky ? styles.stickyNavigationCard : ''}`}
+            style={isSticky && cardWidth && cardLeft !== null ? {
+              position: 'fixed',
+              top: (() => {
+                // More precise positioning based on navbar visibility
+                if (navbarVisible) {
+                  // Navbar is visible, leave space for it
+                  return '80px';
+                } else {
+                  // Navbar is hidden, use minimal top space
+                  return '20px';
+                }
+              })(),
+              left: `${cardLeft}px`,
+              width: `${cardWidth}px`,
+              zIndex: 1001, // Higher than navbar to avoid conflicts
+              boxSizing: 'border-box',
+              transition: 'top 0.3s ease' // Smooth transition synchronized with navbar
+            } : undefined}
+          >
+          {showItems ? (
+            <>
+              <h4>{itemType === 'project' ? 'Projects' : itemType === 'blog' ? 'Blog Posts' : itemType === 'toc' ? 'Catalog' : 'Archive Items'}</h4>
+              <nav className={styles.navList}>
+                {itemType === 'toc' ? (
+                  // Enhanced TOC with nested structure and visual hierarchy
+                  <div className={styles.tocContainer}>
+                    {renderNestedTOC(preparedItems || [])}
+                  </div>
+                ) : (
+                  // Default rendering for other item types
+                  items?.map((item, index) => (
+                    <button
+                      key={index}
+                      className={`${styles.navItem} ${styles.itemNavItem}`}
+                      onClick={() => onItemClick && onItemClick(index)}
+                      title={item.title}
+                    >
+                      <span className={styles.navIcon}>
+                        {itemType === 'project' ? '💻' : itemType === 'blog' ? '📝' : '📁'}
+                      </span>
+                      <span className={styles.itemTitle}>{item.title}</span>
+                    </button>
+                  ))
+                )}
+              </nav>
+            </>
+          ) : (
+            <>
+              <h4>Navigation</h4>
+              <nav className={styles.navList}>
+                {sections.map(section => (
                   <button
-                    key={index}
-                    className={`${styles.navItem} ${styles.itemNavItem}`}
-                    onClick={() => onItemClick && onItemClick(index)}
-                    title={item.title}
+                    key={section.id}
+                    className={`${styles.navItem} ${activeSection === section.id ? styles.active : ''}`}
+                    onClick={() => onSectionChange(section.id)}
                   >
-                    <span className={styles.navIcon}>
-                      {itemType === 'project' ? '💻' : itemType === 'blog' ? '📝' : '📁'}
-                    </span>
-                    <span className={styles.itemTitle}>{item.title}</span>
+                    <span className={styles.navIcon}>{section.icon}</span>
+                    <span>{section.title}</span>
                   </button>
-                ))
-              )}
-            </nav>
-          </>
-        ) : (
-          <>
-            <h4>Navigation</h4>
-            <nav className={styles.navList}>
-              {sections.map(section => (
-                <button
-                  key={section.id}
-                  className={`${styles.navItem} ${activeSection === section.id ? styles.active : ''}`}
-                  onClick={() => onSectionChange(section.id)}
-                >
-                  <span className={styles.navIcon}>{section.icon}</span>
-                  <span>{section.title}</span>
-                </button>
-              ))}
-            </nav>
-          </>
-        )}
+                ))}
+              </nav>
+            </>
+          )}
+        </div>
       </div>
-    </div>
+      )}
     </div>
   );
 });

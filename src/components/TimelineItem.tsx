@@ -49,9 +49,9 @@ export default function TimelineItem({
       <div className={styles.itemInfo}>
         <div className={styles.itemHeader}>
           <h3 className={styles.itemTitle}>{title}</h3>
-          <span className={`${styles.typeIndicator} ${styles[type]}`}>
-            {type.toUpperCase()}
-          </span>
+            <span className={`${styles.typeIndicator} ${styles[type]}`}>
+            {type === 'project' ? 'Proj' : type.charAt(0).toUpperCase() + type.slice(1)}
+            </span>
         </div>
         <div className={styles.itemMeta}>
           <span className={styles.itemDate}>

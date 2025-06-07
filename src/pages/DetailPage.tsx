@@ -350,11 +350,23 @@ export default function DetailPage() {
     );
   }
 
+  // Determine the appropriate header background
+  const getHeaderBackground = () => {
+    // If contentItem.image is empty/undefined or contains default_cover.jpg, use content-type-specific background
+    if (!contentItem.image || contentItem.image.includes('default_cover.jpg')) {
+      return contentType === 'project' 
+        ? `${import.meta.env.BASE_URL}background/default_proj.jpg`
+        : `${import.meta.env.BASE_URL}background/default_blog.png`;
+    }
+    // Otherwise use the contentItem.image as is
+    return contentItem.image;
+  };
+
   // Only render Layout when all data is ready
   return (
     <Layout
       title={contentItem.title}
-      headerBackground={contentItem.image}
+      headerBackground={getHeaderBackground()}
       sidebarItems={sidebarItems}
       sidebarItemType="toc"
       onSidebarItemClick={handleSidebarItemClick}
