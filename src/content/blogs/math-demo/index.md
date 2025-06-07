@@ -73,6 +73,7 @@ $$
 Inline: $\alpha, \beta, \gamma, \delta, \epsilon, \zeta, \eta, \theta$
 
 Display:
+
 $$
 \sum_{i=1}^{n} x_i = \mu \pm \sigma \sqrt{n}
 $$
