@@ -40,6 +40,10 @@ const downloadSvg = (svgContent: string, filename: string): void => {
 
 export const renderMermaidDiagrams = async (): Promise<void> => {
   initializeMermaid();
+  
+  // Clean up any orphaned divs from previous failed renders
+  cleanupOrphanedMermaidDivs();
+  
   const mermaidContainers = document.querySelectorAll('.mermaid-container');
 
   for (const container of mermaidContainers) {
@@ -57,6 +61,9 @@ export const renderMermaidDiagrams = async (): Promise<void> => {
     const id = diagramDiv.id;
     const code = mermaidPre.textContent?.trim();
 
+    // Clean up any existing orphaned div from previous failed renders
+    document.getElementById(`d${id}`)?.remove();
+
     if (!code) {
       loadingDiv.textContent = 'Empty diagram code.';
       continue;
@@ -65,19 +72,19 @@ export const renderMermaidDiagrams = async (): Promise<void> => {
     try {
       const { svg, bindFunctions } = await mermaid.render(id, code);
       
+      // Remove Mermaid's automatically inserted div to prevent "Syntax error in text" artifacts
+      document.getElementById(`d${id}`)?.remove();
+      
       console.log(`✅ SVG generated for ${id}`);
 
-      // Clear the container
+      // Clear the diagram container and hide the original code
       diagramDiv.innerHTML = '';
+      mermaidPre.style.display = 'none'; // Hide the original code block
       
       // Create a temporary container to parse the SVG string
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = svg;
       const svgElement = tempDiv.querySelector('svg');
-
-      // Create wrapper div with mermaid-diagram class for proper CSS targeting
-      const wrapper = document.createElement('div');
-      wrapper.className = 'mermaid-diagram';
       
       if (svgElement) {
         // Extract viewBox dimensions and set explicit width/height
@@ -126,12 +133,10 @@ export const renderMermaidDiagrams = async (): Promise<void> => {
         // Add button directly to SVG container
         svgContainer.appendChild(downloadBtn);
         
-        // Add SVG container to wrapper
-        wrapper.appendChild(svgContainer);
+        // Add SVG container to diagram div
+        diagramDiv.appendChild(svgContainer);
         
-        // Then append the wrapper to the container
-        container.appendChild(wrapper);
-        console.log(`✅ SVG wrapper with banner appended to container for ${id}`);
+        console.log(`✅ SVG container appended to diagram div for ${id}`);
 
         svgElement.style.display = 'block';
         svgElement.style.visibility = 'visible';
@@ -142,16 +147,91 @@ export const renderMermaidDiagrams = async (): Promise<void> => {
 
       // Apply bindFunctions to the SVG container since SVG is now there
       if (bindFunctions) {
-        const svgContainer = wrapper.querySelector('.mermaid-svg-container');
+        const svgContainer = diagramDiv.querySelector('.mermaid-svg-container');
         if (svgContainer) bindFunctions(svgContainer);
       }
       loadingDiv.style.display = 'none';
     } catch (error: any) {
-      console.error(`Error rendering diagram ${id}:`, error);
-      loadingDiv.textContent = `Failed to render diagram: ${error.message || 'Unknown error'}`;
+      // CRITICAL: Remove Mermaid's automatically inserted div even on error
+      document.getElementById(`d${id}`)?.remove();
+      
+      console.error(`❌ Error rendering diagram ${id}:`, error);
+      console.error(`📝 Diagram code that failed:`, code);
+      
+      // Provide better error messages based on error type
+      let errorMessage = 'Failed to render diagram';
+      if (error.message) {
+        if (error.message.includes('Parse error') || error.message.includes('Syntax error')) {
+          errorMessage = 'Syntax error in diagram';
+        } else if (error.message.includes('Lexical error')) {
+          errorMessage = 'Invalid diagram syntax';
+        } else {
+          errorMessage = `Render error: ${error.message}`;
+        }
+      }
+      
+      // Clear the diagram div completely first
+      diagramDiv.innerHTML = '';
+      
+      // Update loading message
+      loadingDiv.textContent = errorMessage;
       loadingDiv.style.color = 'red';
-      diagramDiv.innerHTML = `<pre class="mermaid-error-details">${error.stack || error.message}</pre>`;
+      loadingDiv.style.display = 'block';
+      
+      // Create error details safely using DOM methods instead of innerHTML
+      const errorContainer = document.createElement('div');
+      errorContainer.className = 'mermaid-error-details';
+      errorContainer.style.cssText = `
+        background: #fff5f5;
+        border: 1px solid #fed7d7;
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+        color: #c53030;
+      `;
+      
+      const errorTitle = document.createElement('p');
+      errorTitle.innerHTML = `<strong>Error:</strong> ${errorMessage}`;
+      errorContainer.appendChild(errorTitle);
+      
+      const detailsElement = document.createElement('details');
+      const summaryElement = document.createElement('summary');
+      summaryElement.textContent = 'Show diagram code';
+      summaryElement.style.cursor = 'pointer';
+      
+      const codeElement = document.createElement('pre');
+      codeElement.textContent = code; // Use textContent to prevent any script injection
+      codeElement.style.cssText = `
+        background: #f5f5f5;
+        padding: 1rem;
+        border-radius: 4px;
+        overflow-x: auto;
+        margin-top: 0.5rem;
+        font-family: monospace;
+        white-space: pre-wrap;
+      `;
+      
+      detailsElement.appendChild(summaryElement);
+      detailsElement.appendChild(codeElement);
+      errorContainer.appendChild(detailsElement);
+      
+      // Safely append to diagram div
+      diagramDiv.appendChild(errorContainer);
     }
   }
 };
-    
+
+// Clean up any orphaned Mermaid divs that may have been left behind
+export const cleanupOrphanedMermaidDivs = (): void => {
+  // Find all elements with IDs starting with 'd' that might be orphaned Mermaid divs
+  const allElements = document.querySelectorAll('[id^="d"]');
+  
+  allElements.forEach((element) => {
+    const id = element.id;
+    // Check if this looks like a Mermaid-generated div (starts with 'd' followed by our diagram IDs)
+    if (id.match(/^d(flowchart|sequence|class|state|er|journey|error|syntax|extreme|complex)-/)) {
+      console.log(`🧹 Cleaning up orphaned Mermaid div: ${id}`);
+      element.remove();
+    }
+  });
+};
