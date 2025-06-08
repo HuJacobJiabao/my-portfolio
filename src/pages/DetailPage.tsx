@@ -2,11 +2,9 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, Navigate, useLocation } from 'react-router-dom';
 import Layout from '../components/Layout';
 import MarkdownContent from '../components/MarkdownContent';
-import { loadProjects, loadBlogPosts, type Project, type BlogPost } from '../utils/contentLoader';
-import { generateIdFromTitle } from '../utils/contentUtils';
-import { fetchMarkdownContent, parseMarkdown, type ParsedMarkdown } from '../utils/markdown';
+import { loadStaticProjects, loadStaticBlogPosts, loadMarkdownContent, type Project, type BlogPost } from '../utils/staticDataLoader';
+import { parseMarkdown, type ParsedMarkdown } from '../utils/markdown';
 import { createAssetMapFromCache } from '../utils/assetResolver';
-import { safeMatter } from '../utils/safeMatter';
 import styles from '../styles/DetailPage.module.css';
 
 type ContentType = 'project' | 'blog';
@@ -20,6 +18,7 @@ interface ContentItem {
   image?: string; // Make image optional to match blog posts
   link: string;
   tags: string[];
+  contentPath: string; // Add contentPath for markdown loading
 }
 
 export default function DetailPage() {
@@ -40,7 +39,7 @@ export default function DetailPage() {
     const loadPosts = async () => {
       try {
         setBlogPostsLoading(true);
-        const posts = await loadBlogPosts();
+        const posts = await loadStaticBlogPosts();
         setBlogPosts(posts);
         console.log('Blog posts loaded in DetailPage:', posts);
       } catch (err) {
@@ -58,7 +57,7 @@ export default function DetailPage() {
     const loadProjectsData = async () => {
       try {
         setProjectsLoading(true);
-        const projectsData = await loadProjects();
+        const projectsData = await loadStaticProjects();
         setProjects(projectsData);
         console.log('Projects loaded in DetailPage:', projectsData);
       } catch (err) {
@@ -170,138 +169,30 @@ export default function DetailPage() {
         setLoading(true);
         setError(null);
         
-        console.log('Loading content for:', {
+        console.log('Loading markdown content for:', {
           contentType,
           contentItemId: contentItem.id,
-          contentItem
+          contentPath: contentItem.contentPath
         });
         
-        // For blog posts, we need to find the folder and load index.md
-        // For projects, we also use dynamic loading now
-        let markdownPath: string | null = null;
+        // Load the markdown content from the file
+        const markdownContent = await loadMarkdownContent(contentItem.contentPath);
         
-        if (contentType === 'blog') {
-          // Try to load from src/content/blogs folder structure first
-          const srcContentModules = import.meta.glob('../content/blogs/**/index.md', { query: '?raw', import: 'default' });
-          
-          console.log('Available blog modules:', Object.keys(srcContentModules));
-          
-          // Find the matching blog post content
-          let content: string | null = null;
-          for (const [path, moduleLoader] of Object.entries(srcContentModules)) {
-            try {
-              const moduleContent = await moduleLoader() as string;
-              const parsed = safeMatter(moduleContent);
-              const frontmatter = parsed.data;
-              
-              const generatedId = generateIdFromTitle(frontmatter.title);
-              console.log('Checking blog post:', {
-                path,
-                title: frontmatter.title,
-                generatedId,
-                targetId: contentItem.id,
-                matches: generatedId === contentItem.id
-              });
-              
-              // Check if this is the blog post we're looking for
-              if (generatedId === contentItem.id) {
-                content = moduleContent;
-                markdownPath = path;
-                console.log('Found matching blog post:', path);
-                break;
-              }
-            } catch (error) {
-              console.warn(`Error checking blog post ${path}:`, error);
-            }
-          }
-          
-          if (content && markdownPath) {
-            // Create asset map for this markdown file
-            const assetMap = await createAssetMapFromCache(markdownPath);
-            const parsed = await parseMarkdown(content, true, assetMap); // Remove main title, include asset map
-            setMarkdownData(parsed);
-            setLastUpdateTime(new Date().toLocaleDateString()); // Use current date as fallback
-            return;
-          } else {
-            // Fallback to public content path
-            markdownPath = `${import.meta.env.BASE_URL}content/${contentType}s/${contentItem.id}.md`;
-          }
-        } else {
-          // For projects, try to load from src/content/projects folder structure first
-          const srcProjectModules = import.meta.glob('../content/projects/**/index.md', { query: '?raw', import: 'default' });
-          
-          console.log('Available project modules:', Object.keys(srcProjectModules));
-          
-          // Find the matching project content
-          let content: string | null = null;
-          let markdownPath: string | null = null;
-          for (const [path, moduleLoader] of Object.entries(srcProjectModules)) {
-            try {
-              const moduleContent = await moduleLoader() as string;
-              const parsed = safeMatter(moduleContent);
-              const frontmatter = parsed.data;
-              
-              // Extract folder name from path for ID generation
-              const pathParts = path.split('/');
-              const folderName = pathParts[pathParts.length - 2];
-              const generatedId = generateIdFromTitle(frontmatter.title || folderName);
-              
-              console.log('Checking project:', {
-                path,
-                title: frontmatter.title,
-                folderName,
-                generatedId,
-                targetId: contentItem.id,
-                matches: generatedId === contentItem.id
-              });
-              
-              // Check if this is the project we're looking for
-              if (generatedId === contentItem.id) {
-                content = moduleContent;
-                markdownPath = path;
-                console.log('Found matching project:', path);
-                break;
-              }
-            } catch (error) {
-              console.warn(`Error checking project ${path}:`, error);
-            }
-          }
-          
-          if (content && markdownPath) {
-            // Create asset map for this markdown file
-            const assetMap = await createAssetMapFromCache(markdownPath);
-            const parsed = await parseMarkdown(content, true, assetMap); // Remove main title, include asset map
-            setMarkdownData(parsed);
-            setLastUpdateTime(new Date().toLocaleDateString()); // Use current date as fallback
-            return;
-          } else {
-            // Fallback to public content path
-            markdownPath = `${import.meta.env.BASE_URL}content/${contentType}s/${contentItem.id}.md`;
-          }
+        if (!markdownContent) {
+          throw new Error('Markdown content not found');
         }
         
-        // Load from public folder (fallback or projects)
-        if (markdownPath) {
-          // Get file last modified time
-          try {
-            const headResponse = await fetch(markdownPath, { method: 'HEAD' });
-            const lastModified = headResponse.headers.get('Last-Modified');
-            if (lastModified) {
-              setLastUpdateTime(new Date(lastModified).toLocaleDateString());
-            }
-          } catch (headError) {
-            console.warn('Could not get last modified time:', headError);
-            setLastUpdateTime(null);
-          }
-          
-          const content = await fetchMarkdownContent(markdownPath);
-          // For public folder content, we can't resolve assets dynamically, so use empty asset map
-          const parsed = await parseMarkdown(content, true, new Map()); // Remove main title
-          setMarkdownData(parsed);
-        }
+        // Create asset map for proper image resolution
+        const assetMap = await createAssetMapFromCache(contentItem.contentPath);
+        
+        // Parse the markdown content at runtime with asset map
+        const parsedMarkdown = await parseMarkdown(markdownContent, true, assetMap);
+        
+        setMarkdownData(parsedMarkdown);
+        setLastUpdateTime(new Date().toLocaleDateString());
         
       } catch (err) {
-        console.error('Error loading content:', err);
+        console.error('Error loading markdown content:', err);
         setError('Failed to load content');
       } finally {
         setLoading(false);

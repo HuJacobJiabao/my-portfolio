@@ -2,7 +2,7 @@ import { useRef, useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import BlogCard from '../components/BlogCard';
 import styles from '../styles/Blog.module.css';
-import { loadBlogPosts, type BlogPost } from '../utils/contentLoader';
+import { loadStaticBlogPosts, type BlogPost } from '../utils/staticDataLoader';
 
 export default function Blog() {
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -15,7 +15,7 @@ export default function Blog() {
     const loadPosts = async () => {
       try {
         setLoading(true);
-        const posts = await loadBlogPosts();
+        const posts = await loadStaticBlogPosts();
         setBlogPosts(posts);
       } catch (err) {
         console.error('Error loading blog posts:', err);

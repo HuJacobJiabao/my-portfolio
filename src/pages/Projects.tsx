@@ -2,7 +2,7 @@ import { useRef, useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import Card from '../components/Card';
 import styles from '../styles/Projects.module.css';
-import { loadProjects, type Project } from '../utils/contentLoader';
+import { loadStaticProjects, type Project } from '../utils/staticDataLoader';
 
 export default function Projects() {
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -15,7 +15,7 @@ export default function Projects() {
     const loadProjectsData = async () => {
       try {
         setLoading(true);
-        const projectsData = await loadProjects();
+        const projectsData = await loadStaticProjects();
         setProjects(projectsData);
         console.log('Projects loaded:', projectsData);
       } catch (err) {
