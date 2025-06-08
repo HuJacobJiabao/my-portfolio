@@ -28,21 +28,6 @@
     "image": "default"
   },
   {
-    "id": "markdown-highlights-demo-3",
-    "title": "Markdown Highlights Demo -3",
-    "date": "2025-06-06T16:30:00.000Z",
-    "category": "Documentation",
-    "description": "A demonstration of markdown highlight functionality.",
-    "tags": [
-      "Markdown",
-      "Highlight",
-      "Demo"
-    ],
-    "link": "/my-portfolio/blogs/markdown-highlights-demo-3",
-    "contentPath": "blogs/highlight-demo-2.md",
-    "image": "./markdown-svgrepo-com.svg"
-  },
-  {
     "id": "markdown-highlights-demo",
     "title": "Markdown Highlights Demo",
     "date": "2025-06-06T16:30:00.000Z",
