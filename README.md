@@ -18,7 +18,7 @@ A modern, responsive portfolio website built with React, TypeScript, and Vite. F
 - **Frontend**: React 18 + TypeScript
 - **Build Tool**: Vite
 - **Styling**: CSS Modules + Modern CSS
-- **Markdown**: marked.js with custom renderer
+- **Markdown**: markdown-it with custom renderer
 - **Syntax Highlighting**: Prism.js with Night Owl theme
 - **Icons**: Font Awesome
 - **Routing**: React Router
