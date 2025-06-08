@@ -189,7 +189,7 @@ async function createDailyLog(dateStr?: string) {
   const formattedDate = formatDate(targetDate);
   const displayDate = formatDisplayDate(targetDate);
 
-  const logsDir = path.join(process.cwd(), 'src', 'frame-logs');
+  const logsDir = path.join(process.cwd(), 'public', 'frame-logs');
   const dayDir = path.join(logsDir, formattedDate);
 
   // Create directories if they don't exist
@@ -223,12 +223,10 @@ async function createDailyLog(dateStr?: string) {
   } else {
     console.log(colorize(`📝 Developer log already exists: ${devLogPath}`, colors.yellow));
   }
-    console.log(colorize(`📝 Developer log already exists: ${devLogPath}`, colors.yellow));
-  }
 
   console.log(colorize(`\n✅ Daily logs ready for ${displayDate}`, colors.green + colors.bright));
-  console.log(colorize(`   Change Log: src/frame-logs/${formattedDate}/change-log.md`, colors.gray));
-  console.log(colorize(`   Developer Log: src/frame-logs/${formattedDate}/developer-log.md`, colors.gray));
+  console.log(colorize(`   Change Log: public/frame-logs/${formattedDate}/change-log.md`, colors.gray));
+  console.log(colorize(`   Developer Log: public/frame-logs/${formattedDate}/developer-log.md`, colors.gray));
 }
 
 function showUsage() {
@@ -243,8 +241,8 @@ function showUsage() {
   console.log(`  ${colorize('npm run', colors.gray)} ${colorize('log', colors.blue)} ${colorize('2025-06-07', colors.magenta)} ${colorize('# Creates logs for specific date', colors.gray)}`);
   console.log('');
   console.log(colorize('What it creates:', colors.yellow + colors.bright));
-  console.log(`  ${colorize('src/frame-logs/YYYY-MM-DD/change-log.md', colors.green)}     ${colorize('# High-level daily changes', colors.gray)}`);
-  console.log(`  ${colorize('src/frame-logs/YYYY-MM-DD/developer-log.md', colors.green)}  ${colorize('# Detailed technical notes', colors.gray)}`);
+  console.log(`  ${colorize('public/frame-logs/YYYY-MM-DD/change-log.md', colors.green)}     ${colorize('# High-level daily changes', colors.gray)}`);
+  console.log(`  ${colorize('public/frame-logs/YYYY-MM-DD/developer-log.md', colors.green)}  ${colorize('# Detailed technical notes', colors.gray)}`);
 }
 
 async function main() {
