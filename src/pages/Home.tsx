@@ -324,6 +324,9 @@ const Home = () => {
 
     return (
         <div className={styles.wrapper}>
+            {/* Fixed Background Layer */}
+            <div className={styles.backgroundFixed}></div>
+            
             <NavBar />
             {/* Hero Section */}
             <section className={styles.hero}>

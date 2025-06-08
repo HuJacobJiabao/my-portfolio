@@ -6,7 +6,7 @@
   "type": "module",
   "homepage": "https://HuJacobJiabao.github.io/my-portfolio",
   "scripts": {
-    "dev": "vite",
+    "dev": "npm run preprocess && vite",
     "build": "npm run preprocess && tsc -b && vite build && cp public/404.html dist/404.html && touch dist/.nojekyll",
     "lint": "eslint .",
     "preview": "vite preview",
@@ -14,7 +14,8 @@
     "generate": "tsx src/scripts/generate.ts",
     "g": "tsx src/scripts/generate.ts",
     "log": "tsx src/scripts/create-daily-log.ts",
-    "preprocess": "tsx src/scripts/preprocess-content.ts"
+    "preprocess": "tsx src/scripts/preprocess-content.ts",
+    "p": "tsx src/scripts/preprocess-content.ts"
   },  "dependencies": {
     "@fortawesome/fontawesome-free": "^6.7.2",
     "@types/markdown-it": "^14.1.2",

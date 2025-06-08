@@ -5,7 +5,7 @@ createTime: "2025-06-06T16:30:00.000Z"
 description: "A demonstration of markdown highlight functionality."
 tags: ["Markdown", "Highlight", "Demo"]
 category: "Documentation"
-coverImage: "./markdown-svgrepo-com.svg"
+coverImage: "./default_blog.png"
 ---
 
 # Highlight Demonstration

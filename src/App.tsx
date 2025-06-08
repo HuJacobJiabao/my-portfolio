@@ -72,6 +72,9 @@ function App() {
 
   return (
    <Router>
+      {/* Global fixed background layer */}
+      <div className="global-background-fixed"></div>
+      
       <ScrollToTop />
       <AppContent />
     </Router>

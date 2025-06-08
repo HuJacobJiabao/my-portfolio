@@ -83,7 +83,7 @@ function sanitizeFilename(name: string): string {
 async function generateContent(type: 'blog' | 'project', articleName: string) {
   const projectRoot = process.cwd();
   const templatesDir = path.join(projectRoot, 'src', 'scripts', 'templates');
-  const contentDir = path.join(projectRoot, 'src', 'content', type === 'blog' ? 'blogs' : 'projects');
+  const contentDir = path.join(projectRoot, 'public', 'content', type === 'blog' ? 'blogs' : 'projects');
   
   // Sanitize the article name for use as folder name
   const folderName = sanitizeFilename(articleName);

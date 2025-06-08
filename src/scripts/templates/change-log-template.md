@@ -1,3 +1,13 @@
+<!-- 
+FORMATTING REQUIREMENTS:
+1. Maintain proper heading hierarchy:
+   - Level 1 (#): Document title
+   - Level 2 (##): Major sections
+   - Level 3 (###): Subsections 
+2. Number all changes in the "Changes Made" section (e.g., "### 1. Feature Name")
+3. Use bold (**text**) for important terms and file names
+4. Include checkmarks (✅) for completed items
+-->
 # Change Log - {{displayDate}}
 
 ## Summary

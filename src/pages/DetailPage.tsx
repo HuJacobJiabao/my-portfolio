@@ -25,27 +25,21 @@ export default function DetailPage() {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
   const [markdownData, setMarkdownData] = useState<ParsedMarkdown | null>(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeItemId, setActiveItemId] = useState<string>('');
   const [lastUpdateTime, setLastUpdateTime] = useState<string | null>(null);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
-  const [blogPostsLoading, setBlogPostsLoading] = useState(true);
   const [projects, setProjects] = useState<Project[]>([]);
-  const [projectsLoading, setProjectsLoading] = useState(true);
 
   // Load blog posts on component mount
   useEffect(() => {
     const loadPosts = async () => {
       try {
-        setBlogPostsLoading(true);
         const posts = await loadStaticBlogPosts();
         setBlogPosts(posts);
         console.log('Blog posts loaded in DetailPage:', posts);
       } catch (err) {
         console.error('Error loading blog posts:', err);
-      } finally {
-        setBlogPostsLoading(false);
       }
     };
 
@@ -56,14 +50,11 @@ export default function DetailPage() {
   useEffect(() => {
     const loadProjectsData = async () => {
       try {
-        setProjectsLoading(true);
         const projectsData = await loadStaticProjects();
         setProjects(projectsData);
         console.log('Projects loaded in DetailPage:', projectsData);
       } catch (err) {
         console.error('Error loading projects:', err);
-      } finally {
-        setProjectsLoading(false);
       }
     };
 
@@ -73,22 +64,18 @@ export default function DetailPage() {
   // Determine if this is a project or blog based on the URL path
   const contentType: ContentType = location.pathname.includes('/projects/') ? 'project' : 'blog';
   
-  // Find the content item (project or blog post) - but only after both blog posts and projects are loaded
+  // Find the content item (project or blog post)
   const contentItem: ContentItem | undefined = useMemo(() => {
     if (contentType === 'project') {
-      // For projects, wait until they're loaded
-      if (projectsLoading) return undefined;
       const found = projects.find(p => p.id === id);
       console.log('Looking for project with id:', id, 'Found:', found, 'Available projects:', projects.map(p => p.id));
       return found;
     } else {
-      // For blog posts, wait until they're loaded
-      if (blogPostsLoading) return undefined;
       const found = blogPosts.find(b => b.id === id);
       console.log('Looking for blog post with id:', id, 'Found:', found, 'Available posts:', blogPosts.map(p => p.id));
       return found;
     }
-  }, [contentType, id, blogPosts, blogPostsLoading, projects, projectsLoading]);
+  }, [contentType, id, blogPosts, projects]);
 
   // Create sidebar items from table of contents (memoized)
   const sidebarItems = useMemo(() => {
@@ -166,7 +153,6 @@ export default function DetailPage() {
 
     const loadContent = async () => {
       try {
-        setLoading(true);
         setError(null);
         
         console.log('Loading markdown content for:', {
@@ -194,30 +180,17 @@ export default function DetailPage() {
       } catch (err) {
         console.error('Error loading markdown content:', err);
         setError('Failed to load content');
-      } finally {
-        setLoading(false);
       }
     };
 
     loadContent();
   }, [contentItem, contentType]);
 
-  // If content not found, redirect to appropriate page (but wait for content to load first)
-  const isContentLoading = contentType === 'project' ? projectsLoading : blogPostsLoading;
-  if (!isContentLoading && !contentItem) {
+  // If content not found, redirect to appropriate page
+  if (!contentItem && blogPosts.length > 0 && projects.length > 0) {
     const redirectPath = contentType === 'project' ? '/my-portfolio/projects/' : '/my-portfolio/blogs/';
     console.log('Content item not found, redirecting to:', redirectPath);
     return <Navigate to={redirectPath} replace />;
-  }
-
-  // Show loading state until all data is ready
-  if (loading || !markdownData || isContentLoading) {
-    return (
-      <div className={styles.loadingContainer}>
-        <div className={styles.loadingSpinner}>⏳</div>
-        <p>Loading {contentType} content...</p>
-      </div>
-    );
   }
 
   // Show error state
@@ -231,14 +204,9 @@ export default function DetailPage() {
     );
   }
 
-  // Ensure contentItem is available before rendering
-  if (!contentItem) {
-    return (
-      <div className={styles.loadingContainer}>
-        <div className={styles.loadingSpinner}>⏳</div>
-        <p>Loading {contentType} content...</p>
-      </div>
-    );
+  // Ensure contentItem and markdownData are available before rendering
+  if (!contentItem || !markdownData) {
+    return null; // Return null instead of loading UI
   }
 
   // Determine the appropriate header background

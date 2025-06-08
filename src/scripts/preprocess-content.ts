@@ -198,15 +198,29 @@ async function processContentItem(
       contentPath
     };
 
+    // Handle default cover image resolution
+    const resolveImagePath = (coverImage: string | undefined): string | undefined => {
+      if (!coverImage || coverImage === 'default') {
+        return `${process.env.BASE_URL || '/my-portfolio/'}default_cover.jpg`;
+      }
+      // If it's a relative path starting with './', resolve it relative to content path
+      if (coverImage.startsWith('./')) {
+        const resolvedPath = path.join(path.dirname(contentPath), coverImage.slice(2));
+        return `${process.env.BASE_URL || '/my-portfolio/'}content/${resolvedPath}`;
+      }
+      // If it's already an absolute path or URL, use as is
+      return coverImage;
+    };
+
     if (contentType === 'blogs') {
       return {
         ...baseItem,
-        image: metadata.coverImage || undefined
+        image: resolveImagePath(metadata.coverImage)
       } as BlogPost;
     } else {
       return {
         ...baseItem,
-        image: metadata.coverImage || `${process.env.BASE_URL || '/my-portfolio/'}default_cover.jpg`,
+        image: resolveImagePath(metadata.coverImage),
         assetPaths
       } as Project;
     }
@@ -221,7 +235,7 @@ async function processContentItem(
  * Process content directory
  */
 async function processContentDirectory(contentType: 'blogs' | 'projects'): Promise<Array<BlogPost | Project>> {
-  const contentDir = path.join(projectRoot, 'content', contentType);
+  const contentDir = path.join(projectRoot, 'public', 'content', contentType);
   const items: Array<BlogPost | Project> = [];
   
   if (!fs.existsSync(contentDir)) {
@@ -239,7 +253,7 @@ async function processContentDirectory(contentType: 'blogs' | 'projects'): Promi
       // Process folder-based content - only if it contains index.md
       const indexPath = path.join(entryPath, 'index.md');
       if (fs.existsSync(indexPath) && fs.statSync(indexPath).isFile()) {
-        const item = await processContentItem(contentType, entryPath, path.join(projectRoot, 'content'));
+        const item = await processContentItem(contentType, entryPath, path.join(projectRoot, 'public', 'content'));
         if (item) {
           items.push(item);
         }
@@ -331,18 +345,9 @@ export interface Project {
   }
 }
 
-// Main execution
-console.log('Script file:', import.meta.url);
-console.log('Process argv[1]:', process.argv[1]);
-console.log('Should execute:', import.meta.url.endsWith('preprocess-content.ts'));
-
-if (import.meta.url.endsWith('preprocess-content.ts')) {
+// Main execution - only execute if called directly
+if (import.meta.url === `file://${process.argv[1]}`) {
   generateStaticData();
-} else {
-  console.log('Not executing - condition not met');
 }
-
-// Also execute if called directly
-generateStaticData();
 
 export { generateStaticData };

@@ -1,39 +1,105 @@
-// Asset resolver utility for handling Vite asset imports in markdown content
-// This utility helps resolve relative asset paths to proper Vite asset URLs
+// Asset resolver utility for handling static asset resolution in markdown content
+// Updated for the new preprocessing system that serves assets as static files
+
+/**
+ * Get all available static assets by scanning the projects.json and blogs.json data
+ */
+async function getAllStaticAssets(): Promise<string[]> {
+  const assets: string[] = [];
+  
+  try {
+    // Load static data to get asset paths
+    const [blogsResponse, projectsResponse] = await Promise.all([
+      fetch(`${import.meta.env.BASE_URL}data/blogs.json`),
+      fetch(`${import.meta.env.BASE_URL}data/projects.json`)
+    ]);
+    
+    if (blogsResponse.ok) {
+      const blogs = await blogsResponse.json();
+      for (const blog of blogs) {
+        if (blog.assetPaths) {
+          assets.push(...blog.assetPaths);
+        }
+        // Also add the content directory path for assets in the same folder
+        const contentDir = blog.contentPath.replace('/index.md', '');
+        assets.push(`${contentDir}/default_blog.png`);
+        // Add common asset patterns
+        const assetPatterns = [
+          'default_blog.png', 'cover.jpg', 'cover.png', 'image.jpg', 'image.png'
+        ];
+        for (const pattern of assetPatterns) {
+          assets.push(`${contentDir}/${pattern}`);
+        }
+      }
+    }
+    
+    if (projectsResponse.ok) {
+      const projects = await projectsResponse.json();
+      for (const project of projects) {
+        if (project.assetPaths) {
+          assets.push(...project.assetPaths);
+        }
+        // Also add the content directory path for assets in the same folder
+        const contentDir = project.contentPath.replace('/index.md', '');
+        assets.push(`${contentDir}/default_blog.png`);
+        // Add common asset patterns
+        const assetPatterns = [
+          'default_blog.png', 'cover.jpg', 'cover.png', 'image.jpg', 'image.png'
+        ];
+        for (const pattern of assetPatterns) {
+          assets.push(`${contentDir}/${pattern}`);
+        }
+      }
+    }
+    
+    // Remove duplicates
+    return [...new Set(assets)];
+    
+  } catch (error) {
+    console.warn('Could not load static asset data:', error);
+    return [];
+  }
+}
+
+/**
+ * Convert asset path to static URL
+ */
+function getStaticAssetUrl(assetPath: string): string {
+  // Remove leading './' if present
+  const cleanPath = assetPath.startsWith('./') ? assetPath.slice(2) : assetPath;
+  return `${import.meta.env.BASE_URL}content/${cleanPath}`;
+}
 
 /**
  * Create an asset map for a given markdown file path
- * This resolves relative image paths to Vite asset URLs
+ * This resolves relative image paths to proper static URLs
  */
 export async function createAssetMap(markdownPath: string): Promise<Map<string, string>> {
   const assetMap = new Map<string, string>();
-  
-  // Load all potential image assets from the content directory
-  const assetModules = import.meta.glob('../content/**/*.{png,jpg,jpeg,gif,svg,webp}', { 
-    query: '?url', 
-    import: 'default' 
-  });
   
   // Extract the folder path from the markdown path
   const pathParts = markdownPath.split('/');
   const folderPath = pathParts.slice(0, -1).join('/'); // Remove index.md to get folder path
   
-  // For each asset module, check if it could be referenced from this markdown file
-  for (const [assetPath, assetLoader] of Object.entries(assetModules)) {
-    try {
-      const assetUrl = await assetLoader() as string;
-      
-      // Calculate relative paths that could reference this asset
-      const relativePaths = calculateRelativePaths(folderPath, assetPath);
-      
-      // Add all possible relative paths to the map
-      relativePaths.forEach(relativePath => {
-        assetMap.set(relativePath, assetUrl);
-      });
-      
-    } catch (error) {
-      console.warn(`Could not load asset: ${assetPath}`, error);
-    }
+  console.log('Creating asset map for markdownPath:', markdownPath);
+  console.log('Folder path:', folderPath);
+  
+  // Get all available assets from the static data
+  const assetsFromStatic = await getAllStaticAssets();
+  
+  // For each asset, check if it could be referenced from this markdown file
+  for (const assetPath of assetsFromStatic) {
+    // Calculate relative paths that could reference this asset
+    const relativePaths = calculateRelativePaths(folderPath, assetPath);
+    
+    // Convert to static URL
+    const staticUrl = getStaticAssetUrl(assetPath);
+    
+    // Add all possible relative paths to the map
+    relativePaths.forEach(relativePath => {
+      assetMap.set(relativePath, staticUrl);
+      console.log(`Asset mapping: ${relativePath} -> ${staticUrl}`);
+    });
   }
   
   return assetMap;
@@ -160,18 +226,17 @@ async function loadGlobalAssetCache(): Promise<void> {
   }
   
   globalAssetCachePromise = (async () => {
-    const assetModules = import.meta.glob('../content/**/*.{png,jpg,jpeg,gif,svg,webp}', { 
-      query: '?url', 
-      import: 'default' 
-    });
-    
-    for (const [assetPath, assetLoader] of Object.entries(assetModules)) {
-      try {
-        const assetUrl = await assetLoader() as string;
-        globalAssetCache.set(assetPath, assetUrl);
-      } catch (error) {
-        console.warn(`Could not load asset: ${assetPath}`, error);
+    try {
+      const assetsFromStatic = await getAllStaticAssets();
+      
+      for (const assetPath of assetsFromStatic) {
+        const staticUrl = getStaticAssetUrl(assetPath);
+        globalAssetCache.set(assetPath, staticUrl);
       }
+      
+      console.log('Loaded global asset cache:', Array.from(globalAssetCache.entries()));
+    } catch (error) {
+      console.warn('Could not load global asset cache:', error);
     }
   })();
   

@@ -7,21 +7,17 @@ import { loadStaticBlogPosts, type BlogPost } from '../utils/staticDataLoader';
 export default function Blog() {
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Load blog posts on component mount
   useEffect(() => {
     const loadPosts = async () => {
       try {
-        setLoading(true);
         const posts = await loadStaticBlogPosts();
         setBlogPosts(posts);
       } catch (err) {
         console.error('Error loading blog posts:', err);
         setError('Failed to load blog posts');
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -39,26 +35,6 @@ export default function Blog() {
   };
 
   const sidebarItems = blogPosts.map(post => ({ title: post.title }));
-
-  if (loading) {
-    return (
-      <Layout 
-        title="Blog"
-        headerBackground={`${import.meta.env.BASE_URL}background/default_blog.png`}
-        sidebarItems={[]}
-        sidebarItemType="blog"
-        onSidebarItemClick={() => {}}
-      >
-        <div className={styles.blogContainer}>
-          <div className={styles.loadingState}>
-            <div className={styles.loadingIcon}>⏳</div>
-            <h2>Loading Blog Posts...</h2>
-            <p>Please wait while we fetch the latest content.</p>
-          </div>
-        </div>
-      </Layout>
-    );
-  }
 
   if (error) {
     return (

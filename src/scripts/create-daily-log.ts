@@ -223,6 +223,8 @@ async function createDailyLog(dateStr?: string) {
   } else {
     console.log(colorize(`📝 Developer log already exists: ${devLogPath}`, colors.yellow));
   }
+    console.log(colorize(`📝 Developer log already exists: ${devLogPath}`, colors.yellow));
+  }
 
   console.log(colorize(`\n✅ Daily logs ready for ${displayDate}`, colors.green + colors.bright));
   console.log(colorize(`   Change Log: src/frame-logs/${formattedDate}/change-log.md`, colors.gray));
@@ -247,7 +249,7 @@ function showUsage() {
 
 async function main() {
   const args = process.argv.slice(2);
-
+  
   // Handle help command
   if (args.length > 0 && (args[0] === '--help' || args[0] === '-h' || args[0] === 'help')) {
     showUsage();
@@ -274,8 +276,7 @@ async function main() {
   try {
     await createDailyLog(dateArg);
   } catch (error) {
-    console.error(colorize('❌ Error creating daily logs:', colors.red + colors.bright));
-    console.error(error);
+    console.error(colorize('❌ Error:', colors.red + colors.bright), error);
     process.exit(1);
   }
 }

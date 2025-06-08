@@ -7,6 +7,21 @@
   scroll-behavior: smooth;
 }
 
+/* Fixed background layer - using about.jpg for all fixed backgrounds */
+.backgroundFixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url('/background/about.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: -1;
+  pointer-events: none; /* 避免遮挡内容 */
+}
+
 .hero {
   position: relative;
   width: 100%;
@@ -23,6 +38,13 @@
   text-align: center;
   overflow: hidden;
   animation: fadeInDown 1s ease-in-out;
+}
+
+/* Mobile background fix - use scroll instead of fixed for performance */
+@media (max-width: 768px) {
+  .hero {
+    background-attachment: scroll;
+  }
 }
 
 .hero::before {

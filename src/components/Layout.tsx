@@ -60,6 +60,9 @@ export default function Layout({
 
   return (
     <div className={styles.wrapper}>
+      {/* Fixed Background Layer using about.jpg for middle content areas */}
+      <div className={styles.backgroundFixed}></div>
+      
       <NavBar />
       
       {title && (

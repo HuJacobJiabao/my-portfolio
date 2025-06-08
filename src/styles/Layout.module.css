@@ -7,14 +7,35 @@
   scroll-behavior: smooth;
 }
 
+/* Fixed Background Layer for Layout pages - using about.jpg as default with fixed attachment */
+.backgroundFixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url('/background/about.jpg'); /* Default background */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  z-index: -1;
+  pointer-events: none; /* 避免遮挡内容 */
+}
+
+/* Mobile background fix - use scroll instead of fixed for performance */
+@media (max-width: 768px) {
+  .backgroundFixed {
+    background-attachment: scroll;
+  }
+}
+
 .pageHeader {
   position: relative;
   left: 0;
   right: 0;
   z-index: 998;
-  background-image: url('/background/hero.jpg');
-  background-size: cover;
-  background-position: center;
+  /* Remove background styles - now handled by .backgroundFixed */
   padding: 100px 0 15px; /* Further reduced padding to make header even smaller */
   text-align: center;
   margin-top: 0;

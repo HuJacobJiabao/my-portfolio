@@ -7,22 +7,18 @@ import { loadStaticProjects, type Project } from '../utils/staticDataLoader';
 export default function Projects() {
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Load projects on component mount
   useEffect(() => {
     const loadProjectsData = async () => {
       try {
-        setLoading(true);
         const projectsData = await loadStaticProjects();
         setProjects(projectsData);
         console.log('Projects loaded:', projectsData);
       } catch (err) {
         console.error('Error loading projects:', err);
         setError('Failed to load projects');
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -40,26 +36,6 @@ export default function Projects() {
   };
 
   const sidebarItems = projects.map(project => ({ title: project.title }));
-
-  if (loading) {
-    return (
-      <Layout 
-        title="Projects"
-        headerBackground={`${import.meta.env.BASE_URL}background/default_proj.jpg`}
-        sidebarItems={[]}
-        sidebarItemType="project"
-        onSidebarItemClick={() => {}}
-      >
-        <div className={styles.projectsContainer}>
-          <div className={styles.loadingState}>
-            <div className={styles.loadingIcon}>⏳</div>
-            <h2>Loading Projects...</h2>
-            <p>Please wait while we load the project content.</p>
-          </div>
-        </div>
-      </Layout>
-    );
-  }
 
   if (error) {
     return (

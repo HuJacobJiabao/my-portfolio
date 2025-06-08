@@ -1,7 +1,7 @@
 # Change Log - June 8, 2025
 
 ## Summary
-Updated application routing structure to use plural forms for better semantic consistency, renamed blog component file to match the new routing convention, and temporarily removed Mermaid diagram support due to rendering issues. Completely replaced gray-matter dependency with custom safeMatter parser to eliminate eval warnings and improve security. **Critical Fix**: Resolved GitHub Pages 404 errors when accessing markdown files by disabling Jekyll processing and restoring proper directory structure.
+Updated application routing structure to use plural forms for better semantic consistency, renamed blog component file to match the new routing convention, and temporarily removed Mermaid diagram support due to rendering issues. Completely replaced gray-matter dependency with custom safeMatter parser to eliminate eval warnings and improve security. **Critical Fix**: Resolved GitHub Pages 404 errors when accessing markdown files by disabling Jekyll processing and restoring proper directory structure. **Asset Resolution Fix**: Overhauled asset loading system to work with static preprocessing instead of Vite imports, fixing image display issues. **Dev Workflow**: Enhanced development script to automatically run preprocessing before starting server.
 
 ## Changes Made
 
@@ -48,6 +48,94 @@ Resolved critical deployment issue where React app couldn't fetch markdown conte
 - **Deployment Fix**: Rebuilt and redeployed with correct directory structure and Jekyll disabled
 - **Verification**: Confirmed both local `dist/` and remote `gh-pages` branch have proper structure
 
+### 7. **Asset Resolution System Overhaul**
+Fixed critical asset loading issues where markdown images and default cover images were not displaying correctly:
+- **Root Cause**: Vite's `import.meta.glob` system was incompatible with static file preprocessing approach
+- **Asset Resolver Rewrite**: Completely rewrote `assetResolver.ts` to work with static JSON data instead of Vite imports
+- **Static Asset Loading**: Implemented `getAllStaticAssets()` function that loads from preprocessed `blogs.json` and `projects.json`
+- **Default Image Handling**: Fixed preprocessing script to properly resolve `coverImage: "default"` to actual file paths (`/my-portfolio/default_cover.jpg`)
+- **Path Resolution**: Updated `getStaticAssetUrl()` to convert relative paths to proper static URLs
+- **Duplicate Execution Fix**: Removed duplicate calls in preprocessing script that caused double output
+
+### 8. **Development Workflow Enhancement**
+Improved development experience by automating preprocessing step:
+- **Package.json Update**: Modified dev script from `"dev": "vite"` to `"dev": "npm run preprocess && vite"`
+- **Automatic Preprocessing**: Ensures static data files are always up to date before starting development server
+- **Consistent Workflow**: Development now mirrors build process for reliable asset resolution
+- **Developer Experience**: Eliminates need to manually remember running preprocessing before development
+
+### 9. **Mobile Background Performance Fix**
+Fixed visual background glitches on mobile devices that caused inconsistent appearance:
+- **Root Cause**: `background-attachment: fixed` property causing performance degradation on mobile browsers
+- **Mobile Optimization**: Added media queries to disable fixed background attachment on devices with max-width 768px
+- **Files Modified**: 
+  - `src/styles/Home.module.css` - Added mobile media query for hero section
+  - `src/styles/Footer.module.css` - Added mobile media query for footer
+  - `src/index.css` - Added mobile media queries for global backgrounds
+- **Technical Changes**:
+  ```css
+  /* Mobile-specific fix to prevent background jumping */
+  @media (max-width: 768px) {
+    .hero, html, body, #root {
+      background-attachment: scroll;
+    }
+  }
+  ```
+- **Impact**:
+  - ✅ Eliminated background visual jumps on mobile devices
+  - ✅ Improved mobile scrolling performance
+  - ✅ Maintained desktop parallax effects
+  - ✅ Consistent visual experience across all devices
+- **Testing**: Verified on mobile browsers - background remains stable throughout page lifecycle
+
+### 10. **Background System Unification**
+Implemented a unified background system for consistent visual experience across pages and devices:
+
+- **Background Assignment Rules**:
+  - **Page Headers**: Content-specific backgrounds (projects, blogs, archive)
+  - **Content Areas**: All use consistent `about.jpg` background
+  - **Footer Areas**: All use consistent `hero.jpg` background
+
+- **Mobile Optimization**:
+  - Desktop: Uses `background-attachment: fixed` for parallax effect
+  - Mobile: Uses `background-attachment: scroll` for performance
+
+- **Component Updates**:
+  - **Layout Component**: Fixed content background to always use `about.jpg` regardless of header background
+  - **Footer Component**: Updated to consistently use `hero.jpg`
+  - **Archive Page**: Added proper header background parameter
+
+- **Technical Implementation**:
+  ```css
+  /* Content area backgrounds */
+  .backgroundFixed {
+    background-image: url('/background/about.jpg');
+    background-attachment: fixed;
+  }
+
+  /* Footer backgrounds */
+  .footer .backgroundFixed {
+    background-image: url('/background/hero.jpg');
+    background-attachment: fixed;
+  }
+
+  /* Mobile optimization */
+  @media (max-width: 768px) {
+    .backgroundFixed {
+      background-attachment: scroll;
+    }
+  }
+  ```
+
+- **Impact**:
+  - ✅ Eliminated visual inconsistencies between pages
+  - ✅ Resolved background image jumping on mobile devices
+  - ✅ Improved scrolling performance on mobile
+  - ✅ Maintained desktop parallax effects
+  - ✅ Created coherent design language across the application
+
+The update ensures consistent backgrounds while optimizing for different device capabilities, providing both aesthetic quality on desktop and performance on mobile.
+
 ## Files Modified
 1. **`src/App.tsx`** - Updated route definitions and component imports
 2. **`src/components/NavBar.tsx`** - Updated navigation links
@@ -65,7 +153,7 @@ Resolved critical deployment issue where React app couldn't fetch markdown conte
 14. **`src/scripts/preprocess-content.ts`** - Enhanced preprocessing script with comprehensive content scanning and JSON generation
 15. **`public/data/blogs.json`** - Generated static JSON data for blog posts with metadata and content paths
 16. **`public/data/projects.json`** - Generated static JSON data for projects with metadata, asset paths, and content paths
-17. **`src/utils/staticDataLoader.ts`** - Created utility for loading preprocessed static data instead of runtime scanning
+17. **`src/utils/staticDataLoader.ts`** - Created utility for loading preprocessed static data instead of runtime content scanning
 18. **`src/utils/assetResolver.ts`** - Restored from git history after accidental modification
 19. **`dist/.nojekyll`** - Added to disable Jekyll processing on GitHub Pages
 20. **GitHub Pages deployment** - Rebuilt and redeployed with correct directory structure

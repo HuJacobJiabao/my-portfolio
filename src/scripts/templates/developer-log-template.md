@@ -1,3 +1,13 @@
+<!-- 
+FORMATTING REQUIREMENTS:
+1. Maintain proper heading hierarchy:
+   - Level 1 (#): Document title
+   - Level 2 (##): Major sections
+   - Level 3 (###): Subsections
+   - Level 4 (####): Detailed analysis
+2. IMPORTANT: All Problem Analysis, Solution Design, Implementation Details, etc. 
+   must use Level 4 headings (####) under their Level 3 parent sections.
+-->
 # Developer Log - {{displayDate}}
 
 ## Implementation Summary
