@@ -3,11 +3,11 @@ import markdownItFootnote from 'markdown-it-footnote';
 import markdownItMark from 'markdown-it-mark';
 import markdownItDeflist from 'markdown-it-deflist';
 import Prism from 'prismjs';
-import matter from 'gray-matter';
+import { safeMatter } from './safeMatter';
 import { Buffer } from 'buffer';
 import katex from 'katex';
 
-// Make Buffer available globally for gray-matter
+// Make Buffer available globally for utilities
 if (typeof window !== 'undefined') {
   window.Buffer = Buffer;
 }
@@ -379,8 +379,8 @@ export async function parseMarkdown(
 ): Promise<ParsedMarkdown> {
   const toc: TocItem[] = [];
   
-  // Parse frontmatter and body using gray-matter
-  const parsed = matter(content);
+  // Parse frontmatter and body using safeMatter (no eval)
+  const parsed = safeMatter(content);
   const frontmatter = parsed.data;
   let bodyContent = parsed.content;
   

@@ -6,7 +6,7 @@ import { loadProjects, loadBlogPosts, type Project, type BlogPost } from '../uti
 import { generateIdFromTitle } from '../utils/contentUtils';
 import { fetchMarkdownContent, parseMarkdown, type ParsedMarkdown } from '../utils/markdown';
 import { createAssetMapFromCache } from '../utils/assetResolver';
-import matter from 'gray-matter';
+import { safeMatter } from '../utils/safeMatter';
 import styles from '../styles/DetailPage.module.css';
 
 type ContentType = 'project' | 'blog';
@@ -191,7 +191,7 @@ export default function DetailPage() {
           for (const [path, moduleLoader] of Object.entries(srcContentModules)) {
             try {
               const moduleContent = await moduleLoader() as string;
-              const parsed = matter(moduleContent);
+              const parsed = safeMatter(moduleContent);
               const frontmatter = parsed.data;
               
               const generatedId = generateIdFromTitle(frontmatter.title);
@@ -238,7 +238,7 @@ export default function DetailPage() {
           for (const [path, moduleLoader] of Object.entries(srcProjectModules)) {
             try {
               const moduleContent = await moduleLoader() as string;
-              const parsed = matter(moduleContent);
+              const parsed = safeMatter(moduleContent);
               const frontmatter = parsed.data;
               
               // Extract folder name from path for ID generation

@@ -1,7 +1,7 @@
 /**
  * Content loading utilities for blogs and projects
  */
-import matter from 'gray-matter';
+import { safeMatter } from './safeMatter';
 import { generateIdFromTitle } from './contentUtils';
 import { createAssetMapFromCache } from './assetResolver';
 
@@ -44,7 +44,7 @@ export async function loadBlogPosts(): Promise<BlogPost[]> {
   for (const [path, moduleLoader] of Object.entries(blogModules)) {
     try {
       const content = await moduleLoader() as string;
-      const parsed = matter(content);
+      const parsed = safeMatter(content);
       const frontmatter = parsed.data;
 
       // Extract folder name from path for the link
@@ -149,7 +149,7 @@ export async function loadProjects(): Promise<Project[]> {
   for (const [path, moduleLoader] of Object.entries(projectModules)) {
     try {
       const content = await moduleLoader() as string;
-      const parsed = matter(content);
+      const parsed = safeMatter(content);
       const frontmatter = parsed.data;
 
       // Extract folder name from path for the link

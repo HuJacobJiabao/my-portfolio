@@ -9,12 +9,14 @@ export default defineConfig({
   define: {
     global: 'globalThis',
   },
-  optimizeDeps: {
-    include: ['gray-matter']
-  },
   resolve: {
     alias: {
-      buffer: 'buffer',
+      buffer: 'buffer'
     },
   },
+  build: {
+    rollupOptions: {
+      external: ['fs', 'path']
+    }
+  }
 })
