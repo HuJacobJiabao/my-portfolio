@@ -11,7 +11,7 @@
     ],
     "link": "/my-portfolio/blogs/definition-list-test",
     "contentPath": "blogs/definition-list-test/index.md",
-    "image": "default"
+    "image": "/my-portfolio/default_cover.jpg"
   },
   {
     "id": "test-project-1",
@@ -25,7 +25,7 @@
     ],
     "link": "/my-portfolio/blogs/test-project-1",
     "contentPath": "blogs/test-project-1/index.md",
-    "image": "default"
+    "image": "/my-portfolio/default_cover.jpg"
   },
   {
     "id": "markdown-highlights-demo",
@@ -40,7 +40,7 @@
     ],
     "link": "/my-portfolio/blogs/markdown-highlights-demo",
     "contentPath": "blogs/highlight-test/index.md",
-    "image": "./markdown-svgrepo-com.svg"
+    "image": "/my-portfolio/content/blogs/highlight-test/default_blog.png"
   },
   {
     "id": "footnotes-demo",
@@ -55,7 +55,7 @@
     ],
     "link": "/my-portfolio/blogs/footnotes-demo",
     "contentPath": "blogs/footnotes-demo/index.md",
-    "image": "default"
+    "image": "/my-portfolio/default_cover.jpg"
   },
   {
     "id": "math-demo",
@@ -70,6 +70,6 @@
     ],
     "link": "/my-portfolio/blogs/math-demo",
     "contentPath": "blogs/math-demo/index.md",
-    "image": "default    "
+    "image": "/my-portfolio/default_cover.jpg"
   }
 ]

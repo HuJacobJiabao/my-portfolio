@@ -11,7 +11,7 @@
     ],
     "link": "/my-portfolio/projects/project-test",
     "contentPath": "projects/project-test/index.md",
-    "image": "default",
+    "image": "/my-portfolio/default_cover.jpg",
     "assetPaths": []
   },
   {
@@ -26,7 +26,7 @@
     ],
     "link": "/my-portfolio/projects/test-project-1",
     "contentPath": "projects/test-project-1/index.md",
-    "image": "default",
+    "image": "/my-portfolio/default_cover.jpg",
     "assetPaths": [
       "default_blog.png"
     ]
