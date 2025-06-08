@@ -1,4 +1,4 @@
-const e=`---
+---
 type: "project"
 title: "project test"
 createTime: "2025-06-07T17:14:37.393Z"
@@ -43,12 +43,12 @@ Continue with additional features as needed.
 ## Implementation Details
 
 ### Code Structure
-\`\`\`typescript
+```typescript
 // Example of key implementation
 interface {{titleCamelCase}}Config {
   // Configuration interface
 }
-\`\`\`
+```
 
 ### Challenges and Solutions
 Discuss any technical challenges you faced and how you solved them.
@@ -76,4 +76,3 @@ Detail any performance improvements or optimizations you implemented.
 ## Conclusion
 
 Summarize the project's impact, what you learned, and its significance in your portfolio.
-`;export{e as default};

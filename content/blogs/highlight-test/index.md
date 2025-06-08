@@ -1,4 +1,4 @@
-const n=`---
+---
 type: "blog"
 title: "Markdown Highlights Demo"
 createTime: "2025-06-06T16:30:00.000Z"
@@ -28,16 +28,16 @@ Highlighted text can be used to ==emphasize important concepts== within a paragr
 
 When discussing code, you might want to highlight specific terms:
 
-\`\`\`javascript
+```javascript
 // The ==await== keyword is used with async functions
 async function fetchData() {
   const response = await fetch('/api/data');
   const data = await response.json();
   return data;
 }
-\`\`\`
+```
 
-Note that the highlight markers \`==\` won't work inside code blocks as shown above - they'll just be shown as is. But you can refer to the ==await== keyword in your explanatory text.
+Note that the highlight markers `==` won't work inside code blocks as shown above - they'll just be shown as is. But you can refer to the ==await== keyword in your explanatory text.
 
 ## Highlighting with Other Formatting
 
@@ -59,4 +59,3 @@ Highlighting is useful for:
 ---
 
 This concludes the demonstration of the ==highlight feature== in markdown!
-`;export{n as default};

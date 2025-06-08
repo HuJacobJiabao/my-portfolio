@@ -1,4 +1,4 @@
-const n=`---
+---
 type: "blog"
 title: "definition list test"
 createTime: "2025-06-07T17:26:30.142Z"
@@ -15,7 +15,7 @@ This is a simple markdown file to test **definition list rendering**.
 ## 📘 Definitions
 
 Term 1  
-: This is the definition of term 1. It includes **bold text**, *italic text*, and \`inline code\`.
+: This is the definition of term 1. It includes **bold text**, *italic text*, and `inline code`.
 
 Term 2  
 : This is the first explanation of term 2.  
@@ -24,21 +24,21 @@ Term 2
 
 Term with LaTeX  
 : $$
-\\begin{bmatrix}  
-a & b \\\\  
+\begin{bmatrix}  
+a & b \\  
 c & d  
-\\end{bmatrix}  
+\end{bmatrix}  
 $$
 
 ## ✅ Other Markdown Features
 
 ### Code Block
 
-\`\`\`js
+```js
 function hello(name) {
-  return \`Hello, \${name}!\`;
+  return `Hello, ${name}!`;
 }
-\`\`\`
+```
 
 ### Highlighted Text
 
@@ -53,4 +53,3 @@ Here is a footnote reference[^1].
 ---
 
 End of test.
-`;export{n as default};

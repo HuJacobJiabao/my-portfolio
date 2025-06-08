@@ -1,4 +1,4 @@
-const n=`---
+---
 type: "blog"
 title: "Footnotes Demo"
 createTime: "2025-06-06T15:22:00.000Z"
@@ -73,5 +73,4 @@ This reference[^missing] doesn't have a corresponding footnote definition.
 
 [^math]: This footnote contains an equation: $E = mc^2$
 
-[^code]: This footnote contains code: \`console.log('Hello, world!');\`
-`;export{n as default};
+[^code]: This footnote contains code: `console.log('Hello, world!');`

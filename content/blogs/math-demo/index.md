@@ -1,4 +1,4 @@
-const n=`---
+---
 type: "blog"
 title: "Math Demo"
 createTime: "2025-06-06T15:22:00.000Z"
@@ -18,85 +18,84 @@ This is a demonstration of math equation rendering using KaTeX.
 | Dog          | Elephant       | Fox           |
 | 100          | 200            | 300           |
 
-\`\`\`latex
+```latex
 $$
-\\begin{bmatrix}
-a & b \\\\
+\begin{bmatrix}
+a & b \\
 c & d
-\\end{bmatrix}
-\\begin{bmatrix}
-x \\\\
+\end{bmatrix}
+\begin{bmatrix}
+x \\
 y
-\\end{bmatrix}
+\end{bmatrix}
 =
-\\begin{bmatrix}
-ax + by \\\\
+\begin{bmatrix}
+ax + by \\
 cx + dy
-\\end{bmatrix}
+\end{bmatrix}
 $$
-\`\`\`
+```
 ## Inline Math
 
 Here's an inline math equation: $E = mc^2$ which is Einstein's famous equation.
 
-You can also write more complex inline equations like $\\int_{a}^{b} x^2 dx = \\frac{b^3 - a^3}{3}$.
+You can also write more complex inline equations like $\int_{a}^{b} x^2 dx = \frac{b^3 - a^3}{3}$.
 
 ## Display Math
 
 Here's a display math equation:
 
 $$
-\\frac{d}{dx}\\left[ \\int_{a}^{x} f(u) \\, du\\right] = f(x)
+\frac{d}{dx}\left[ \int_{a}^{x} f(u) \, du\right] = f(x)
 $$
 
 Another example with matrices:
 
 $$
-\\begin{pmatrix}
-a & b \\\\
+\begin{pmatrix}
+a & b \\
 c & d
-\\end{pmatrix}
-\\begin{pmatrix}
-x \\\\
+\end{pmatrix}
+\begin{pmatrix}
+x \\
 y
-\\end{pmatrix}
+\end{pmatrix}
 =
-\\begin{pmatrix}
-ax + by \\\\
+\begin{pmatrix}
+ax + by \\
 cx + dy
-\\end{pmatrix}
+\end{pmatrix}
 $$
 
 
 ## Greek Letters and Symbols
 
-Inline: $\\alpha, \\beta, \\gamma, \\delta, \\epsilon, \\zeta, \\eta, \\theta$
+Inline: $\alpha, \beta, \gamma, \delta, \epsilon, \zeta, \eta, \theta$
 
 Display:
 
 $$
-\\sum_{i=1}^{n} x_i = \\mu \\pm \\sigma \\sqrt{n}
+\sum_{i=1}^{n} x_i = \mu \pm \sigma \sqrt{n}
 $$
 
 ## Fractions and Roots
 
 $$
-x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}
+x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
 $$
 
 $$
-\\sqrt[n]{x^n + y^n} \\leq \\sqrt[n]{2} \\cdot \\max(x, y)
+\sqrt[n]{x^n + y^n} \leq \sqrt[n]{2} \cdot \max(x, y)
 $$
 
 ## Limits and Integrals
 
 $$
-\\lim_{x \\to \\infty} \\frac{1}{x} = 0
+\lim_{x \to \infty} \frac{1}{x} = 0
 $$
 
 $$
-\\int_{-\\infty}^{\\infty} e^{-x^2} dx = \\sqrt{\\pi}
+\int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi}
 $$
 
 This demonstrates the KaTeX integration working properly!
-`;export{n as default};
