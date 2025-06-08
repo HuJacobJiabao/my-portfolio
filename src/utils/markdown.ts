@@ -220,24 +220,6 @@ function customCodeRenderer(md: MarkdownIt, toc: TocItem[]) {
     const token = tokens[idx];
     const info = token.info ? token.info.trim() : '';
     const langName = info.split(/\s+/g)[0];
-    
-    // Special handling for mermaid diagrams
-    if (langName.toLowerCase() === 'mermaid') {
-      const cleanedContent = token.content.trim();
-      if (!cleanedContent) {
-        return '<div class="mermaid-container"><div class="mermaid-error">Empty mermaid diagram.</div></div>';
-      }
-
-      const diagramId = `mermaid-diagram-${Math.random().toString(36).substring(2, 11)}`;
-      return `
-        <div class="mermaid-container">
-          <div class="mermaid-diagram" id="${diagramId}">
-            <pre class="mermaid">${cleanedContent}</pre>
-          </div>
-          <div class="mermaid-loading">Loading diagram...</div>
-        </div>
-      `;
-    }
 
     // Map common language aliases
     const languageMap: { [key: string]: string } = {

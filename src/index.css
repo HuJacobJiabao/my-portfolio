@@ -276,21 +276,21 @@ mark.highlighted-text {
 }
 
 /* ==============================================
-   Mermaid Diagram Styles - Global
+   Mermaid Diagram Styles - Global (TEMPORARILY DISABLED)
    ============================================== */
 
+/*
 .mermaid-container {
   margin: 2.5rem 0;
   padding: 0;
   overflow: auto;
-  position: relative; /* Ensures absolute positioning context for download button */
+  position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
   transition: all 0.3s ease;
-  isolation: isolate; /* Creates a new stacking context */
+  isolation: isolate;
 }
-
 
 .mermaid-diagram {
   width: 100%;
@@ -303,14 +303,13 @@ mark.highlighted-text {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0; /* Remove padding for precise button positioning */
+  padding: 0;
   min-height: 300px;
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 12px; /* Rounded corners on all sides */
-  margin: 0 auto; /* Center the container */
-  /* Width will be set dynamically to match SVG width */
-  position: relative; /* Positioning context for the download button */
+  border-radius: 12px;
+  margin: 0 auto;
+  position: relative;
 }
 
 .mermaid-svg-container > svg:first-child {
@@ -318,14 +317,13 @@ mark.highlighted-text {
   visibility: visible !important;
   opacity: 1 !important;
   margin: 0 !important;
-  max-width: calc(100% - 2rem); /* Leave space for margins around SVG */
-  max-height: calc(100% - 2rem); /* Prevent SVG from taking full height */
+  max-width: calc(100% - 2rem);
+  max-height: calc(100% - 2rem);
   height: auto !important;
-  border-radius: 0 0 12px 12px; /* Only round bottom corners */
-  box-shadow: none; /* Remove shadow for a cleaner look */
+  border-radius: 0 0 12px 12px;
+  box-shadow: none;
   background: #ffffff;
-  padding: 1rem 2rem 2rem; /* Less padding on top */
-  /* Ensure SVG is properly centered with constraints */
+  padding: 1rem 2rem 2rem;
   flex-shrink: 0;
   align-self: center;
   justify-self: center;
@@ -382,7 +380,7 @@ mark.highlighted-text {
 
 .mermaid-download-btn {
   background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-  color: white; /* Change color to white for better visibility */
+  color: white;
   border: none;
   padding: 0.6rem;
   border-radius: 50%;
@@ -397,7 +395,6 @@ mark.highlighted-text {
   box-shadow: 0 2px 4px rgba(79, 70, 229, 0.3);
   z-index: 100;
   pointer-events: auto;
-  /* Position absolutely relative to mermaid-container, not SVG container */
   position: absolute;
   top: 12px;
   right: 12px;
@@ -422,7 +419,7 @@ mark.highlighted-text {
 .mermaid-download-btn > svg {
   width: 20px; 
   height: 20px;
-  fill: currentColor; /* Ensures the SVG inherits the button's text color */
+  fill: currentColor;
   display: inline-block !important;
   visibility: visible !important;
   opacity: 1 !important;
@@ -434,8 +431,10 @@ mark.highlighted-text {
   max-width: none !important;
   max-height: none !important;
 }
+*/
 
-/* Mobile responsive styles for Mermaid */
+/* Mobile responsive styles for Mermaid (TEMPORARILY DISABLED) */
+/*
 @media (max-width: 768px) {
   .mermaid-container {
     margin: 1.5rem 0;
@@ -443,7 +442,7 @@ mark.highlighted-text {
   }
   
   .mermaid-svg-container {
-    padding: 2.5rem 1.5rem 1.5rem; /* Keep top padding for button */
+    padding: 2.5rem 1.5rem 1.5rem;
     min-height: 200px;
     border-radius: 8px;
   }
@@ -475,6 +474,7 @@ mark.highlighted-text {
     background: transparent !important;
   }
 }
+*/
 
 /* =======================
    Definition List Styles

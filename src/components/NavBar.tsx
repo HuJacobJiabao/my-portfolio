@@ -61,8 +61,8 @@ export default function NavBar() {
       <ul className={`${styles.navLinks} ${menuOpen ? styles.showMenu : ''}`}>
         <li><Link to="/my-portfolio/" onClick={(e) => handleNavClick('/my-portfolio/', e)}>Home</Link></li>
         <li><a href={`${import.meta.env.BASE_URL}${config.site.contact.resume}`} target="_blank" rel="noopener noreferrer">CV</a></li>
-        <li><Link to="/my-portfolio/project/" onClick={(e) => handleNavClick('/my-portfolio/project/', e)}>Project</Link></li>
-        <li><Link to="/my-portfolio/blog/" onClick={(e) => handleNavClick('/my-portfolio/blog/', e)}>Blog</Link></li>
+        <li><Link to="/my-portfolio/projects/" onClick={(e) => handleNavClick('/my-portfolio/projects/', e)}>Projects</Link></li>
+        <li><Link to="/my-portfolio/blogs/" onClick={(e) => handleNavClick('/my-portfolio/blogs/', e)}>Blogs</Link></li>
         <li><Link to="/my-portfolio/archive/" onClick={(e) => handleNavClick('/my-portfolio/archive/', e)}>Archive</Link></li>
       </ul>
     </nav>

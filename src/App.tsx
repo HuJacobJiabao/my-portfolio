@@ -5,7 +5,7 @@ import PageTransition from './components/PageTransition'
 import Home from './pages/Home'
 import Projects from './pages/Projects'
 import DetailPage from './pages/DetailPage'
-import Blog from './pages/Blog'
+import Blogs from './pages/Blogs'
 import Archive from './pages/Archive'
 import './App.css'
 
@@ -51,12 +51,12 @@ function AppContent() {
     <PageTransition transitionKey={transitionKey}>
       <Routes>
         <Route path="/my-portfolio/" element={<Home />} />
-        <Route path="/my-portfolio/project" element={<Projects />} />
-        <Route path="/my-portfolio/project/" element={<Projects />} />
-        <Route path="/my-portfolio/project/:id" element={<DetailPage />} />
-        <Route path="/my-portfolio/blog" element={<Blog />} />
-        <Route path="/my-portfolio/blog/" element={<Blog />} />
-        <Route path="/my-portfolio/blog/:id" element={<DetailPage />} />
+        <Route path="/my-portfolio/projects" element={<Projects />} />
+        <Route path="/my-portfolio/projects/" element={<Projects />} />
+        <Route path="/my-portfolio/projects/:id" element={<DetailPage />} />
+        <Route path="/my-portfolio/blogs" element={<Blogs />} />
+        <Route path="/my-portfolio/blogs/" element={<Blogs />} />
+        <Route path="/my-portfolio/blogs/:id" element={<DetailPage />} />
         <Route path="/my-portfolio/archive" element={<Archive />} />
         <Route path="/my-portfolio/archive/" element={<Archive />} />
       </Routes>

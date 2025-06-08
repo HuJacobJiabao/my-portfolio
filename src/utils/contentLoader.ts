@@ -112,7 +112,7 @@ export async function loadBlogPosts(): Promise<BlogPost[]> {
         category: frontmatter.category || 'Uncategorized',
         description: frontmatter.description || 'No description available.',
         image: resolvedImagePath,
-        link: `/my-portfolio/blog/${generateIdFromTitle(frontmatter.title || folderName)}`,
+        link: `/my-portfolio/blogs/${generateIdFromTitle(frontmatter.title || folderName)}`,
         tags: Array.isArray(frontmatter.tags) ? frontmatter.tags : []
       };
 
@@ -226,7 +226,7 @@ export async function loadProjects(): Promise<Project[]> {
         category: frontmatter.category || 'Uncategorized',
         description: frontmatter.description || 'No description available.',
         image: resolvedImagePath,
-        link: `/my-portfolio/project/${generateIdFromTitle(frontmatter.title || folderName)}`,
+        link: `/my-portfolio/projects/${generateIdFromTitle(frontmatter.title || folderName)}`,
         tags: Array.isArray(frontmatter.tags) ? frontmatter.tags : [],
         assetMap: assetMap
       };

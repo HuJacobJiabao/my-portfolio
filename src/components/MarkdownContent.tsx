@@ -4,7 +4,6 @@
 import React, { useEffect } from 'react';
 import type { ParsedMarkdown } from '../utils/markdown';
 import { initializeCodeBlocks } from '../utils/codeBlock';
-import { renderMermaidDiagrams } from '../utils/mermaidRenderer';
 import styles from '../styles/DetailPage.module.css';
 
 interface MarkdownContentProps {
@@ -22,15 +21,8 @@ const MarkdownContent = React.memo<MarkdownContentProps>(({
     let rafId: number;
 
     const run = async () => {
-      console.log('Initializing code blocks and mermaid diagrams...');
+      console.log('Initializing code blocks...');
       initializeCodeBlocks();
-
-      try {
-        await renderMermaidDiagrams();
-        console.log('Mermaid diagrams rendering completed');
-      } catch (error) {
-        console.error('Error rendering mermaid diagrams:', error);
-      }
     };
 
     rafId = requestAnimationFrame(run);

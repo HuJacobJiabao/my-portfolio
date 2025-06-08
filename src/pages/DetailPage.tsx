@@ -72,7 +72,7 @@ export default function DetailPage() {
   }, []);
 
   // Determine if this is a project or blog based on the URL path
-  const contentType: ContentType = location.pathname.includes('/project/') ? 'project' : 'blog';
+  const contentType: ContentType = location.pathname.includes('/projects/') ? 'project' : 'blog';
   
   // Find the content item (project or blog post) - but only after both blog posts and projects are loaded
   const contentItem: ContentItem | undefined = useMemo(() => {
@@ -314,7 +314,7 @@ export default function DetailPage() {
   // If content not found, redirect to appropriate page (but wait for content to load first)
   const isContentLoading = contentType === 'project' ? projectsLoading : blogPostsLoading;
   if (!isContentLoading && !contentItem) {
-    const redirectPath = contentType === 'project' ? '/my-portfolio/project/' : '/my-portfolio/blog/';
+    const redirectPath = contentType === 'project' ? '/my-portfolio/projects/' : '/my-portfolio/blogs/';
     console.log('Content item not found, redirecting to:', redirectPath);
     return <Navigate to={redirectPath} replace />;
   }

@@ -30,7 +30,7 @@ export default function Card({
   const handleClick = () => {
     if (type === 'project' && id) {
       // Navigate to project detail page
-      navigate(`/my-portfolio/project/${id}`);
+      navigate(`/my-portfolio/projects/${id}`);
     } else if (link) {
       // External link
       window.open(link, '_blank', 'noopener noreferrer');

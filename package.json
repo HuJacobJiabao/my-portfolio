@@ -27,7 +27,7 @@
     "markdown-it-footnote": "^4.0.0",
     "markdown-it-mark": "^4.0.0",
     "markdown-it-prism": "^2.3.1",
-    "mermaid": "^11.6.0",
+
     "prismjs": "^1.30.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -38,7 +38,7 @@
     "@eslint/js": "^9.25.0",
     "@rollup/plugin-yaml": "^4.1.2",
     "@types/katex": "^0.16.7",
-    "@types/mermaid": "^9.1.0",
+
     "@types/node": "^22.15.29",
     "@types/prismjs": "^1.26.5",
     "@types/react": "^19.1.2",

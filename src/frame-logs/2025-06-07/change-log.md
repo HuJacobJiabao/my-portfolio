@@ -1,58 +1,37 @@
 # Change Log - June 7, 2025
 
 ## Summary
-**Major Migration**: Replaced the entire markdown parsing engine from `marked` to `markdown-it` for better extensibility and plugin support. Added comprehensive support for definition lists and footnotes with proper CSS Module styling.
+**Major Migration**: Replaced the entire markdown parsing engine from `marked` to `markdown-it` for better extensibility and plugin support. Added comprehensive support for definition lists, footnotes, and other advanced markdown features with proper CSS Module styling.
 
 ## Changes Made
 
 ### 1. 🔄 Markdown Engine Migration: marked → markdown-it
-Completely replaced the markdown parsing library to gain access to a richer plugin ecosystem and better extensibility.
+Replaced the entire markdown parsing infrastructure to use `markdown-it` with comprehensive plugin support.
 
 **Files Modified:**
-- `package.json` - Removed `marked`, added `markdown-it` and plugins
-- `src/utils/markdown.ts` - Complete rewrite using markdown-it API
-- `src/components/MarkdownContent.tsx` - Updated to handle new parser output
+- `src/utils/markdown.ts` - Complete rewrite using `markdown-it` + plugins
+- `package.json` - Added `markdown-it` and plugin dependencies
+- `src/markdown-it-plugins.d.ts` - Added TypeScript declarations
 
-**Key Dependencies Added:**
-```json
-{
-  "markdown-it": "^14.0.0",
-  "markdown-it-deflist": "^3.0.0",
-  "markdown-it-footnote": "^4.0.0",
-  "markdown-it-mark": "^4.0.0",
-  "markdown-it-attrs": "^4.1.6"
-}
-```
-
-**Migration Benefits:**
-- Better standards compliance and HTML output
-- Rich plugin ecosystem for extended features
-- More reliable parsing of complex markdown
-- Better error handling and edge case support
+**New Dependencies:**
+- `markdown-it` - Core parser (replaced `marked`)
+- `markdown-it-footnote` - Footnotes support
+- `markdown-it-deflist` - Definition lists support
+- `markdown-it-mark` - Text highlighting support
 
 ### 2. 📝 Definition List Support Implementation
 Added native support for definition lists using `markdown-it-deflist` plugin with comprehensive CSS styling.
 
 **Files Modified:**
 - `src/utils/markdown.ts` - Integrated `markdown-it-deflist` plugin
-- `src/styles/DetailPage.module.css` - Added definition list CSS styles
-- `src/content/blogs/definition-list-test/index.md` - Created comprehensive test content
+- `src/index.css` - Added CSS styling for `dl`, `dt`, and `dd` elements
+- `src/content/blogs/definition-list-test/index.md` - Created test content
 
-**Syntax Supported:**
-```markdown
-Term 1  
-: This is the definition of term 1
-
-Term 2  
-: First definition
-: Second definition for same term
-```
-
-**CSS Features:**
-- Elegant typography with proper spacing
-- Support for multiple definitions per term
-- Integration with existing code and math styles
-- Responsive design for mobile devices
+**Technical Details:**
+- Uses standard markdown-it plugin architecture
+- Generates proper HTML `<dl>`, `<dt>`, and `<dd>` elements
+- Supports multiple definitions per term
+- Integrates seamlessly with other markdown features
 
 ### 3. 📎 Footnotes Support Implementation  
 Added native footnotes support using `markdown-it-footnote` plugin with proper CSS Module integration.
@@ -63,64 +42,27 @@ Added native footnotes support using `markdown-it-footnote` plugin with proper C
 
 **Key Challenge Solved:**
 - **CSS Module Scope Issue**: Footnote plugin generates global CSS classes, but CSS Modules require local scoping
-- **Solution**: Used `:global()` syntax to target plugin-generated classes:
-  ```css
-  .markdownContent :global(.footnote-ref) { /* styles */ }
-  .markdownContent :global(.footnotes) { /* styles */ }
-  .markdownContent :global(.footnote-backref) { /* styles */ }
-  ```
-
-**Syntax Supported:**
-```markdown
-Text with footnote[^1].
-
-[^1]: This is the footnote content.
-```
+- **Solution**: Used `:global()` syntax to target plugin-generated classes
 
 ### 4. ✨ Enhanced Markdown Features
-Added additional markdown extensions for richer content support.
+Added additional markdown extensions for richer content support using various markdown-it plugins.
 
-**New Features:**
-- **Highlighting**: `==highlighted text==` using `markdown-it-mark`
-- **Attributes**: Add CSS classes and IDs to elements using `markdown-it-attrs`
-- **Better Math**: Improved KaTeX integration with new parser
-- **Code Blocks**: Enhanced code block handling with Prism.js
-
-### 5. 🎨 CSS Module Integration Improvements
-Improved the CSS architecture to properly handle third-party plugin styles.
-
-**Key Improvements:**
-- **Global Style Strategy**: Used `:global()` for plugin-generated content
-- **Scoped Overrides**: Maintained local scoping while controlling global elements
-- **Consistent Typography**: Unified font and spacing across all markdown elements
-- **Mobile Responsive**: All new features work seamlessly on mobile devices
-
-### 6. 📍 CreateTime Positioning Refactor (Previous Work)
+### 5. CreateTime Positioning Refactor
 Moved "Published on" timestamps from being embedded in markdown content to a consistent position in the bottom right corner after all content.
 
 **Files Modified:**
-- `src/utils/markdown.ts` - Excluded createTime from template processing  
+- `src/utils/markdown.ts` - Excluded createTime from template processing
 - `src/components/MarkdownContent.tsx` - Added separate createTime rendering
 - `src/styles/DetailPage.module.css` - Added `.publishedDate` styling with right alignment
 - Template files - Removed hardcoded timestamp lines from all templates
 
-### 7. 🎨 Page Header Background Consistency Fix
-Fixed page header background inconsistency where detail pages with default covers would show different backgrounds from their parent listing pages.
-
-**Files Modified:**
-- `src/styles/DetailPage.module.css` - Updated background logic for default covers
-
 **Technical Implementation:**
-- When a blog/project uses the default cover image, the detail page header now uses the same background as the blogs/projects listing page
-- Maintains visual consistency across the navigation flow
-- Prevents jarring background transitions when viewing content with default covers
+- Modified `ParsedMarkdown` interface to include optional `createTime` field
+- Updated `parseMarkdown()` to skip createTime in template variable processing
+- Component now renders createTime separately after main content
+- Ensures timestamps appear after footnotes in correct document order
 
-**User Experience Improvement:**
-- Smoother visual transitions between listing and detail pages
-- Consistent brand appearance for default content
-- Better visual hierarchy and navigation flow
-
-### 8. 🧹 Template Cleanup (Previous Work)
+### 6. Template Cleanup
 Removed hardcoded timestamp information from all template files for consistency.
 
 **Files Modified:**
@@ -137,8 +79,8 @@ Removed hardcoded timestamp information from all template files for consistency.
 - **CSS Module Integration**: Proper handling of third-party plugin styles using `:global()`
 - **Standards Compliance**: Better HTML output and markdown standards support
 - **Performance**: More efficient parsing and better error handling
-- **User Experience**: More professional and consistent content rendering
-- **Visual Consistency**: Unified page header backgrounds for default covers across listing and detail pages
+- **User Experience**: More professional and consistent timestamp positioning
+- **Template Consistency**: Cleaner template files without redundant timestamp code
 
 ### ✅ Technical Benefits  
 - **Plugin Ecosystem**: Access to 200+ markdown-it plugins for future enhancements

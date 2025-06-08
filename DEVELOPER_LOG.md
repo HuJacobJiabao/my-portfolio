@@ -21,10 +21,15 @@ src/frame-logs/
 
 ## 🗓️ Recent Development Activity
 
+### [June 8, 2025](./src/frame-logs/2025-06-08/)
+- **Changes**: [Change Log](./src/frame-logs/2025-06-08/change-log.md)
+- **Technical**: [Developer Log](./src/frame-logs/2025-06-08/developer-log.md)
+- **Summary**: Route structure modernization and component file naming consistency
+
 ### [June 7, 2025](./src/frame-logs/2025-06-07/)
 - **Changes**: [Change Log](./src/frame-logs/2025-06-07/change-log.md)
 - **Technical**: [Developer Log](./src/frame-logs/2025-06-07/developer-log.md)
-- **Summary**: **Major Markdown Migration** - Replaced `marked` with `markdown-it` for better extensibility. Added definition lists, footnotes, highlighting, and advanced markdown features with proper CSS Module integration.
+- **Summary**: Major markdown engine migration from marked to markdown-it with advanced features (definition lists, footnotes, highlighting)
 
 ### [June 6, 2025](./src/frame-logs/2025-06-06/)
 - **Changes**: [Change Log](./src/frame-logs/2025-06-06/change-log.md)

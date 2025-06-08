@@ -36,7 +36,7 @@ export default function BlogCard({
       console.log('Navigating to blog post:', id);
       
       // Use navigate to go to the blog detail page
-      const targetPath = `/my-portfolio/blog/${id}`;
+      const targetPath = `/my-portfolio/blogs/${id}`;
       navigate(targetPath);
     } else {
       console.log('No link provided for blog card');
