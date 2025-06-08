@@ -1,7 +1,40 @@
+---
+type: "blog"
+title: "Math Demo"
+createTime: "2025-06-06T15:22:00.000Z"
+description: "A demonstration of markdown math equation functionality."
+tags: ["Markdown", "Footnotes", "Demo"]
+category: "Documentation"
+coverImage: "default    "
+---
+
 # Math Equations Demo
 
 This is a demonstration of math equation rendering using KaTeX.
 
+| Left Aligned | Center Aligned | Right Aligned |
+|:------------ |:--------------:| -------------:|
+| Apple        | Banana         | Cherry        |
+| Dog          | Elephant       | Fox           |
+| 100          | 200            | 300           |
+
+```latex
+$$
+\begin{bmatrix}
+a & b \\
+c & d
+\end{bmatrix}
+\begin{bmatrix}
+x \\
+y
+\end{bmatrix}
+=
+\begin{bmatrix}
+ax + by \\
+cx + dy
+\end{bmatrix}
+$$
+```
 ## Inline Math
 
 Here's an inline math equation: $E = mc^2$ which is Einstein's famous equation.
@@ -34,11 +67,13 @@ cx + dy
 \end{pmatrix}
 $$
 
+
 ## Greek Letters and Symbols
 
 Inline: $\alpha, \beta, \gamma, \delta, \epsilon, \zeta, \eta, \theta$
 
 Display:
+
 $$
 \sum_{i=1}^{n} x_i = \mu \pm \sigma \sqrt{n}
 $$

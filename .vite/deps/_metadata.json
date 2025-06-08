@@ -1,0 +1,193 @@
+{
+  "hash": "dd0405f1",
+  "configHash": "5f7d049f",
+  "lockfileHash": "454eb359",
+  "browserHash": "f7979c5b",
+  "optimized": {
+    "react/jsx-dev-runtime": {
+      "src": "../../node_modules/react/jsx-dev-runtime.js",
+      "file": "react_jsx-dev-runtime.js",
+      "fileHash": "69eed2ce",
+      "needsInterop": true
+    },
+    "react": {
+      "src": "../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "30b62bea",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "2555c069",
+      "needsInterop": true
+    },
+    "react-router-dom": {
+      "src": "../../node_modules/react-router-dom/dist/index.js",
+      "file": "react-router-dom.js",
+      "fileHash": "76c8b6f7",
+      "needsInterop": false
+    },
+    "markdown-it": {
+      "src": "../../node_modules/markdown-it/index.mjs",
+      "file": "markdown-it.js",
+      "fileHash": "678c8e4c",
+      "needsInterop": false
+    },
+    "markdown-it-footnote": {
+      "src": "../../node_modules/markdown-it-footnote/index.mjs",
+      "file": "markdown-it-footnote.js",
+      "fileHash": "e0889d88",
+      "needsInterop": false
+    },
+    "markdown-it-mark": {
+      "src": "../../node_modules/markdown-it-mark/index.mjs",
+      "file": "markdown-it-mark.js",
+      "fileHash": "e14cab34",
+      "needsInterop": false
+    },
+    "markdown-it-deflist": {
+      "src": "../../node_modules/markdown-it-deflist/index.mjs",
+      "file": "markdown-it-deflist.js",
+      "fileHash": "34327242",
+      "needsInterop": false
+    },
+    "prismjs": {
+      "src": "../../node_modules/prismjs/prism.js",
+      "file": "prismjs.js",
+      "fileHash": "ac7b2057",
+      "needsInterop": true
+    },
+    "buffer": {
+      "src": "../../node_modules/buffer/index.js",
+      "file": "buffer.js",
+      "fileHash": "af967f5a",
+      "needsInterop": true
+    },
+    "katex": {
+      "src": "../../node_modules/katex/dist/katex.mjs",
+      "file": "katex.js",
+      "fileHash": "ad0d83be",
+      "needsInterop": false
+    },
+    "prismjs/components/prism-markup": {
+      "src": "../../node_modules/prismjs/components/prism-markup.js",
+      "file": "prismjs_components_prism-markup.js",
+      "fileHash": "8dfbda64",
+      "needsInterop": true
+    },
+    "prismjs/components/prism-css": {
+      "src": "../../node_modules/prismjs/components/prism-css.js",
+      "file": "prismjs_components_prism-css.js",
+      "fileHash": "f49017d4",
+      "needsInterop": true
+    },
+    "prismjs/components/prism-javascript": {
+      "src": "../../node_modules/prismjs/components/prism-javascript.js",
+      "file": "prismjs_components_prism-javascript.js",
+      "fileHash": "1c045601",
+      "needsInterop": true
+    },
+    "prismjs/components/prism-typescript": {
+      "src": "../../node_modules/prismjs/components/prism-typescript.js",
+      "file": "prismjs_components_prism-typescript.js",
+      "fileHash": "911af848",
+      "needsInterop": true
+    },
+    "prismjs/components/prism-jsx": {
+      "src": "../../node_modules/prismjs/components/prism-jsx.js",
+      "file": "prismjs_components_prism-jsx.js",
+      "fileHash": "26f0563c",
+      "needsInterop": true
+    },
+    "prismjs/components/prism-tsx": {
+      "src": "../../node_modules/prismjs/components/prism-tsx.js",
+      "file": "prismjs_components_prism-tsx.js",
+      "fileHash": "ba1bf453",
+      "needsInterop": true
+    },
+    "prismjs/components/prism-json": {
+      "src": "../../node_modules/prismjs/components/prism-json.js",
+      "file": "prismjs_components_prism-json.js",
+      "fileHash": "7eb18c81",
+      "needsInterop": true
+    },
+    "prismjs/components/prism-bash": {
+      "src": "../../node_modules/prismjs/components/prism-bash.js",
+      "file": "prismjs_components_prism-bash.js",
+      "fileHash": "0d72b8b1",
+      "needsInterop": true
+    },
+    "prismjs/components/prism-markdown": {
+      "src": "../../node_modules/prismjs/components/prism-markdown.js",
+      "file": "prismjs_components_prism-markdown.js",
+      "fileHash": "5821f7e9",
+      "needsInterop": true
+    },
+    "prismjs/components/prism-yaml": {
+      "src": "../../node_modules/prismjs/components/prism-yaml.js",
+      "file": "prismjs_components_prism-yaml.js",
+      "fileHash": "e76d855b",
+      "needsInterop": true
+    },
+    "prismjs/components/prism-python": {
+      "src": "../../node_modules/prismjs/components/prism-python.js",
+      "file": "prismjs_components_prism-python.js",
+      "fileHash": "05fbe022",
+      "needsInterop": true
+    },
+    "prismjs/components/prism-java": {
+      "src": "../../node_modules/prismjs/components/prism-java.js",
+      "file": "prismjs_components_prism-java.js",
+      "fileHash": "730482a7",
+      "needsInterop": true
+    },
+    "prismjs/components/prism-c": {
+      "src": "../../node_modules/prismjs/components/prism-c.js",
+      "file": "prismjs_components_prism-c.js",
+      "fileHash": "00063bbb",
+      "needsInterop": true
+    },
+    "prismjs/components/prism-cpp": {
+      "src": "../../node_modules/prismjs/components/prism-cpp.js",
+      "file": "prismjs_components_prism-cpp.js",
+      "fileHash": "9d057ae1",
+      "needsInterop": true
+    },
+    "prismjs/components/prism-sql": {
+      "src": "../../node_modules/prismjs/components/prism-sql.js",
+      "file": "prismjs_components_prism-sql.js",
+      "fileHash": "6850e906",
+      "needsInterop": true
+    },
+    "prismjs/components/prism-rust": {
+      "src": "../../node_modules/prismjs/components/prism-rust.js",
+      "file": "prismjs_components_prism-rust.js",
+      "fileHash": "cca6ce68",
+      "needsInterop": true
+    },
+    "prismjs/components/prism-go": {
+      "src": "../../node_modules/prismjs/components/prism-go.js",
+      "file": "prismjs_components_prism-go.js",
+      "fileHash": "d93a9e7c",
+      "needsInterop": true
+    },
+    "prismjs/components/prism-latex": {
+      "src": "../../node_modules/prismjs/components/prism-latex.js",
+      "file": "prismjs_components_prism-latex.js",
+      "fileHash": "ddc10976",
+      "needsInterop": true
+    }
+  },
+  "chunks": {
+    "chunk-5HNGYYSW": {
+      "file": "chunk-5HNGYYSW.js"
+    },
+    "chunk-TVFQMRVC": {
+      "file": "chunk-TVFQMRVC.js"
+    },
+    "chunk-G3PMV62Z": {
+      "file": "chunk-G3PMV62Z.js"
+    }
+  }
+}

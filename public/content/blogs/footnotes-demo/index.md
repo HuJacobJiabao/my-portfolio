@@ -5,7 +5,7 @@ createTime: "2025-06-06T15:22:00.000Z"
 description: "A demonstration of markdown footnotes functionality."
 tags: ["Markdown", "Footnotes", "Demo"]
 category: "Documentation"
-coverImage: "./markdown-svgrepo-com.svg"
+coverImage: "default"
 ---
 
 # Footnotes Demonstration
@@ -50,7 +50,6 @@ Sometimes you might want to reference code in a footnote[^code].
 
 This reference[^missing] doesn't have a corresponding footnote definition.
 
----
 
 [^1]: This is the first footnote.
 
