@@ -8,22 +8,20 @@ The portfolio's markdown rendering was limited by the `marked` library's extensi
 ### Solution Overview
 **Major Migration**: Replaced the entire markdown parsing engine from `marked` to `markdown-it` for better plugin support and extensibility. Implemented comprehensive support for definition lists, footnotes, and other advanced markdown features with proper CSS Module integration using `:global()` syntax.
 
-## Technical Implementations
+## 1. Markdown Engine Migration: marked → markdown-it
 
-### 1. 🔄 Markdown Engine Migration: marked → markdown-it
-
-#### Problem Analysis
+### Problem Analysis
 - **Issue**: Limited extensibility and plugin ecosystem with `marked`
 - **Root Cause**: `marked` has fewer plugins and less flexible architecture for extensions
 - **Impact**: Couldn't add advanced features like definition lists, footnotes, and attribute support
 - **Performance**: Some parsing edge cases and inconsistent HTML output
 
-#### Solution Design
+### Solution Design
 - **Approach**: Complete migration to `markdown-it` with comprehensive plugin integration
 - **Architecture**: Plugin-based system with modular feature additions
 - **Benefits**: Access to 200+ plugins, better standards compliance, superior extensibility
 
-#### Implementation Details
+### Implementation Details
 ```typescript
 // Old approach with marked
 import { marked } from 'marked';
@@ -59,13 +57,13 @@ const html = md.render(content);
 - **Performance Testing**: Verified parsing speed improvements
 - **Type Safety**: Added proper TypeScript definitions for all plugins
 
-### 2. 📝 Definition List Support Implementation
+## 2. Definition List Support Implementation
 
-#### Problem Analysis (Previous Implementation)
+### Problem Analysis (Previous Implementation)
 - **Issue**: No native support for definition list syntax in markdown
 - **Impact**: Content authors couldn't create properly formatted glossaries
 
-#### New Implementation with markdown-it-deflist
+### New Implementation with markdown-it-deflist
 ```typescript
 // Plugin automatically handles this syntax:
 // Term 1
@@ -92,24 +90,24 @@ const html = md.render(content);
 - Better integration with other markdown features
 - Proper semantic HTML for accessibility
 
-### 4. ✨ Additional Markdown Features
+## 4. Additional Markdown Features
 
-#### Highlighting Support
+### Highlighting Support
 ```typescript
 // markdown-it-mark plugin
 // ==highlighted text== → <mark>highlighted text</mark>
 ```
 
-#### Attributes Support  
+### Attributes Support  
 ```typescript
 // markdown-it-attrs plugin
 // # Header {.my-class #my-id}
 // ![Image](url){.responsive}
 ```
 
-### 5. 🔧 Performance and Bundle Optimization
+## 5.  Performance and Bundle Optimization
 
-#### Bundle Size Analysis
+### Bundle Size Analysis
 **Before (marked):**
 - `marked`: ~47KB
 - Custom definition list code: ~2KB
@@ -124,23 +122,23 @@ const html = md.render(content);
 
 **Result:** Smaller bundle with significantly more features!
 
-#### Performance Improvements
+### Performance Improvements
 - **Parsing Speed**: 15-20% faster for typical content
 - **Memory Usage**: 10% reduction in peak memory during parsing
 - **Error Handling**: Better error messages and edge case handling
 
-### 6. CreateTime Positioning Refactor
+## 6. CreateTime Positioning Refactor
 
-#### Problem Analysis
+### Problem Analysis
 - **Issue**: Timestamps appeared within markdown content before footnotes
 - **Root Cause**: Template processing embedded `{{createTime}}` directly in markdown body
 - **Impact**: Inconsistent document structure, timestamps not in logical position
 
-#### Solution Design
+### Solution Design
 - **Approach**: Separate createTime from content processing, render at component level
 - **Architecture**: Export createTime from parser, render separately in MarkdownContent component
 
-#### Implementation Details
+### Implementation Details
 ```typescript
 // Modified parseMarkdown function
 Object.entries(frontmatter).forEach(([key, value]) => {
@@ -161,13 +159,13 @@ return {
 };
 ```
 
-#### Files Modified
+### Files Modified
 - `src/utils/markdown.ts` - Modified `ParsedMarkdown` interface and `parseMarkdown()` function
 - `src/components/MarkdownContent.tsx` - Added separate createTime rendering
 - `src/styles/DetailPage.module.css` - Added `.publishedDate` styling with right alignment
 - All template files - Removed hardcoded timestamp lines
 
-#### Testing Results
+### Testing Results
 - ✅ CreateTime appears after all content including footnotes
 - ✅ Right-aligned positioning provides better visual balance
 - ✅ Conditional rendering works (no timestamp when createTime absent)
@@ -188,7 +186,7 @@ return {
 
 ## Architecture Insights
 
-### 🔌 Plugin Architecture Lessons
+###  Plugin Architecture Lessons
 
 **markdown-it Plugin System Advantages:**
 1. **Composability**: Each plugin handles one concern (footnotes, definition lists, etc.)

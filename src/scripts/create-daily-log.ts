@@ -189,7 +189,7 @@ async function createDailyLog(dateStr?: string) {
   const formattedDate = formatDate(targetDate);
   const displayDate = formatDisplayDate(targetDate);
 
-  const logsDir = path.join(process.cwd(), 'public', 'frame-logs');
+  const logsDir = path.join(process.cwd(), 'public', 'devlogs');
   const dayDir = path.join(logsDir, formattedDate);
 
   // Create directories if they don't exist

@@ -1,35 +1,25 @@
-## Intro
 
-This file serves as an index to the structured daily development logs. For current development activity, see the daily logs in `/devlogs/`.
+## 2025.06
 
-## 🗓️ Recent Development Activity
+**Jun 9** - Configuration system enhancement, developer log page implementation, and sidebar navigation bug fixes  
+[Change Log](./devlogs/2025-06-09/change-log.md) | [Developer Log](./devlogs/2025-06-09/developer-log.md)
 
-### [June 8, 2025](./devlogs/2025-06-08/)
-- **Changes**: [Change Log](./devlogs/2025-06-08/change-log.md)
-- **Technical**: [Developer Log](./devlogs/2025-06-08/developer-log.md)
-- **Summary**: Route structure modernization and component file naming consistency
+**Jun 8** - Route structure modernization and component file naming consistency  
+[Change Log](./devlogs/2025-06-08/change-log.md) | [Developer Log](./devlogs/2025-06-08/developer-log.md)
 
-### [June 7, 2025](./devlogs/2025-06-07/)
-- **Changes**: [Change Log](./devlogs/2025-06-07/change-log.md)
-- **Technical**: [Developer Log](./devlogs/2025-06-07/developer-log.md)
-- **Summary**: Major markdown engine migration from marked to markdown-it with advanced features (definition lists, footnotes, highlighting)
+**Jun 7** - Major markdown engine migration from marked to markdown-it with advanced features  
+[Change Log](./devlogs/2025-06-07/change-log.md) | [Developer Log](./devlogs/2025-06-07/developer-log.md)
 
-### [June 6, 2025](./devlogs/2025-06-06/)
-- **Changes**: [Change Log](./devlogs/2025-06-06/change-log.md)
-- **Technical**: [Developer Log](./devlogs/2025-06-06/developer-log.md)
-- **Summary**: Logging system restructure implementation and daily log migration
+**Jun 6** - Logging system restructure implementation and daily log migration  
+[Change Log](./devlogs/2025-06-06/change-log.md) | [Developer Log](./devlogs/2025-06-06/developer-log.md)
 
-### [June 5, 2025](./devlogs/2025-06-05/)
-- **Changes**: [Change Log](./devlogs/2025-06-05/change-log.md)
-- **Technical**: [Developer Log](./devlogs/2025-06-05/developer-log.md)
-- **Summary**: Multiple bug fixes including page headers, scrollbars, SPA routing, and navigation
+**Jun 5** - Multiple bug fixes including page headers, scrollbars, SPA routing, and navigation  
+[Change Log](./devlogs/2025-06-05/change-log.md) | [Developer Log](./devlogs/2025-06-05/developer-log.md)
 
-### [June 4, 2025](./devlogs/2025-06-04/)
-- **Changes**: [Change Log](./devlogs/2025-06-04/change-log.md)
-- **Technical**: [Developer Log](./devlogs/2025-06-04/developer-log.md)
-- **Summary**: Code block management fixes and performance optimizations
+**Jun 4** - Code block management fixes and performance optimizations  
+[Change Log](./devlogs/2025-06-04/change-log.md) | [Developer Log](./devlogs/2025-06-04/developer-log.md)
 
-## 🛠️ Development Workflow
+## Development Workflow
 
 ### Creating Daily Logs
 Use the automated log creation script:
@@ -42,7 +32,7 @@ npm run log
 npm run log 2025-06-07
 ```
 
-## 📁 Daily Log Structure
+## Daily Log Structure
 
 Starting June 6, 2025, all development logging has been migrated to a structured daily format:
 

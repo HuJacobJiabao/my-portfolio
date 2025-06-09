@@ -3,6 +3,7 @@ import Layout from '../components/Layout';
 import TimelineItem from '../components/TimelineItem';
 import Pagination from '../components/Pagination';
 import styles from '../styles/Archive.module.css';
+import config from '../config/config';
 
 // Import data from static loader
 import { loadStaticBlogPosts, loadStaticProjects, type BlogPost, type Project } from '../utils/staticDataLoader';
@@ -127,7 +128,7 @@ export default function Archive() {
   return (
     <Layout 
       title="Archive"
-      headerBackground={`${import.meta.env.BASE_URL}background/about.jpg`}
+      headerBackground={`${import.meta.env.BASE_URL}${config.content.archive.defaultHeaderBackground}`}
       sidebarItems={sidebarItems}
       sidebarItemType="archive"
       onSidebarItemClick={handleSidebarItemClick}

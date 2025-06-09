@@ -6,23 +6,21 @@
 Code block interactive functionality was causing conflicts with React re-renders during scroll events, leading to unexpected expansion behavior and performance issues.
 
 ### Solution Overview
-Implemented a simplified code block system focusing on essential functionality while removing complex state management that was causing conflicts.
+Implemented a simplified code block system focusing on essential functionality while removing complex state management that was causing conflicts
 
-## Technical Implementations
+## 1. Code Block State Management Bug Fix
 
-### 1. Code Block State Management Bug Fix
-
-#### Problem Analysis
+### Problem Analysis
 - **Issue**: Code blocks would automatically expand when scrolling, breaking user experience
 - **Root Cause**: Complex state management system was causing conflicts with React re-renders during scroll events
 - **Impact**: Poor user experience with unpredictable code block behavior
 
-#### Solution Design
+### Solution Design
 - **Approach**: Removed expand/collapse functionality entirely and simplified code block system
 - **Architecture**: Maintained copy functionality while eliminating state persistence
 - **Alternatives Considered**: Fixing state management vs complete removal (chose removal for stability)
 
-#### Implementation Details
+### Implementation Details
 ```tsx
 // Simplified code block implementation
 function initializeCodeBlocks() {
@@ -41,30 +39,30 @@ function initializeCodeBlocks() {
 // Kept only essential copy-to-clipboard feature
 ```
 
-#### Files Modified
+### Files Modified
 - `src/utils/codeBlock.ts` - Complete rewrite, removed state management, kept copy functionality
 - `src/utils/markdown.ts` - Simplified code block HTML generation
 - `PERFORMANCE_OPTIMIZATION.md` - New documentation file
 
-#### Testing Results
+### Testing Results
 - ✅ No more automatic expansion during scroll
 - ✅ Copy functionality works reliably
 - ✅ Simplified codebase without complex state
 - ✅ Better performance with reduced DOM manipulation
 
-### 2. Markdown Content Re-rendering Optimization
+## 2. Markdown Content Re-rendering Optimization
 
-#### Problem Analysis
+### Problem Analysis
 - **Issue**: MarkdownContent component was re-rendering unnecessarily
 - **Root Cause**: Component not memoized, causing excessive re-computation
 - **Impact**: Performance degradation with frequent re-renders
 
-#### Solution Design
+### Solution Design
 - **Approach**: Implemented React.memo with proper dependency management
 - **Architecture**: Separated concerns with memoized components
 - **Performance**: Significant reduction in unnecessary re-renders
 
-#### Implementation Details
+### Implementation Details
 ```tsx
 // Memoized MarkdownContent component
 const MarkdownContent = React.memo(({ content, className }: MarkdownContentProps) => {
@@ -81,30 +79,30 @@ const MarkdownContent = React.memo(({ content, className }: MarkdownContentProps
 });
 ```
 
-#### Files Modified
+### Files Modified
 - `src/components/MarkdownContent.tsx` - Created memoized component
 - `src/components/Sidebar.tsx` - Added React.memo and scroll throttling
 - `src/pages/DetailPage.tsx` - Added memoization optimizations
 
-#### Testing Results
+### Testing Results
 - ✅ Reduced re-render frequency by ~60%
 - ✅ Improved scroll performance
 - ✅ Better memory efficiency
 - ✅ No visual regression in UI
 
-### 3. Scroll Navigation Animation Fix
+## 3. Scroll Navigation Animation Fix
 
-#### Problem Analysis
+### Problem Analysis
 - **Issue**: Animation conflicts during page navigation affecting scroll behavior
 - **Root Cause**: Multiple scroll event listeners conflicting with navigation transitions
 - **Impact**: Janky animations and poor navigation experience
 
-#### Solution Design
+### Solution Design
 - **Approach**: Implemented throttled scroll handling with proper cleanup
 - **Architecture**: Centralized scroll event management
 - **Performance**: Reduced scroll event processing overhead
 
-#### Implementation Details
+### Implementation Details
 ```tsx
 // Throttled scroll handling
 const useThrottledScroll = (callback: () => void, delay: number) => {
@@ -120,11 +118,11 @@ const useThrottledScroll = (callback: () => void, delay: number) => {
 };
 ```
 
-#### Files Modified
+### Files Modified
 - `src/components/Sidebar.tsx` - Implemented throttled scroll handling
 - `src/hooks/useNavbarState.ts` - Added scroll event optimization
 
-#### Testing Results
+### Testing Results
 - ✅ Smooth scroll animations during navigation
 - ✅ Reduced CPU usage during scroll events
 - ✅ No conflicting event handlers
@@ -158,7 +156,3 @@ const useThrottledScroll = (callback: () => void, delay: number) => {
 - **Dependencies**: No new dependencies added, reduced internal complexity
 - **Interfaces**: Maintained existing API while simplifying implementation
 
----
-
-*Technical implementation completed: June 4, 2025*
-*Documentation updated: June 6, 2025*

@@ -24,16 +24,21 @@ export function loadSiteConfig() {
     console.error('Error loading site config:', error);
     // Return default values if config can't be loaded
     return {
-      site: {
-        content: {
-          blogs: {
-            defaultCover: 'default_cover.jpg',
-            defaultHeaderBackground: 'background/default_blog.png'
-          },
-          projects: {
-            defaultCover: 'default_cover.jpg',
-            defaultHeaderBackground: 'background/default_proj.jpg'
-          }
+      content: {
+        blogs: {
+          defaultCover: 'default_cover.jpg',
+          defaultHeaderBackground: 'background/default_blog.png'
+        },
+        projects: {
+          defaultCover: 'default_cover.jpg',
+          defaultHeaderBackground: 'background/default_proj.jpg'
+        },
+        archive: {
+          defaultCover: 'default_cover.jpg',
+          defaultHeaderBackground: 'background/default_blog.png'
+        },
+        logs: {
+          defaultHeaderBackground: 'background/default_blog.png'
         }
       }
     };
@@ -47,15 +52,24 @@ export function getDefaultCoverImage(contentType: 'blogs' | 'projects'): string 
   const config = loadSiteConfig();
   return contentType === 'blogs'
     ? config.content.blogs.defaultCover
-    : config.content.projectConfig.defaultCover;
+    : config.content.projects.defaultCover;
 }
 
 /**
  * Get default header background for content type
  */
-export function getDefaultHeaderBackground(contentType: 'blogs' | 'projects'): string {
+export function getDefaultHeaderBackground(contentType: 'blogs' | 'projects' | 'archive' | 'logs'): string {
   const config = loadSiteConfig();
-  return contentType === 'blogs'
-    ? config.content.blogs.defaultHeaderBackground
-    : config.content.projectConfig.defaultHeaderBackground;
+  switch (contentType) {
+    case 'blogs':
+      return config.content.blogs.defaultHeaderBackground;
+    case 'projects':
+      return config.content.projects.defaultHeaderBackground;
+    case 'archive':
+      return config.content.archive.defaultHeaderBackground;
+    case 'logs':
+      return config.content.logs.defaultHeaderBackground;
+    default:
+      return config.content.blogs.defaultHeaderBackground;
+  }
 }

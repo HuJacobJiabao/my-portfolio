@@ -247,6 +247,8 @@ function customLinkRenderer(md: MarkdownIt) {
 
 // Custom renderer for code blocks with syntax highlighting
 function customCodeRenderer(md: MarkdownIt, toc: TocItem[]) {
+  // Track heading IDs to ensure uniqueness
+  const headingIds = new Map<string, number>();
   // Override fence renderer for code blocks
   md.renderer.rules.fence = function(tokens, idx) {
     const token = tokens[idx];
@@ -384,11 +386,21 @@ function customCodeRenderer(md: MarkdownIt, toc: TocItem[]) {
     }
     
     // Generate ID from text
-    const id = text
+    let baseId = text
       .toLowerCase()
       .replace(/[^\w\s-]/g, '')
       .replace(/\s+/g, '-')
       .trim();
+    
+    // Ensure unique ID by adding counter for duplicates
+    let id = baseId;
+    if (headingIds.has(baseId)) {
+      const count = headingIds.get(baseId)! + 1;
+      headingIds.set(baseId, count);
+      id = `${baseId}-${count}`;
+    } else {
+      headingIds.set(baseId, 0);
+    }
     
     // Add to TOC
     toc.push({

@@ -42,7 +42,7 @@ export default function Projects() {
     return (
       <Layout 
         title="Projects"
-        headerBackground={`${import.meta.env.BASE_URL}${config.content.projectConfig.defaultHeaderBackground}`}
+        headerBackground={`${import.meta.env.BASE_URL}${config.content.projects.defaultHeaderBackground}`}
         sidebarItems={[]}
         sidebarItemType="project"
         onSidebarItemClick={() => {}}
@@ -61,7 +61,7 @@ export default function Projects() {
   return (
     <Layout 
       title="Projects"
-      headerBackground={`${import.meta.env.BASE_URL}${config.content.projectConfig.defaultHeaderBackground}`}
+      headerBackground={`${import.meta.env.BASE_URL}${config.content.projects.defaultHeaderBackground}`}
       sidebarItems={sidebarItems}
       sidebarItemType="project"
       onSidebarItemClick={handleSidebarItemClick}

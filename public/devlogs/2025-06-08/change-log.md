@@ -3,18 +3,16 @@
 ## Summary
 Updated application routing structure to use plural forms for better semantic consistency, renamed blog component file to match the new routing convention, and temporarily removed Mermaid diagram support due to rendering issues. Completely replaced gray-matter dependency with custom safeMatter parser to eliminate eval warnings and improve security. **Critical Fix**: Resolved GitHub Pages 404 errors when accessing markdown files by disabling Jekyll processing and restoring proper directory structure. **Asset Resolution Fix**: Overhauled asset loading system to work with static preprocessing instead of Vite imports, fixing image display issues. **Dev Workflow**: Enhanced development script to automatically run preprocessing before starting server.
 
-## Changes Made
-
-### 1. Route Path Updates
+## 1. Route Path Updates
 Updated application routes to use plural forms for better semantic consistency:
 - **Projects Route**: Changed from `/my-portfolio/project/` to `/my-portfolio/projects/`
 - **Blog Route**: Changed from `/my-portfolio/blog/` to `/my-portfolio/blogs/`
 
-### 2. File Rename
+## 2. File Rename
 Renamed the blog page component file:
 - **File Name**: Changed from `Blog.tsx` to `Blogs.tsx` to match the new plural routing convention
 
-### 3. Mermaid Support Removal
+## 3. Mermaid Support Removal
 Temporarily removed Mermaid diagram support due to ongoing rendering issues:
 - **Dependencies**: Removed `mermaid` and `@types/mermaid` packages from package.json
 - **Components**: Removed mermaid imports and rendering logic from MarkdownContent.tsx
@@ -22,7 +20,7 @@ Temporarily removed Mermaid diagram support due to ongoing rendering issues:
 - **Markdown Processing**: Removed mermaid code block handling from markdown.ts
 - **Styles**: Commented out all mermaid-related CSS styles (preserving for future re-enable)
 
-### 4. Gray-Matter Replacement
+## 4. Gray-Matter Replacement
 Completely replaced gray-matter dependency with custom safeMatter parser:
 - **Dependencies**: Removed `gray-matter` package from package.json to eliminate eval warnings
 - **Parser**: Updated all frontmatter parsing to use custom `safeMatter` utility
@@ -30,7 +28,7 @@ Completely replaced gray-matter dependency with custom safeMatter parser:
 - **Components**: Updated imports in contentLoader.ts, markdown.ts, and DetailPage.tsx
 - **Build Config**: Cleaned up vite.config.ts to remove gray-matter specific configurations
 
-### 5. **Content Preprocessing System Implementation**
+## 5. **Content Preprocessing System Implementation**
 Implemented comprehensive content preprocessing system to generate static JSON data for improved performance:
 - **Static Data Generation**: Created preprocessing script that scans content directories and generates static JSON files
 - **Build Integration**: Integrated preprocessing into build pipeline via `npm run preprocess` command
@@ -39,7 +37,7 @@ Implemented comprehensive content preprocessing system to generate static JSON d
 - **Asset Management**: Enhanced asset path resolution and metadata extraction during preprocessing
 - **JSON Output**: Generated `public/data/blogs.json` and `public/data/projects.json` for fast data loading
 
-### 6. **GitHub Pages 404 Error Fix (Critical)**
+## 6. **GitHub Pages 404 Error Fix (Critical)**
 Resolved critical deployment issue where React app couldn't fetch markdown content from GitHub Pages:
 - **Root Cause**: GitHub Pages enabled Jekyll by default, which processed markdown files but didn't expose raw .md files
 - **Directory Structure Issue**: Fixed incorrect deployment structure where files were placed directly in `/content/projects/` instead of proper subdirectories
@@ -48,7 +46,7 @@ Resolved critical deployment issue where React app couldn't fetch markdown conte
 - **Deployment Fix**: Rebuilt and redeployed with correct directory structure and Jekyll disabled
 - **Verification**: Confirmed both local `dist/` and remote `gh-pages` branch have proper structure
 
-### 7. **Asset Resolution System Overhaul**
+## 7. **Asset Resolution System Overhaul**
 Fixed critical asset loading issues where markdown images and default cover images were not displaying correctly:
 - **Root Cause**: Vite's `import.meta.glob` system was incompatible with static file preprocessing approach
 - **Asset Resolver Rewrite**: Completely rewrote `assetResolver.ts` to work with static JSON data instead of Vite imports
@@ -57,14 +55,14 @@ Fixed critical asset loading issues where markdown images and default cover imag
 - **Path Resolution**: Updated `getStaticAssetUrl()` to convert relative paths to proper static URLs
 - **Duplicate Execution Fix**: Removed duplicate calls in preprocessing script that caused double output
 
-### 8. **Development Workflow Enhancement**
+## 8. **Development Workflow Enhancement**
 Improved development experience by automating preprocessing step:
 - **Package.json Update**: Modified dev script from `"dev": "vite"` to `"dev": "npm run preprocess && vite"`
 - **Automatic Preprocessing**: Ensures static data files are always up to date before starting development server
 - **Consistent Workflow**: Development now mirrors build process for reliable asset resolution
 - **Developer Experience**: Eliminates need to manually remember running preprocessing before development
 
-### 9. **Mobile Background Performance Fix**
+## 9. **Mobile Background Performance Fix**
 Fixed visual background glitches on mobile devices that caused inconsistent appearance:
 - **Root Cause**: `background-attachment: fixed` property causing performance degradation on mobile browsers
 - **Mobile Optimization**: Added media queries to disable fixed background attachment on devices with max-width 768px
@@ -88,7 +86,7 @@ Fixed visual background glitches on mobile devices that caused inconsistent appe
   - ✅ Consistent visual experience across all devices
 - **Testing**: Verified on mobile browsers - background remains stable throughout page lifecycle
 
-### 10. **Background System Unification**
+## 10. **Background System Unification**
 Implemented a unified background system for consistent visual experience across pages and devices:
 
 - **Background Assignment Rules**:

@@ -1,98 +1,180 @@
-site:
+# Resume configuration
+resume:
+  filename: "Jiabao_Resume.pdf"
+
+home:
   hero:
     name: "Jiabao Hu"
     quote: "Let life be beautiful like summer flowers and death like autumn leaves."
     title: "Full-stack Developer"
     subtitle: "MSCS at USC"
-  about:
-    title: "About Me"
-    content: >
-      Hi, I'm Jiabao, currently a Master's student in 
-      [Computer Science](https://www.cs.usc.edu/academic-programs/masters/) at 
-      [University of Southern California (USC)](https://www.usc.edu/).
-      I'm a passionate developer with a love for front-end design,
-      interactive experiences, and elegant code. I enjoy transforming creative
-      ideas into beautiful, functional websites, and I thrive on crafting digital
-      experiences that feel alive and engaging.
-    photo: "seattle.jpg"
 
-  contact:
-    email: "hujiabao1224@gmail.com"
-    github: "https://github.com/HuJacobJiabao"
-    linkedin: "https://www.linkedin.com/in/jiabao-hu-920664221/"
-    twitter: "https://twitter.com/yourusername"
-    resume: "Jiabao_Resume.pdf"
+  navigation:
+    about:
+      title: "About Me"
+      icon: "👤"
+      type: "about"
+      content: >
+        Hi, I'm Jiabao, currently a Master's student in 
+        [Computer Science](https://www.cs.usc.edu/academic-programs/masters/) at 
+        [University of Southern California (USC)](https://www.usc.edu/).
+        I'm a passionate developer with a love for front-end design,
+        interactive experiences, and elegant code. I enjoy transforming creative
+        ideas into beautiful, functional websites, and I thrive on crafting digital
+        experiences that feel alive and engaging.
+      photo: "seattle.jpg"
 
-  education:
-    - schoolName: "University of Southern California"
-      degree: "Master of Science in Computer Science"
-      duration: "Aug. 2023 - Dec. 2025"
-      location: "Los Angeles, CA"
-      logoSrc: "usc.png"
-      highlights:
-        - "Related Courses: Operating System, Networking, Algorithms, Web Technologies"
+    education:
+      title: "Education"
+      icon: "🎓"
+      type: "education"
+      items:
+        - schoolName: "University of Southern California"
+          degree: "Master of Science in Computer Science"
+          duration: "Aug. 2023 - Dec. 2025"
+          location: "Los Angeles, CA"
+          logoSrc: "usc.png"
+          highlights:
+            - "Related Courses: Operating System, Networking, Algorithms, Web Technologies"
 
-    - schoolName: "University of Illinois at Urbana-Champaign"
-      degree: "Bachelor of Science in Civil Engineering with Honors"
-      duration: "Sep. 2019 - Jun. 2023"
-      location: "Urbana, IL"
-      logoSrc: "uiuc.png"
-      highlights:
-        - "Minor in Computer Science"
+        - schoolName: "University of Illinois at Urbana-Champaign"
+          degree: "Bachelor of Science in Civil Engineering with Honors"
+          duration: "Sep. 2019 - Jun. 2023"
+          location: "Urbana, IL"
+          logoSrc: "uiuc.png"
+          highlights:
+            - "Minor in Computer Science"
 
-    - schoolName: "Zhejiang University"
-      degree: "Bachelor of Engineering in Civil Engineering"
-      duration: "Sep. 2019 - Jun. 2023"
-      location: "Hangzhou, China"
-      logoSrc: "zju.png"
-      highlights: []
+        - schoolName: "Zhejiang University"
+          degree: "Bachelor of Engineering in Civil Engineering"
+          duration: "Sep. 2019 - Jun. 2023"
+          location: "Hangzhou, China"
+          logoSrc: "zju.png"
+          highlights: []
 
-  experience:
-    - companyName: "ZJU/UIUC Institute"
-      position: "Undergraduate Research Assistant"
-      duration: "Sep 2022 - Apr 2023"
-      location: "Haining, China"
-      logoSrc: "zjui.jpg"
-      highlights:
-        - "Engineered a modular 3D simulation platform in Python/Blender"
-        - "Built scalable data generation pipelines for CV model training"
-        - "Integrated and trained deep learning pipelines (PyTorch)"
-
-  projects:
-    - projectName: "Portfolio Website"
-      description: "A modern, responsive portfolio website built with React and TypeScript"
-      technologies: ["React", "TypeScript", "CSS Modules", "Vite"]
-      duration: "Dec 2024 - Jan 2025"
-      projectUrl: "https://hujacobjiabao.github.io/my-portfolio/"
-      githubUrl: "https://github.com/HuJacobJiabao/my-portfolio"
-      imageSrc: "default_cover.jpg"
-      highlights:
-        - "Responsive design with mobile-first approach"
-        - "Component-based architecture with reusable cards"
-        - "Modern UI with glass morphism effects and animations"
-        
-    - projectName: "3D Simulation Platform"
-      description: "A modular 3D simulation platform for computer vision research"
-      technologies: ["Python", "Blender", "PyTorch", "OpenCV"]
-      duration: "Sep 2022 - Apr 2023"
-      projectUrl: ""
-      githubUrl: "https://github.com/HuJacobJiabao/3d-simulation"
-      imageSrc: "default_cover.jpg"
-      highlights:
-        - "Built scalable data generation pipelines"
-        - "Integrated deep learning training workflows"
-        - "Modular architecture for extensibility"
-  
-  newbe:
-    title: "Newbie Projects"
-    description: "A collection of my early projects showcasing my journey in web development and programming."
     projects:
-      - projectName: "Simple Calculator"
-        description: "A basic calculator application built with HTML, CSS, and JavaScript."
-        technologies: ["HTML", "CSS", "JavaScript"]
-        duration: "Jan 2023"
-        projectUrl: ""
-        githubUrl: ""
+      title: "Projects"
+      icon: "💻"
+      type: "projects"
+      items:
+        - projectName: "Portfolio Website"
+          description: "A modern, responsive portfolio website built with React and TypeScript"
+          technologies: ["React", "TypeScript", "CSS Modules", "Vite"]
+          duration: "Dec 2024 - Jan 2025"
+          projectUrl: "https://hujacobjiabao.github.io/my-portfolio/"
+          githubUrl: "https://github.com/HuJacobJiabao/my-portfolio"
+          imageSrc: "default_cover.jpg"
+          highlights:
+            - "Responsive design with mobile-first approach"
+            - "Component-based architecture with reusable cards"
+            - "Modern UI with glass morphism effects and animations"
+            
+        - projectName: "3D Simulation Platform"
+          description: "A modular 3D simulation platform for computer vision research"
+          technologies: ["Python", "Blender", "PyTorch", "OpenCV"]
+          duration: "Sep 2022 - Apr 2023"
+          projectUrl: ""
+          githubUrl: "https://github.com/HuJacobJiabao/3d-simulation"
+          imageSrc: "default_cover.jpg"
+          highlights:
+            - "Built scalable data generation pipelines"
+            - "Integrated deep learning training workflows"
+            - "Modular architecture for extensibility"
+
+    experience:
+      title: "Experience"
+      icon: "💼"
+      type: "experience"
+      items:
+        - companyName: "ZJU/UIUC Institute"
+          position: "Undergraduate Research Assistant"
+          duration: "Sep 2022 - Apr 2023"
+          location: "Haining, China"
+          logoSrc: "zjui.jpg"
+          highlights:
+            - "Engineered a modular 3D simulation platform in Python/Blender"
+            - "Built scalable data generation pipelines for CV model training"
+            - "Integrated and trained deep learning pipelines (PyTorch)"
+
+    # certificates:
+    #   title: "Certificates & Achievements"
+    #   icon: "🏆"
+    #   type: "projects"
+    #   items:
+    #     - projectName: "AWS Solutions Architect Associate"
+    #       description: "Comprehensive certification covering AWS architecture best practices and cloud solutions design"
+    #       technologies: ["AWS", "Cloud Architecture", "EC2", "S3", "Lambda"]
+    #       duration: "Dec 2024"
+    #       projectUrl: "https://aws.amazon.com/certification/certified-solutions-architect-associate/"
+    #       githubUrl: ""
+    #       imageSrc: "default_cover.jpg"
+    #       highlights:
+    #         - "Validated expertise in designing distributed applications on AWS"
+    #         - "Demonstrated knowledge of security and compliance on AWS platform"
+    #         - "Proven ability to optimize costs and performance"
+            
+    #     - projectName: "React Developer Certification"
+    #       description: "Advanced certification in React development covering hooks, state management, and modern patterns"
+    #       technologies: ["React", "JavaScript", "TypeScript", "Redux"]
+    #       duration: "Nov 2024"
+    #       projectUrl: "https://reactjs.org/"
+    #       githubUrl: ""
+    #       imageSrc: "default_cover.jpg"
+    #       highlights:
+    #         - "Advanced component architecture and optimization"
+    #         - "State management with Redux and Context API"
+    #         - "Testing strategies for React applications"
+
+    # skills:
+    #   title: "Technical Skills"
+    #   icon: "⚡"
+    #   type: "projects"
+    #   items:
+    #     - projectName: "Frontend Development"
+    #       description: "Modern frontend technologies and frameworks for creating responsive, interactive user interfaces"
+    #       technologies: ["React", "TypeScript", "Vue.js", "CSS3", "HTML5"]
+    #       duration: "2019 - Present"
+    #       projectUrl: ""
+    #       githubUrl: ""
+    #       imageSrc: "default_cover.jpg"
+    #       highlights:
+    #         - "Component-based architecture design"
+    #         - "Responsive design and mobile-first development"
+    #         - "Modern CSS techniques and animations"
+            
+    #     - projectName: "Backend Development"
+    #       description: "Server-side development with various languages and frameworks for scalable applications"
+    #       technologies: ["Node.js", "Python", "Java", "PostgreSQL", "MongoDB"]
+    #       duration: "2020 - Present"
+    #       projectUrl: ""
+    #       githubUrl: ""
+    #       imageSrc: "default_cover.jpg"
+    #       highlights:
+    #         - "RESTful API design and implementation"
+    #         - "Database design and optimization"
+    #         - "Microservices architecture"
+            
+    #     - projectName: "DevOps & Cloud"
+    #       description: "Cloud platforms and DevOps practices for deployment and infrastructure management"
+    #       technologies: ["AWS", "Docker", "Kubernetes", "CI/CD", "Terraform"]
+    #       duration: "2021 - Present"
+    #       projectUrl: ""
+    #       githubUrl: ""
+    #       imageSrc: "default_cover.jpg"
+    #       highlights:
+    #         - "Container orchestration and deployment"
+    #         - "Infrastructure as Code (IaC)"
+    #         - "Automated testing and deployment pipelines"
+
+    contact:
+      title: "Get In Touch"
+      icon: "📬"
+      type: "contact"
+      content: "Feel free to reach out for collaborations, opportunities, or just to say hello!"
+      email: "hujiabao1224@gmail.com"
+      github: "https://github.com/HuJacobJiabao"
+      linkedin: "https://www.linkedin.com/in/jiabao-hu-920664221/"
+      twitter: "https://twitter.com/yourusername"
 
 # Navigation bar configuration
 navbar:
@@ -108,49 +190,14 @@ content:
   blogs:
     defaultCover: "default_cover.jpg"
     defaultHeaderBackground: "background/default_blog.png"
-  projectConfig:
+  projects:
     defaultCover: "default_cover.jpg"
     defaultHeaderBackground: "background/default_proj.jpg"
-
-  navigation:
-    # Define all the sections that can appear in your portfolio
-    # type can be: 'intro', 'education', 'experience', 'projects', 'custom'
-    # for custom sections, specify contentType: 'project' to use ProjectCard as default
-    sections:
-      - id: 'intro'
-        title: 'About Me'
-        icon: '👤'
-        type: 'intro'
-        
-      - id: 'education' 
-        title: 'Education'
-        icon: '🎓'
-        type: 'education'
-        
-      - id: 'experience'
-        title: 'Work Experience'
-        icon: '💼'
-        type: 'experience'
-        
-      - id: 'projects'
-        title: 'Projects'
-        icon: '💻'
-        type: 'projects'
-
-      - id: 'certificates'
-        title: 'Certificates'
-        icon: '🏆'
-        type: 'custom'
-        contentType: 'project'
-        
-      - id: 'contact'
-        title: 'Contact'
-        icon: '📬'
-        type: 'custom'
-        contentType: 'basic'
-        
-    # This defines which sections appear in the navigation and in what order
-    visibleSections: ['intro', 'education', 'experience', 'projects', 'contact']
+  archive:
+    defaultCover: "default_cover.jpg"
+    defaultHeaderBackground: "background/default_blog.png"
+  logs:
+    defaultHeaderBackground: "background/default_blog.png"
 
 # Footer configuration
 footer:

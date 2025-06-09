@@ -52,7 +52,7 @@ export default function NavBar() {
   
   return (
     <nav className={`${styles.nav} ${visible ? styles.show : styles.hide} ${atTop ? styles.transparent : styles.solid}`}>
-      <div className={styles.logo}>🌟 {config.site.hero.name}</div>
+      <div className={styles.logo}>🌟 {config.home.hero.name}</div>
 
       <div className={styles.hamburger} onClick={() => setMenuOpen(!menuOpen)}>
         ☰
@@ -63,7 +63,7 @@ export default function NavBar() {
           <li><Link to="/my-portfolio/" onClick={(e) => handleNavClick('/my-portfolio/', e)}>Home</Link></li>
         )}
         {config.navbar.showCV && (
-          <li><a href={`${import.meta.env.BASE_URL}${config.site.contact.resume}`} target="_blank" rel="noopener noreferrer">CV</a></li>
+          <li><a href={`${import.meta.env.BASE_URL}${config.resume.filename}`} target="_blank" rel="noopener noreferrer">CV</a></li>
         )}
         {config.navbar.showProjects && (
           <li><Link to="/my-portfolio/projects/" onClick={(e) => handleNavClick('/my-portfolio/projects/', e)}>Projects</Link></li>

@@ -3,9 +3,8 @@
 ## Summary
 **Major Migration**: Replaced the entire markdown parsing engine from `marked` to `markdown-it` for better extensibility and plugin support. Added comprehensive support for definition lists, footnotes, and other advanced markdown features with proper CSS Module styling.
 
-## Changes Made
 
-### 1. 🔄 Markdown Engine Migration: marked → markdown-it
+## 1. Markdown Engine Migration: marked → markdown-it
 Replaced the entire markdown parsing infrastructure to use `markdown-it` with comprehensive plugin support.
 
 **Files Modified:**
@@ -19,7 +18,7 @@ Replaced the entire markdown parsing infrastructure to use `markdown-it` with co
 - `markdown-it-deflist` - Definition lists support
 - `markdown-it-mark` - Text highlighting support
 
-### 2. 📝 Definition List Support Implementation
+## 2. Definition List Support Implementation
 Added native support for definition lists using `markdown-it-deflist` plugin with comprehensive CSS styling.
 
 **Files Modified:**
@@ -33,7 +32,7 @@ Added native support for definition lists using `markdown-it-deflist` plugin wit
 - Supports multiple definitions per term
 - Integrates seamlessly with other markdown features
 
-### 3. 📎 Footnotes Support Implementation  
+## 3. Footnotes Support Implementation  
 Added native footnotes support using `markdown-it-footnote` plugin with proper CSS Module integration.
 
 **Files Modified:**
@@ -44,10 +43,10 @@ Added native footnotes support using `markdown-it-footnote` plugin with proper C
 - **CSS Module Scope Issue**: Footnote plugin generates global CSS classes, but CSS Modules require local scoping
 - **Solution**: Used `:global()` syntax to target plugin-generated classes
 
-### 4. ✨ Enhanced Markdown Features
+## 4. Enhanced Markdown Features
 Added additional markdown extensions for richer content support using various markdown-it plugins.
 
-### 5. CreateTime Positioning Refactor
+## 5. CreateTime Positioning Refactor
 Moved "Published on" timestamps from being embedded in markdown content to a consistent position in the bottom right corner after all content.
 
 **Files Modified:**
@@ -62,7 +61,7 @@ Moved "Published on" timestamps from being embedded in markdown content to a con
 - Component now renders createTime separately after main content
 - Ensures timestamps appear after footnotes in correct document order
 
-### 6. Template Cleanup
+## 6. Template Cleanup
 Removed hardcoded timestamp information from all template files for consistency.
 
 **Files Modified:**

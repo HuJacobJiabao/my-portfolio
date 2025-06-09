@@ -268,7 +268,7 @@ export default function DetailPage() {
   const getHeaderBackground = () => {
     // Get default backgrounds from config
     const defaultBlogBackground = `${import.meta.env.BASE_URL}${config.content.blogs.defaultHeaderBackground}`;
-    const defaultProjectBackground = `${import.meta.env.BASE_URL}${config.content.projectConfig.defaultHeaderBackground}`;
+    const defaultProjectBackground = `${import.meta.env.BASE_URL}${config.content.projects.defaultHeaderBackground}`;
     
     // For daily logs, use the blog background
     if (contentType === 'dailylog') {

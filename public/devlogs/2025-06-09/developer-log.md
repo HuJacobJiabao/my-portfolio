@@ -1,13 +1,3 @@
-<!-- 
-FORMATTING REQUIREMENTS:
-1. Maintain proper heading hierarchy:
-   - Level 1 (#): Document title
-   - Level 2 (##): Major sections
-   - Level 3 (###): Subsections
-   - Level 4 (####): Detailed analysis
-2. IMPORTANT: All Problem Analysis, Solution Design, Implementation Details, etc. 
-   must use Level 4 headings (####) under their Level 3 parent sections.
--->
 # Developer Log - June 9, 2025
 
 ## Implementation Summary
@@ -24,21 +14,20 @@ This session involved a comprehensive enhancement of the portfolio website's con
 ### Solution Overview
 Implemented a multi-phase approach involving configuration system restructuring, new page creation for developer logs, enhanced markdown processing with custom link rendering, and comprehensive routing fixes. The solution maintains backward compatibility while adding significant new functionality.
 
-## Technical Implementations
 
-### 1. Configuration System Enhancement
+## 1. Configuration System Enhancement
 
-#### Problem Analysis
+### Problem Analysis
 - **Issue**: Need for configurable default cover images and header backgrounds for different content types
 - **Challenge**: Existing hardcoded paths in components made customization difficult
 - **Requirement**: Centralized configuration for visual assets and navigation options
 
-#### Solution Design
+### Solution Design
 - **Configuration Structure**: Enhanced `config.yaml` with new sections for content defaults and navbar options
 - **Component Integration**: Updated all relevant components to use configuration values instead of hardcoded paths
 - **Build System**: Created Node.js config loader for preprocessing scripts
 
-#### Implementation Details
+### Implementation Details
 ```yaml
 # Enhanced config.yaml structure
 content:
@@ -58,7 +47,7 @@ navbar:
   showArchive: true
 ```
 
-#### Files Modified
+### Files Modified
 - `src/config/config.yaml` - Added new configuration sections
 - `src/pages/Blogs.tsx` - Updated to use config for header backgrounds
 - `src/pages/Projects.tsx` - Updated to use config for header backgrounds
@@ -66,20 +55,20 @@ navbar:
 - `src/scripts/content-config-loader.ts` - New Node.js config loader
 - `src/scripts/preprocess-content.ts` - Updated to use config-based defaults
 
-### 2. Developer Log Page Implementation
+## 2. Developer Log Page Implementation
 
-#### Problem Analysis
+### Problem Analysis
 - **Issue**: Need to display DEVELOPER_LOG.md content with proper navigation
 - **Challenge**: File lacks frontmatter unlike other content in the system
 - **Requirement**: Extract title from first H1 heading and create TOC navigation
 
-#### Solution Design
+### Solution Design
 - **Component Structure**: Created dedicated `DeveloperLog.tsx` component
 - **Title Extraction**: Logic to use first H1 heading as page title
 - **Content Processing**: Enhanced markdown parser to handle files without frontmatter
 - **Timestamp Removal**: Removed timestamp functionality per requirements
 
-#### Implementation Details
+### Implementation Details
 ```typescript
 // DeveloperLog.tsx key implementation
 export default function DeveloperLog() {
@@ -104,26 +93,26 @@ export default function DeveloperLog() {
 }
 ```
 
-#### Files Modified
+### Files Modified
 - `src/pages/DeveloperLog.tsx` - New component for displaying developer log
 - `src/App.tsx` - Added routes for developer log page
 - `src/components/NavBar.tsx` - Added navigation link
 - `src/utils/markdown.ts` - Enhanced to handle files without frontmatter
 
-### 3. Daily Log Page Routing System
+## 3. Daily Log Page Routing System
 
-#### Problem Analysis
+### Problem Analysis
 - **Issue**: Need to create pages for daily markdown files in devlogs directory
 - **Challenge**: Routing conflicts and path detection issues
 - **Requirement**: Support `/devlogs/:date/:logType` route pattern
 
-#### Solution Design
+### Solution Design
 - **Route Pattern**: Implemented `/my-portfolio/devlogs/:date/:logType` routing
 - **Content Type Detection**: Enhanced DetailPage to detect 'dailylog' content type
 - **Mock Content**: Added mock content item generation for daily logs
 - **Path Correction**: Fixed routing detection from `/devlog/` to `/devlogs/`
 
-#### Implementation Details
+### Implementation Details
 ```typescript
 // Enhanced DetailPage routing detection
 const getContentType = (): ContentType => {
@@ -146,25 +135,25 @@ const mockDailyLogItem: ContentItem = {
 };
 ```
 
-#### Files Modified
+### Files Modified
 - `src/App.tsx` - Added daily log route pattern
 - `src/pages/DetailPage.tsx` - Enhanced content type detection and mock content
 - `src/components/Layout.tsx` - Extended contentType to include 'dailylog'
 
-### 4. YAML Configuration Structure Fix
+## 4. YAML Configuration Structure Fix
 
-#### Problem Analysis
+### Problem Analysis
 - **Issue**: Duplicate mapping keys causing YAML parsing errors
 - **Challenge**: Conflicting `contact`, `projects`, and `footer` sections
 - **Requirement**: Clean, hierarchical configuration structure
 
-#### Solution Design
+### Solution Design
 - **Data Reorganization**: Moved education, experience, and projects under `site` section
 - **Namespace Resolution**: Renamed `content.projects` to `content.projectConfig`
 - **Global Footer**: Made footer configuration global instead of under site
 - **Component Updates**: Fixed all component references to use correct config paths
 
-#### Implementation Details
+### Implementation Details
 ```yaml
 # Fixed YAML structure
 site:
@@ -182,26 +171,26 @@ footer:  # Made global
   message: "..."
 ```
 
-#### Files Modified
+### Files Modified
 - `src/config/config.yaml` - Restructured entire configuration
 - `src/pages/Home.tsx` - Updated to use `config.site.navigation.sections`
 - `src/components/Sidebar.tsx` - Fixed config references
 - `src/components/Footer.tsx` - Updated to use global `config.footer`
 - `src/scripts/content-config-loader.ts` - Updated config references
 
-### 5. Navbar Configuration System
+## 5. Navbar Configuration System
 
-#### Problem Analysis
+### Problem Analysis
 - **Issue**: Hardcoded navigation items preventing flexible site configuration
 - **Challenge**: Need individual control over each navbar item visibility
 - **Requirement**: Configurable navbar through config file
 
-#### Solution Design
+### Solution Design
 - **Individual Controls**: Added boolean flags for each navbar item
 - **Dynamic Rendering**: Conditional rendering based on configuration
 - **Backward Compatibility**: Default true values maintain existing behavior
 
-#### Implementation Details
+### Implementation Details
 ```typescript
 // NavBar.tsx conditional rendering
 {config.navbar.showHome && (
@@ -224,23 +213,23 @@ footer:  # Made global
 )}
 ```
 
-#### Files Modified
+### Files Modified
 - `src/config/config.yaml` - Added navbar configuration section
 - `src/components/NavBar.tsx` - Implemented conditional navigation rendering
 
-### 6. Markdown Processing Enhancements
+## 6. Markdown Processing Enhancements
 
-#### Problem Analysis
+### Problem Analysis
 - **Issue**: TOC generation showing content after headers instead of just header text
 - **Challenge**: Markdown links in DEVELOPER_LOG.md not converting to React Router routes
 - **Requirement**: Clean TOC display and proper link transformation
 
-#### Solution Design
+### Solution Design
 - **Enhanced Text Extraction**: Improved heading text extraction to handle markdown formatting
 - **Custom Link Renderer**: Implemented link transformation for devlog file references
 - **Filter Logic**: Enhanced filtering to show only header titles in TOC
 
-#### Implementation Details
+### Implementation Details
 ```typescript
 // Enhanced heading text extraction
 if (textToken.children && textToken.children.length > 0) {
@@ -265,204 +254,161 @@ renderer.link = (href: string, title: string | null, text: string) => {
 };
 ```
 
-#### Files Modified
+### Files Modified
 - `src/utils/markdown.ts` - Enhanced TOC generation and added custom link renderer
 - `public/DEVELOPER_LOG.md` - Updated links to use proper file paths
 
-## Testing and Validation Results
+## 7. Sidebar Navigation Card Repetitive Highlight Bug Fix
 
-### 1. Configuration System Testing
-- ✅ All components now use configuration values instead of hardcoded paths
-- ✅ Different default covers applied correctly for blogs vs projects
-- ✅ Header backgrounds properly sourced from configuration
-- ✅ Node.js config loader works correctly in preprocessing scripts
-- ✅ No YAML parsing errors after structure fixes
+### Problem Analysis
+- **Issue**: Multiple headers with identical text content were all being highlighted simultaneously in the sidebar TOC navigation
+- **Root Cause**: Headers with same text (like "Problem Statement", "Solution Design", etc.) were receiving identical IDs during markdown processing, causing all matching items to be highlighted when one was selected
+- **Impact**: Confusing user experience where multiple unrelated sections appeared active simultaneously
 
-### 2. Developer Log Page Testing
-- ✅ Page loads correctly with content from DEVELOPER_LOG.md
-- ✅ Title extracted from first H1 heading displays properly
-- ✅ TOC navigation shows clean header text without content fragments
-- ✅ Navigation integration works smoothly from main navbar
-- ✅ Page styling consistent with other detail pages
+### Solution Design
+- **Unique ID Generation**: Enhanced markdown processing to create unique IDs for headers with same text by adding incremental counters
+- **Hierarchical ID System**: Implemented hierarchical ID structure (L1-0, L2-0, L2-0.3-0) to maintain parent-child relationships while ensuring uniqueness
+- **Selective Highlighting**: Modified active state logic to only highlight the exact selected item while still expanding relevant sections based on text matching
 
-### 3. Daily Log Routing Testing
-- ✅ `/devlogs/:date/:logType` routes work correctly
-- ✅ Content type detection properly identifies 'dailylog' pages
-- ✅ Mock content generation provides appropriate metadata
-- ✅ Layout component handles 'dailylog' content type correctly
-- ✅ Path detection fixed from `/devlog/` to `/devlogs/`
-
-### 4. Navbar Configuration Testing
-- ✅ Individual navbar items can be toggled on/off via configuration
-- ✅ Navigation remains functional with various item combinations
-- ✅ Default values maintain existing behavior for backward compatibility
-- ✅ All navigation links work correctly when enabled
-
-### 5. Markdown Processing Testing
-- ✅ TOC generation now shows only header titles, not content fragments
-- ✅ Custom link renderer transforms devlog file links to React Router routes
-- ✅ Markdown files without frontmatter handled correctly with default values
-- ✅ Link transformation works for pattern `devlogs/YYYY-MM-DD/logtype.md`
-
-## Impact Analysis
-
-### Performance Impact
-- **Positive**: Centralized configuration reduces component complexity
-- **Neutral**: Additional config loading has minimal performance impact
-- **Improvement**: Enhanced markdown processing more efficient for TOC generation
-
-### User Experience Impact
-- **Enhanced Navigation**: New Dev Log page provides easy access to development updates
-- **Improved Consistency**: Unified styling across all content types
-- **Better Organization**: Clear separation between main log and daily logs
-- **Flexible Configuration**: Site owners can customize navigation and visual elements
-
-### Developer Experience Impact
-- **Simplified Maintenance**: Centralized configuration makes updates easier
-- **Better Documentation**: Comprehensive daily logging system
-- **Enhanced Debugging**: Clear separation of concerns in configuration structure
-- **Improved Extensibility**: New content types easily added to routing system
-
-### Technical Debt Impact
-- **Reduced**: Eliminated duplicate configuration keys and hardcoded paths
-- **Improved**: Better separation of concerns in component architecture
-- **Enhanced**: More robust error handling in markdown processing
-- **Streamlined**: Cleaner YAML structure prevents parsing issues
-
-## Key Learnings
-
-### 1. Configuration Management
-- **Lesson**: Hierarchical YAML structures require careful namespace management
-- **Best Practice**: Use descriptive section names to avoid key conflicts
-- **Implementation**: Separate data organization from functional configuration
-
-### 2. Routing Architecture
-- **Lesson**: Content type detection needs robust path pattern matching
-- **Best Practice**: Use consistent URL patterns across similar content types
-- **Implementation**: Centralize route detection logic for maintainability
-
-### 3. Markdown Processing
-- **Lesson**: Different content types may require specialized processing approaches
-- **Best Practice**: Design parsers to handle content with and without frontmatter
-- **Implementation**: Use token-level processing for precise content extraction
-
-### 4. Component Design
-- **Lesson**: Flexible components should accept configuration through props or context
-- **Best Practice**: Separate presentation logic from data fetching concerns
-- **Implementation**: Use configuration-driven rendering for dynamic behavior
-
-## Future Enhancements
-
-### 1. Configuration System
-- **Dynamic Configuration**: Consider adding runtime configuration updates
-- **Validation**: Implement configuration schema validation
-- **Migration**: Add configuration migration utilities for version updates
-
-### 2. Developer Logging
-- **Search Functionality**: Add search capability within developer logs
-- **Categories**: Implement log categorization and filtering
-- **Analytics**: Add usage tracking for log content
-
-### 3. Markdown Processing
-- **Plugin System**: Consider adding markdown plugin architecture
-- **Performance**: Implement caching for frequently accessed content
-- **Features**: Add support for advanced markdown features like diagrams
-
-### 4. Navigation System
-- **Breadcrumbs**: Implement breadcrumb navigation for daily logs
-- **History**: Add navigation history for better user experience
-- **Responsive**: Enhance mobile navigation experience
-- **Limitation**: DEVELOPER_LOG.md and potentially other files don't use frontmatter
-- **Error Risk**: Without proper handling, missing frontmatter could cause runtime errors
-
-#### Solution Design
-- **Default Values**: Modified parseMarkdown to provide empty defaults for missing frontmatter
-- **Type Safety**: Updated types to account for potentially missing frontmatter data
-- **Error Handling**: Enhanced error handling in the markdown processing pipeline
-
-#### Implementation Details
+### Implementation Details
 ```typescript
-// Enhanced parseMarkdown function in markdown.ts
-export async function parseMarkdown(
-  content: string, 
-  removeMainTitle: boolean = false,
-  assetMap?: Map<string, string>
-): Promise<ParsedMarkdown> {
-  const toc: TocItem[] = [];
+// Enhanced ID generation in markdown.ts
+const headingIds = new Map<string, number>();
+
+md.renderer.rules.heading_open = function(tokens, idx) {
+  const token = tokens[idx];
+  const level = parseInt(token.tag.slice(1));
   
-  // Parse frontmatter and body using safeMatter (no eval)
-  const parsed = safeMatter(content);
-  const frontmatter = parsed.data || {}; // Provide empty object default for files without frontmatter
-  let bodyContent = parsed.content;
+  // Generate base ID from heading text
+  let baseId = generateIdFromTitle(text);
   
-  // Process template variables in body content using frontmatter values
-  Object.entries(frontmatter).forEach(([key, value]) => {
-    // Skip createTime as we'll handle it separately in the component
-    if (key === 'createTime') {
-      return;
-    }
-    
-    const regex = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
-    bodyContent = bodyContent.replace(regex, String(value));
+  // Ensure uniqueness by adding counter for duplicate text
+  if (headingIds.has(baseId)) {
+    const count = headingIds.get(baseId)! + 1;
+    headingIds.set(baseId, count);
+    baseId = `${baseId}-${count}`;
+  } else {
+    headingIds.set(baseId, 0);
+  }
+  
+  const id = baseId;
+  // ... rest of implementation
+};
+
+// Sidebar.tsx - Enhanced expansion logic
+const renderNestedTOC = (items: any[]): React.ReactElement | null => {
+  // Create text-based index for expansion while maintaining unique IDs for highlighting
+  const headerTextIndex: Map<string, { items: any[], hierarchyIds: string[] }> = new Map();
+  
+  // Build index for same-text headers
+  groupedItems.forEach(group => {
+    group.items.forEach(item => {
+      const normalizedTitle = item.title.toLowerCase().trim();
+      if (!headerTextIndex.has(normalizedTitle)) {
+        headerTextIndex.set(normalizedTitle, { items: [], hierarchyIds: [] });
+      }
+      const entry = headerTextIndex.get(normalizedTitle)!;
+      entry.items.push(item);
+      entry.hierarchyIds.push(item.hierarchyId);
+    });
   });
   
-  // Rest of the function remains unchanged
-}
+  // Expand sections based on text matching, but highlight only exact ID matches
+  if (activeItemTitle && headerTextIndex.has(activeItemTitle)) {
+    const sameTextHeaders = headerTextIndex.get(activeItemTitle)!;
+    sameTextHeaders.items.forEach(sameTextItem => {
+      const itemHierarchyId = sameTextItem.hierarchyId;
+      if (itemHierarchyId) {
+        if (itemHierarchyId.startsWith('L2-')) {
+          expandedLevel2HierarchyIds.add(itemHierarchyId);
+        } else if (itemHierarchyId.includes('.')) {
+          const parentL2Id = itemHierarchyId.split('.')[0];
+          expandedLevel2HierarchyIds.add(parentL2Id);
+        }
+      }
+    });
+  }
+  
+  // Highlight only exact ID matches
+  const isActive = activeItemId === item.id; // Exact ID match only
+};
 ```
 
-#### Files Modified
-- `src/utils/markdown.ts` - Modified parseMarkdown to handle missing frontmatter
+### Technical Implementation Details
 
-#### Testing Results
-- ✅ Successfully processes markdown files without frontmatter
-- ✅ Maintains compatibility with existing frontmatter-based content
-- ✅ No runtime errors when frontmatter is missing
+#### Unique ID Generation Strategy
+```typescript
+// Before: Headers with same text got identical IDs
+"problem-statement" -> Multiple headers with same ID
+"solution-design" -> Multiple headers with same ID
 
-## Performance Impact
+// After: Each header gets unique ID with counter
+"problem-statement" -> First occurrence
+"problem-statement-1" -> Second occurrence  
+"problem-statement-2" -> Third occurrence
+```
 
-### Page Load Performance
-- **First Contentful Paint**: ~300ms for Developer Log page (similar to other detail pages)
-- **Time to Interactive**: No significant difference from other detail pages
-- **Bundle Impact**: Minimal - reused existing components with small modifications
+#### Expansion vs Highlighting Logic
+- **Expansion Logic**: Uses text-based matching to expand all sections containing headers with same text
+- **Highlighting Logic**: Uses exact ID matching to highlight only the specific selected header
+- **Result**: Sections expand logically for related content, but only one item shows as active
 
-### Build Process Impact
-- **Build Time**: Negligible increase (~200ms) from timestamp script execution
-- **Bundle Size**: No measurable increase in final bundle size
-- **Development Workflow**: No negative impact on development server startup time
+### Files Modified
+- `src/utils/markdown.ts` - Enhanced heading ID generation with uniqueness counters
+- `src/components/Sidebar.tsx` - Improved TOC rendering with hierarchical ID system and text-based expansion
+- `src/components/Sidebar.tsx` - Fixed active state logic to use exact ID matching
 
-## Lessons Learned
+### Testing Results
+- ✅ Headers with identical text now receive unique IDs during markdown processing
+- ✅ Only the actually selected header is highlighted in the sidebar navigation
+- ✅ Sections containing headers with same text still expand appropriately for related content
+- ✅ Navigation hierarchy maintained with proper parent-child relationships
+- ✅ No performance impact from the enhanced ID generation logic
 
-### Technical Insights
-- **Markdown Processing**: Our markdown processing system was flexible enough to handle files without frontmatter with minimal changes
-- **Component Reuse**: By leveraging the existing DetailPage pattern, we were able to add a completely new content type with minimal code
-- **Build Automation**: The timestamp tracking script provides a simple but effective way to show content freshness
+### Impact Assessment
+- **User Experience**: Eliminated confusing multiple highlights, providing clear visual feedback
+- **Navigation Clarity**: Users can now distinguish between different sections with similar names
+- **Content Organization**: Maintained logical grouping while fixing visual inconsistencies
+- **System Reliability**: Robust ID generation prevents future conflicts with duplicate header text
 
-### Future Considerations
-- Consider creating a more generalized system for handling different types of markdown files with varying metadata requirements
-- Explore ways to more deeply integrate the developer logs with the rest of the documentation system
-- Look into automated tools for generating developer log entries from git commits or pull requests
+### Edge Cases Handled
+- **Multiple Identical Headers**: Each gets unique ID with incremental counter
+- **Nested Similar Headers**: Hierarchical structure preserved while ensuring uniqueness
+- **Dynamic Content**: ID generation works consistently across different markdown files
+- **Performance**: Efficient ID tracking with minimal memory overhead
 
-### Before/After Metrics
-- **Performance**: Measurable improvements
-- **Bundle Size**: Any changes to build output
-- **Memory Usage**: Impact on runtime performance
+## 8. File Structure Updates
 
-### Optimization Notes
-- **Code Efficiency**: Improvements to algorithm or implementation
-- **Resource Usage**: Better utilization of system resources
-- **User Experience**: Perceived performance improvements
+### Problem Analysis
+- **Issue**: Multiple files needed updates to support new functionality across the system
+- **Challenge**: Ensuring all configuration references and file paths were updated consistently
+- **Requirement**: Maintain proper file organization while adding new capabilities
 
-## Future Considerations
+### Solution Design
+- **Systematic Updates**: Updated configuration files, build scripts, and component references
+- **Path Standardization**: Ensured all file paths follow consistent patterns
+- **Documentation Updates**: Updated main DEVELOPER_LOG.md with proper route references
 
-### Technical Debt
-- **Identified**: Any technical debt discovered
-- **Planned**: Debt reduction strategies
+### Implementation Details
+- **DEVELOPER_LOG.md**: Updated links to use proper file paths for route transformation
+- **Config Files**: Restructured `config.yaml` with clear hierarchy and no duplicates
+- **Build Scripts**: Removed timestamp script references from `package.json`
+- **Sidebar Component**: Enhanced with hierarchical ID system and unique ID generation
+- **Markdown Utilities**: Improved heading ID generation and TOC processing
 
-### Potential Improvements
-- **Short-term**: Quick wins and minor improvements
-- **Long-term**: Architectural improvements and major features
+### Files Modified
+- `public/DEVELOPER_LOG.md` - Updated devlog file links for proper routing
+- `src/config/config.yaml` - Complete restructure with namespace fixes
+- `package.json` - Cleaned up build script references
+- `src/components/Sidebar.tsx` - Enhanced with new ID system
+- `src/utils/markdown.ts` - Improved heading processing
+- `src/scripts/templates/` - Updated log templates with proper hierarchy
 
-### Architecture Notes
-- **Patterns**: Design patterns used or established
-- **Dependencies**: New dependencies added or removed
-- **Interfaces**: API or interface changes
+### Testing Results
+- ✅ All file references updated correctly throughout the system
+- ✅ Configuration hierarchy prevents future parsing conflicts
+- ✅ Build process runs cleanly without deprecated script references
+- ✅ File paths resolve correctly in both development and production
+- ✅ Template files maintain consistent structure for future logs
+
+

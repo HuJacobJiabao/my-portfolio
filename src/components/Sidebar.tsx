@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styles from '../styles/Sidebar.module.css';
 import config from '../config/config';
 import { useNavbarState } from '../hooks/useNavbarState';
@@ -10,14 +10,6 @@ interface SidebarProps {
   itemType?: 'project' | 'blog' | 'archive' | 'toc';
   onItemClick?: (index: number) => void;
   activeItemId?: string; // For tracking which TOC item is currently active
-}
-
-interface NavigationSection {
-  id: string;
-  title: string;
-  icon: string;
-  type: string;
-  contentType?: string;
 }
 
 const Sidebar: React.FC<SidebarProps> = React.memo(({ 
@@ -45,14 +37,32 @@ const Sidebar: React.FC<SidebarProps> = React.memo(({
   // Throttling variable for scroll events
   let scrollTicking = false;
 
-  // Get all sections and visible sections from config (for Home page)
-  const allSections = config.content.navigation.sections as NavigationSection[];
-  const visibleSectionIds = config.content.navigation.visibleSections as string[];
+  // Get contact data directly from navigation
+  const contactData = config.home.navigation.contact;
   
-  // Filter sections to only show the ones listed in visibleSections
-  const sections = allSections.filter(section => 
-    visibleSectionIds.includes(section.id)
-  );
+  // Define available sections for navigation - dynamically generate from config
+  const generateSections = () => {
+    const availableSections: { id: string; title: string; icon: string }[] = [];
+    
+    // Dynamically read from config.home.navigation and only include non-commented sections
+    const navigation = config.home.navigation;
+    
+    // Iterate through all keys in navigation and add them if they exist and are not commented
+    Object.keys(navigation || {}).forEach(key => {
+      const section = navigation[key];
+      if (section && section.title && section.icon) {
+        availableSections.push({ 
+          id: key, 
+          title: section.title, 
+          icon: section.icon 
+        });
+      }
+    });
+    
+    return availableSections;
+  };
+  
+  const sections = generateSections();
 
   // Helper function to prepare TOC items without adding numbers
   const prepareTocItems = (items: any[]) => {
@@ -209,56 +219,220 @@ const Sidebar: React.FC<SidebarProps> = React.memo(({
   const renderNestedTOC = (items: any[]): React.ReactElement | null => {
     if (!items || items.length === 0) return null;
 
-    // Group items by level 2 sections
-    const groupedItems: { [key: string]: any[] } = {};
+    // Group items by level 2 sections while preserving order
+    const groupedItems: { key: string; hierarchyId: string; items: any[] }[] = [];
     let currentLevel2: string | null = null;
+    let currentLevel2Index = -1;
+    
+    // Create counters for each level to create consistent hierarchical IDs
+    const levelCounters: Record<number, number> = {};
 
     items.forEach((item, index) => {
+      // Initialize counter for this level if not exists
+      if (levelCounters[item.level] === undefined) {
+        levelCounters[item.level] = 0;
+      }
+      
       if (item.level === 1) {
         // Level 1 items are always shown independently
         const key = `level1-${index}`;
-        groupedItems[key] = [{ ...item, originalIndex: index }];
+        const hierarchyId = `L1-${levelCounters[item.level]}`;
+        levelCounters[item.level]++;
+        
+        groupedItems.push({
+          key,
+          hierarchyId,
+          items: [{ ...item, originalIndex: index, hierarchyId }]
+        });
       } else if (item.level === 2) {
-        // Start a new level 2 group
+        // Start a new level 2 group with an incrementing counter
         currentLevel2 = item.id || `item-${index}`;
-        groupedItems[currentLevel2!] = [{ ...item, originalIndex: index }];
-      } else if (item.level > 2 && currentLevel2) {
-        // Add to current level 2 group
-        groupedItems[currentLevel2!].push({ ...item, originalIndex: index });
+        const hierarchyId = `L2-${levelCounters[item.level]}`;
+        levelCounters[item.level]++;
+        
+        currentLevel2Index = groupedItems.length;
+        groupedItems.push({
+          key: currentLevel2!,
+          hierarchyId,
+          items: [{ ...item, originalIndex: index, hierarchyId }]
+        });
+        
+        // Reset counters for child levels when a new parent is encountered
+        Object.keys(levelCounters).forEach(level => {
+          if (parseInt(level) > 2) {
+            levelCounters[parseInt(level)] = 0;
+          }
+        });
+      } else if (item.level > 2 && currentLevel2 && currentLevel2Index >= 0) {
+        // Add to current level 2 group with hierarchical ID
+        const currentGroup = groupedItems[currentLevel2Index];
+        if (currentGroup) {
+          // Extract the L2 base ID (e.g., "L2-0")
+          const parentHierarchyId = currentGroup.hierarchyId;
+          
+          // Create hierarchical ID based on parent and current counters
+          const hierarchyId = `${parentHierarchyId}.${item.level}-${levelCounters[item.level]}`;
+          levelCounters[item.level]++;
+          
+          currentGroup.items.push({ ...item, originalIndex: index, hierarchyId });
+        }
       }
     });
 
+    // Create an index of headers by their text content
+    // This allows us to find all headers with the same text while maintaining hierarchy
+    const headerTextIndex: Map<string, { items: any[], hierarchyIds: string[] }> = new Map();
+    
+    // Build the index from grouped items
+    groupedItems.forEach(group => {
+      group.items.forEach(item => {
+        const normalizedTitle = item.title.toLowerCase().trim();
+        if (!headerTextIndex.has(normalizedTitle)) {
+          headerTextIndex.set(normalizedTitle, { items: [], hierarchyIds: [] });
+        }
+        const entry = headerTextIndex.get(normalizedTitle)!;
+        entry.items.push(item);
+        entry.hierarchyIds.push(item.hierarchyId);
+      });
+    });
+
     // Find which level 2 section should be expanded based on activeItemId
-    let expandedLevel2: string | null = null;
+    let expandedLevel2HierarchyIds: Set<string> = new Set();
+    let activeItemTitle: string | null = null;
+    
     if (activeItemId) {
-      const activeItem = items.find(item => item.id === activeItemId);
+      // More robust approach to find the active item's hierarchical ID
+      let activeHierarchyId: string | null = null;
+      let activeItem: any = null;
+      let activeItemIndex = -1;
+      
+      // Get the active item details first
+      activeItemIndex = items.findIndex(item => item.id === activeItemId);
+      activeItem = activeItemIndex >= 0 ? items[activeItemIndex] : null;
+      
+      // Store the active item's title for matching with same-text headers
       if (activeItem) {
+        activeItemTitle = activeItem.title.toLowerCase().trim();
+      }
+      
+      // First try to find the active item's hierarchical ID from the grouped items
+      for (const group of groupedItems) {
+        const foundItem = group.items.find(item => item.id === activeItemId);
+        if (foundItem) {
+          activeHierarchyId = foundItem.hierarchyId;
+          break;
+        }
+      }
+      
+      // Now find ALL sections that should be expanded based on the active item's text content
+      if (activeItemTitle && headerTextIndex.has(activeItemTitle)) {
+        const sameTextHeaders = headerTextIndex.get(activeItemTitle)!;
+        
+        // For each header with the same text, determine which L2 section it belongs to
+        sameTextHeaders.items.forEach(sameTextItem => {
+          const itemHierarchyId = sameTextItem.hierarchyId;
+          
+          if (itemHierarchyId) {
+            if (itemHierarchyId.startsWith('L2-')) {
+              // If it's a level 2 header, expand its section
+              expandedLevel2HierarchyIds.add(itemHierarchyId);
+            } else if (itemHierarchyId.includes('.')) {
+              // If it's a child item (level 3+), extract and expand the parent L2 section
+              const parentL2Id = itemHierarchyId.split('.')[0];
+              expandedLevel2HierarchyIds.add(parentL2Id);
+            }
+          }
+        });
+      }
+      
+      // Also handle the original active item's hierarchy if we found it
+      if (activeHierarchyId) {
+        if (activeHierarchyId.startsWith('L2-')) {
+          // If it's a level 2 header, use its hierarchy ID directly
+          expandedLevel2HierarchyIds.add(activeHierarchyId);
+        } else if (activeHierarchyId.includes('.')) {
+          // If it's a child item (level 3+), extract the parent L2 part
+          expandedLevel2HierarchyIds.add(activeHierarchyId.split('.')[0]);
+        }
+      }
+      
+      // Legacy fallback logic (keeping for safety)
+      if (expandedLevel2HierarchyIds.size === 0 && activeItem) {
         if (activeItem.level === 2) {
-          expandedLevel2 = activeItemId;
+          // For level 2 items, find their corresponding group
+          const matchingGroup = groupedItems.find(group => 
+            group.items.some(item => item.originalIndex === activeItemIndex)
+          );
+          if (matchingGroup) {
+            expandedLevel2HierarchyIds.add(matchingGroup.hierarchyId);
+          }
         } else if (activeItem.level > 2) {
-          // Find the parent level 2 section
-          const activeIndex = items.findIndex(item => item.id === activeItemId);
-          for (let i = activeIndex - 1; i >= 0; i--) {
-            if (items[i].level === 2) {
-              expandedLevel2 = items[i].id || `item-${i}`;
-              break;
-            } else if (items[i].level === 1) {
-              break;
+          // For level 3+ items, check if they're directly in a group first
+          const parentGroup = groupedItems.find(group => 
+            group.items.some(item => item.originalIndex === activeItemIndex)
+          );
+          
+          if (parentGroup) {
+            expandedLevel2HierarchyIds.add(parentGroup.hierarchyId);
+          } else {
+            // If not found in a group, search backward for the closest level 2 parent
+            for (let i = activeItemIndex - 1; i >= 0; i--) {
+              if (items[i].level === 2) {
+                // Find the matching group for this level 2 item
+                const matchingGroup = groupedItems.find(group => 
+                  group.items.some(item => item.originalIndex === i)
+                );
+                if (matchingGroup) {
+                  expandedLevel2HierarchyIds.add(matchingGroup.hierarchyId);
+                  break;
+                }
+              } else if (items[i].level === 1) {
+                // Stop if we encounter a level 1 header (different section)
+                break;
+              }
             }
           }
         }
       }
+      
+      // Final fallback: Check ALL groups for the active item
+      if (expandedLevel2HierarchyIds.size === 0) {
+        for (const group of groupedItems) {
+          // Skip level 1 groups since they don't need expansion
+          if (group.key.startsWith('level1-')) continue;
+          
+          // Check if this group contains the active item
+          if (group.items.some(item => item.id === activeItemId)) {
+            expandedLevel2HierarchyIds.add(group.hierarchyId);
+            break;
+          }
+        }
+      }
     }
+    
+    // Debug logging to help diagnose issues
+    // console.log("Active item ID:", activeItemId);
+    // console.log("Header text index:", headerTextIndex);
+    // console.log("Expanded sections:", Array.from(expandedLevel2HierarchyIds));
+    // console.log("Groups:", groupedItems);
 
     return (
       <div className={styles.tocNestedContainer}>
-        {Object.entries(groupedItems).map(([groupKey, groupItems]) => {
+        {groupedItems.map(({ key: groupKey, hierarchyId, items: groupItems }) => {
           const isLevel1Group = groupKey.startsWith('level1-');
-          const isExpanded = !isLevel1Group && groupKey === expandedLevel2;
+          
+          // Check if this group should be expanded based on hierarchy IDs
+          let isExpanded = !isLevel1Group && expandedLevel2HierarchyIds.has(hierarchyId);
+          
+          // Also check if this group contains the active item as a backup method
+          if (!isExpanded && !isLevel1Group && activeItemId) {
+            isExpanded = groupItems.some(item => item.id === activeItemId);
+          }
           
           if (isLevel1Group) {
             // Render level 1 items independently
             const item = groupItems[0];
+            // Only highlight the exact item by ID (not by text content)
             const isActive = activeItemId === item.id;
             
             return (
@@ -267,6 +441,7 @@ const Sidebar: React.FC<SidebarProps> = React.memo(({
                   className={`${styles.navItem} ${styles.tocItem} ${styles.tocLevel1} ${isActive ? styles.active : ''}`}
                   onClick={() => onItemClick && onItemClick(item.originalIndex)}
                   title={item.title}
+                  data-hierarchy-id={item.hierarchyId}
                 >
                   <div className={styles.tocItemContent}>
                     <span className={styles.tocTitle}>{item.title}</span>
@@ -278,15 +453,17 @@ const Sidebar: React.FC<SidebarProps> = React.memo(({
             // Render level 2 groups with potential expansion
             const level2Item = groupItems.find(item => item.level === 2);
             const childItems = groupItems.filter(item => item.level > 2);
+            // Only highlight the exact level 2 item by ID (not by text content)
             const isLevel2Active = activeItemId === level2Item?.id;
             
             return (
-              <div key={groupKey} className={`${styles.tocLevel2Container} ${isExpanded ? styles.expanded : ''}`}>
+              <div key={groupKey} className={`${styles.tocLevel2Container} ${isExpanded ? styles.expanded : ''}`} data-group-id={hierarchyId}>
                 {/* Level 2 heading */}
                 <button
                   className={`${styles.navItem} ${styles.tocItem} ${styles.tocLevel2} ${isLevel2Active ? styles.active : ''}`}
                   onClick={() => level2Item && onItemClick && onItemClick(level2Item.originalIndex)}
                   title={level2Item?.title}
+                  data-hierarchy-id={level2Item?.hierarchyId}
                 >
                   <div className={styles.tocItemContent}>
                     <span className={styles.tocTitle}>{level2Item?.title}</span>
@@ -299,6 +476,7 @@ const Sidebar: React.FC<SidebarProps> = React.memo(({
                     <div className={styles.tocConnectionLine}></div>
                     <div className={styles.tocChildItems}>
                       {childItems.map((childItem) => {
+                        // Only highlight the exact child item by ID (not by text content)
                         const isChildActive = activeItemId === childItem.id;
                         return (
                           <button
@@ -306,6 +484,8 @@ const Sidebar: React.FC<SidebarProps> = React.memo(({
                             className={`${styles.navItem} ${styles.tocItem} ${styles[`tocLevel${childItem.level}`]} ${isChildActive ? styles.active : ''}`}
                             onClick={() => onItemClick && onItemClick(childItem.originalIndex)}
                             title={childItem.title}
+                            data-hierarchy-id={childItem.hierarchyId}
+                            data-parent-id={hierarchyId}
                           >
                             <div className={styles.tocItemContent}>
                               <span className={styles.tocTitle}>{childItem.title}</span>
@@ -338,20 +518,20 @@ const Sidebar: React.FC<SidebarProps> = React.memo(({
       {/* Profile Card with Integrated Contact Info */}
       <div className={styles.profileCard}>
         <div className={styles.photoWrapper}>
-          <img src={`${import.meta.env.BASE_URL}favicon.png`} alt={config.site.hero.name} className={styles.photo} />
+          <img src={`${import.meta.env.BASE_URL}favicon.png`} alt={config.home.hero.name} className={styles.photo} />
         </div>
-        <h3 className={styles.profileName}>{config.site.hero.name}</h3>
-        <p className={styles.profileTitle}>{config.site.hero.title}</p>
-        <p className={styles.profileTitle}>{config.site.hero.subtitle}</p>
+        <h3 className={styles.profileName}>{config.home.hero.name}</h3>
+        <p className={styles.profileTitle}>{config.home.hero.title}</p>
+        <p className={styles.profileTitle}>{config.home.hero.subtitle}</p>
         <div className={styles.contactCard}>
           <div className={styles.contactList}>
-            <a href={`mailto:${config.site.contact.email}`} className={styles.contactItem}>
+            <a href={`mailto:${contactData?.email || ''}`} className={styles.contactItem}>
               <i className="fas fa-envelope"></i>
             </a>
-            <a href={config.site.contact.github} className={styles.contactItem}>
+            <a href={contactData?.github || ''} className={styles.contactItem}>
               <i className="fab fa-github"></i>
             </a>
-            <a href={config.site.contact.linkedin} className={styles.contactItem}>
+            <a href={contactData?.linkedin || ''} className={styles.contactItem}>
               <i className="fab fa-linkedin"></i>
             </a>
           </div>

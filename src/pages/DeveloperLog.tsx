@@ -3,6 +3,7 @@ import Layout from '../components/Layout';
 import MarkdownContent from '../components/MarkdownContent';
 import { parseMarkdown, fetchMarkdownContent, type ParsedMarkdown } from '../utils/markdown';
 import styles from '../styles/DetailPage.module.css';
+import config from '../config/config';
 
 export default function DeveloperLog() {
   const [markdownData, setMarkdownData] = useState<ParsedMarkdown | null>(null);
@@ -127,7 +128,7 @@ export default function DeveloperLog() {
 
   // Determine the appropriate header background
   const getHeaderBackground = () => {
-    return `${import.meta.env.BASE_URL}background/about.jpg`;
+    return `${import.meta.env.BASE_URL}${config.content.logs.defaultHeaderBackground}`;
   };
 
   // Only render Layout when all data is ready

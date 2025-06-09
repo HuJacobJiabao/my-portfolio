@@ -8,19 +8,15 @@ The application was facing multiple critical issues: inconsistent routing conven
 ### Solution Overview
 Implemented a comprehensive system overhaul including routing restructure to use plural forms (`/projects/`, `/blogs/`), file renaming for consistency, GitHub Pages Jekyll disabling to enable raw file access, complete asset resolution system rewrite to work with static data instead of Vite imports, and development workflow automation with preprocessing integration. For the background display issues, implemented a unified background system across all pages with proper mobile optimizations.
 
-### Solution Overview
-Implemented a comprehensive system overhaul including routing restructure to use plural forms (`/projects/`, `/blogs/`), file renaming for consistency, GitHub Pages Jekyll disabling to enable raw file access, complete asset resolution system rewrite to work with static data instead of Vite imports, and development workflow automation with preprocessing integration.
 
-## Technical Implementations
+## 1. Route Structure Modernization
 
-### 1. Route Structure Modernization
-
-#### Problem Analysis
+### Problem Analysis
 - **Issue**: Inconsistent route naming with singular forms (`/project/`, `/blog/`) for collection pages
 - **Root Cause**: Initial route design didn't follow REST conventions where collection endpoints use plural forms
 - **Impact**: Semantic confusion and inconsistency with standard web conventions
 
-#### Solution Design
+### Solution Design
 - **Approach**: Systematic update of all route definitions from singular to plural forms
 - **Architecture**: Maintained existing React Router structure while updating path patterns
 - **Alternatives Considered**: 
@@ -28,7 +24,7 @@ Implemented a comprehensive system overhaul including routing restructure to use
   - Gradual migration (rejected for consistency)
   - Keep existing routes (rejected for semantic clarity)
 
-#### Implementation Details
+### Implementation Details
 ```typescript
 // App.tsx - Route definitions updated
 <Routes>
@@ -54,7 +50,7 @@ link: `/my-portfolio/projects/${generateIdFromTitle(frontmatter.title || folderN
 link: `/my-portfolio/blogs/${generateIdFromTitle(frontmatter.title || folderName)}`,
 ```
 
-#### Files Modified
+### Files Modified
 - `src/App.tsx` - Updated route definitions and component imports
 - `src/components/NavBar.tsx` - Updated navigation links to use plural forms
 - `src/pages/DetailPage.tsx` - Updated contentType detection and redirect paths
@@ -63,25 +59,25 @@ link: `/my-portfolio/blogs/${generateIdFromTitle(frontmatter.title || folderName
 - `src/utils/contentLoader.ts` - Updated link generation for content items
 - `src/pages/Blog.tsx` → `src/pages/Blogs.tsx` - File renamed and moved
 
-#### Testing Results
+### Testing Results
 - ✅ TypeScript compilation successful
 - ✅ Build process completed without errors
 - ✅ All import references updated correctly
 - ✅ Route navigation functionality verified
 
-### 3. Content Preprocessing System Implementation
+## 3. Content Preprocessing System Implementation
 
-#### Problem Analysis
+### Problem Analysis
 - **Issue**: Runtime content scanning was inefficient and added unnecessary load time
 - **Root Cause**: Dynamic content loading required filesystem access during page rendering
 - **Impact**: Slower initial page loads and potential performance bottlenecks
 
-#### Solution Design
+### Solution Design
 - **Approach**: Move content processing from runtime to build time
 - **Architecture**: Generate static JSON data during build process
 - **Benefits**: Faster page loads, better SEO, improved user experience
 
-#### Implementation Details
+### Implementation Details
 ```typescript
 // src/scripts/preprocess-content.ts - Main preprocessing script
 export interface BlogPost {
@@ -132,7 +128,7 @@ async function processContentItem(
 }
 ```
 
-#### Build Integration
+### Build Integration
 ```json
 // package.json - Build process with preprocessing
 {
@@ -149,7 +145,7 @@ async function processContentItem(
 // 4. File copying and Jekyll disabling
 ```
 
-#### Static Data Loading
+### Static Data Loading
 ```typescript
 // src/utils/staticDataLoader.ts - Runtime data access
 export async function loadStaticBlogPosts(): Promise<BlogPost[]> {
@@ -169,14 +165,14 @@ export async function loadMarkdownContent(contentPath: string): Promise<string> 
 }
 ```
 
-#### Files Modified
+### Files Modified
 - `src/scripts/preprocess-content.ts` - Enhanced preprocessing with comprehensive content scanning
 - `public/data/blogs.json` - Generated static blog data
 - `public/data/projects.json` - Generated static project data  
 - `src/utils/staticDataLoader.ts` - Created static data loading utilities
 - `package.json` - Integrated preprocessing into build pipeline
 
-#### Testing Results
+### Testing Results
 - ✅ Static JSON generation successful
 - ✅ Content metadata properly extracted from frontmatter
 - ✅ Asset paths correctly resolved during preprocessing
@@ -184,14 +180,14 @@ export async function loadMarkdownContent(contentPath: string): Promise<string> 
 - ✅ Runtime data loading from static files functional
 - ✅ Performance improvement: eliminated runtime content scanning overhead
 
-### 4. Mermaid Diagram Support Removal
+## 4. Mermaid Diagram Support Removal
 
-#### Problem Analysis
+### Problem Analysis
 - **Issue**: Mermaid diagrams experiencing ongoing rendering issues and conflicts
 - **Root Cause**: Mermaid library integration causing performance bottlenecks and rendering failures
 - **Impact**: Broken diagram displays affecting user experience in blog and project content
 
-#### Solution Design
+### Solution Design
 - **Approach**: Systematic removal of all Mermaid-related code and dependencies
 - **Architecture**: Temporarily disable while preserving ability to re-enable in future
 - **Alternatives Considered**: 
@@ -199,7 +195,7 @@ export async function loadMarkdownContent(contentPath: string): Promise<string> 
   - Partial removal (rejected for cleanliness)
   - Keep as optional feature (rejected for complexity)
 
-#### Implementation Details
+### Implementation Details
 ```typescript
 // package.json - Dependencies removed
 - "mermaid": "^11.6.0",
@@ -220,7 +216,7 @@ export async function loadMarkdownContent(contentPath: string): Promise<string> 
 - DetailPage.module.css: Mobile responsive Mermaid styles
 ```
 
-#### Files Modified
+### Files Modified
 - `package.json` - Removed mermaid and @types/mermaid dependencies
 - `src/components/MarkdownContent.tsx` - Removed mermaid imports and rendering calls
 - `src/utils/markdown.ts` - Removed mermaid code block handling
@@ -228,31 +224,31 @@ export async function loadMarkdownContent(contentPath: string): Promise<string> 
 - `src/index.css` - Commented out all mermaid-related styles
 - `src/styles/DetailPage.module.css` - Commented out mermaid mobile styles
 
-#### Testing Results
+### Testing Results
 - ✅ Mermaid dependencies successfully removed from package.json
 - ✅ TypeScript compilation successful without mermaid imports
 - ✅ CSS styles safely commented out (preserving for future re-enable)
 - ✅ No broken imports or references remaining
 - ⚠️ Demo content with mermaid examples still present (to be addressed)
 
-#### Temporary Measures
+### Temporary Measures
 - **CSS Preservation**: All mermaid styles commented with "TEMPORARILY DISABLED" labels
 - **Content Files**: Demo files remain but will show mermaid code blocks as plain text
 - **Re-enablement Path**: Can be restored by uncommenting styles and reinstalling dependencies
 
-### 5. Gray-Matter Replacement Implementation
+## 5. Gray-Matter Replacement Implementation
 
-#### Problem Analysis
+### Problem Analysis
 - **Issue**: `gray-matter` package causing eval warnings during build process
 - **Root Cause**: Gray-matter library uses eval internally for parsing certain YAML constructs
 - **Impact**: Security warnings in production builds and potential security vulnerabilities
 
-#### Solution Design
+### Solution Design
 - **Approach**: Replace gray-matter with custom safeMatter parser
 - **Architecture**: Manual YAML-like frontmatter parsing without eval usage
 - **Benefits**: Eliminated security warnings while maintaining full functionality
 
-#### Implementation Details
+### Implementation Details
 ```typescript
 // src/utils/safeMatter.ts - Custom frontmatter parser
 export function safeMatter(content: string): { data: any; content: string } {
@@ -294,7 +290,7 @@ export function safeMatter(content: string): { data: any; content: string } {
 }
 ```
 
-#### Migration Process
+### Migration Process
 ```typescript
 // Before (using gray-matter):
 import matter from 'gray-matter';
@@ -307,7 +303,7 @@ const parsed = safeMatter(content);
 // Interface remains identical, seamless replacement
 ```
 
-#### Files Modified
+### Files Modified
 - `src/utils/safeMatter.ts` - Created custom frontmatter parser
 - `src/utils/contentLoader.ts` - Replaced gray-matter imports with safeMatter
 - `src/utils/markdown.ts` - Updated frontmatter parsing
@@ -316,43 +312,43 @@ const parsed = safeMatter(content);
 - `package.json` - Removed gray-matter dependency
 - `vite.config.ts` - Cleaned up gray-matter-specific configurations
 
-#### Testing Results
+### Testing Results
 - ✅ All frontmatter parsing functionality maintained
 - ✅ Build process runs without eval warnings
 - ✅ No performance degradation observed
 - ✅ Type safety preserved with identical interfaces
 - ✅ Reduced bundle size by eliminating large gray-matter dependency
 
-### 5. Performance Impact
+## 5. Performance Impact
 
-#### Before/After Metrics
+### Before/After Metrics
 - **Performance**: No measurable performance change - purely structural improvement
 - **Bundle Size**: No significant change in build output size
 - **Memory Usage**: No impact on runtime performance
 
-#### Optimization Notes
+### Optimization Notes
 - **Code Efficiency**: Improved semantic clarity without performance overhead
 - **Resource Usage**: Same resource utilization with better developer experience
 - **User Experience**: More intuitive navigation with standard REST conventions
 
 ## Future Considerations
 
-#### Technical Debt
+### Technical Debt
 - **Identified**: Legacy route references in documentation files
 - **Planned**: Update README.md and other documentation to reflect new routes
 
-#### Potential Improvements
+### Potential Improvements
 - **Short-term**: Add redirect rules for old routes to maintain backward compatibility
 - **Long-term**: Consider implementing breadcrumb navigation using the semantic route structure
 
-#### Architecture Notes
+### Architecture Notes
 - **Patterns**: Established consistent plural naming convention for collection routes
 - **Dependencies**: No new dependencies added, leveraged existing React Router functionality
 - **Interfaces**: Route structure now aligns with REST API conventions
 
-### 6. Final Mermaid & Gray-Matter Cleanup
+## 6. Final Mermaid & Gray-Matter Cleanup
 
-#### Completed Changes
+### Completed Changes
 1. **Vite Config Cleanup**:
    - Removed all gray-matter references from `vite.config.ts`
    - Removed `optimizeDeps.include` and manual chunks for gray-matter
@@ -365,13 +361,13 @@ const parsed = safeMatter(content);
    - Deleted `package-lock.json` and regenerated to remove gray-matter dependencies
    - Confirmed 143 packages removed from node_modules
 
-#### Build Verification
+### Build Verification
 - **Status**: ✅ **COMPLETE SUCCESS**
 - **Result**: Build runs cleanly with no eval warnings
 - **Output**: No gray-matter chunks in build output
 - **Performance**: Build time reduced from 2.02s to 1.96s
 
-#### Final State
+### Final State
 - **Eval Warning**: ✅ Completely eliminated
 - **Mermaid Support**: ✅ Fully removed (preserved CSS as comments)
 - **Gray-Matter**: ✅ Fully replaced with safeMatter
@@ -379,23 +375,23 @@ const parsed = safeMatter(content);
 - **Build**: ✅ Clean production build with optimal chunking
 - **GitHub Pages**: ✅ Fixed critical 404 errors preventing content loading
 
-#### Technical Implementation Summary
+### Technical Implementation Summary
 - **Frontmatter Parsing**: Custom `safeMatter` parser handles YAML frontmatter without eval
 - **Mermaid Handling**: Code blocks now display as regular syntax-highlighted code
 - **CSS Preservation**: All mermaid styles preserved as comments for future re-enablement
 - **Performance**: Reduced bundle size and eliminated security warnings
 - **Deployment**: Fixed GitHub Pages configuration to properly serve markdown content
 
-### 7. GitHub Pages 404 Error Critical Fix
+## 7. GitHub Pages 404 Error Critical Fix
 
-#### Problem Discovery
+### Problem Discovery
 - **Issue**: React application couldn't load project/blog content on production GitHub Pages
 - **Symptoms**: 
   - Directory access worked: `https://hujacobjiabao.github.io/my-portfolio/content/projects/test-project-1/` (200 OK)
   - Direct markdown access failed: `https://hujacobjiabao.github.io/my-portfolio/content/projects/test-project-1/index.md` (404 Not Found)
 - **Impact**: Complete failure of content loading in production deployment
 
-#### Root Cause Analysis
+### Root Cause Analysis
 ```bash
 # Diagnosis commands used:
 curl -I "https://hujacobjiabao.github.io/my-portfolio/content/projects/test-project-1/index.md"
@@ -407,7 +403,7 @@ curl -I "https://hujacobjiabao.github.io/my-portfolio/content/projects/test-proj
 # Key discovery: GitHub Pages automatically enables Jekyll processing
 ```
 
-#### Technical Root Cause
+### Technical Root Cause
 1. **Jekyll Processing**: GitHub Pages enabled Jekyll by default on `gh-pages` branch
 2. **Markdown Handling**: Jekyll renders `index.md` files as HTML when accessing directories
 3. **Raw File Blocking**: Jekyll doesn't expose raw `.md` files for direct HTTP access
@@ -470,7 +466,7 @@ git show gh-pages:content/projects/test-project-1/index.md  # Content present
 git show gh-pages:content/projects/project-test/index.md   # Content present
 ```
 
-#### Technical Implementation Details
+### Technical Implementation Details
 
 #### Jekyll vs Static File Serving
 ```
@@ -508,32 +504,32 @@ WITH .nojekyll (Jekyll disabled):
 - **Jekyll**: Disabled to enable static file serving
 - **Deployment**: Clean build process with .nojekyll inclusion
 
-#### Lessons Learned
+### Lessons Learned
 1. **GitHub Pages Default**: Jekyll is enabled by default and blocks raw file access
 2. **React App Requirements**: SPA applications need raw file access for dynamic content loading
 3. **Build Process**: Critical files like `.nojekyll` must be included in deployment package
 4. **Diagnosis Tools**: `curl -I` is essential for debugging HTTP response issues
 5. **Git Recovery**: `git checkout HEAD -- file` is crucial for recovering accidentally modified files
 
-### 8. Asset Resolution System Overhaul
+## 8. Asset Resolution System Overhaul
 
-#### Problem Statement
+### Problem Statement
 The application had critical asset loading issues where markdown images were not displaying correctly due to incompatibility between Vite's build-time asset resolution system and the new static file preprocessing approach.
 
-### Issues Identified
+## Issues Identified
 1. **Asset Path Resolution**: Pictures in markdown files using wrong routes/paths
 2. **Default Cover Images**: Showing as `src="default"` instead of actual image paths  
 3. **Vite Import Conflict**: `import.meta.glob` system incompatible with static preprocessing
 4. **Development Workflow**: Manual preprocessing required before running dev server
 
-#### Solution Design
+### Solution Design
 
-##### Asset Resolver Rewrite
+#### Asset Resolver Rewrite
 - **Problem**: Original `assetResolver.ts` used Vite's `import.meta.glob` for build-time asset discovery
 - **Conflict**: Static preprocessing generates JSON files at build time, but Vite imports expect compile-time resolution
 - **Solution**: Complete rewrite to use runtime static data loading instead of compile-time imports
 
-##### Implementation Details
+#### Implementation Details
 
 ```typescript
 // OLD: Vite-based asset resolution (incompatible with static preprocessing)
@@ -558,7 +554,7 @@ export function getAllStaticAssets(): AssetMap {
 }
 ```
 
-##### Default Image Resolution Fix
+#### Default Image Resolution Fix
 - **Problem**: Preprocessing script left `coverImage: "default"` as literal string
 - **Solution**: Added `resolveImagePath()` function to convert defaults to actual paths
 
@@ -572,19 +568,19 @@ function resolveImagePath(imagePath: string | undefined, contentType: 'blog' | '
 }
 ```
 
-##### Preprocessing Script Fixes
+#### Preprocessing Script Fixes
 - **Duplicate Execution**: Removed redundant `generateStaticData()` call causing double output
 - **Image Path Resolution**: Ensured all default images resolve to proper file paths in JSON output
 - **Asset Mapping**: Updated to work with new content directory structure
 
-#### Development Workflow Enhancement
+### Development Workflow Enhancement
 
-##### Problem Analysis
+#### Problem Analysis
 - **Issue**: Developers had to manually run `npm run preprocess` before `npm run dev`
 - **Impact**: Inconsistent development experience and outdated static data
 - **Risk**: Asset resolution failures during development
 
-##### Solution Implementation
+#### Solution Implementation
 ```json
 // package.json - Enhanced dev script
 {
@@ -595,28 +591,28 @@ function resolveImagePath(imagePath: string | undefined, contentType: 'blog' | '
 }
 ```
 
-#### Resolution Results
+### Resolution Results
 - **Status**: ✅ **ASSET RESOLUTION FIXED**
 - **Image Loading**: All markdown images now display correctly
 - **Default Covers**: Properly resolved to actual file paths
 - **Development**: Automatic preprocessing ensures up-to-date static data
 - **Build Process**: Consistent preprocessing in both dev and build workflows
 
-#### Technical Lessons Learned
+### Technical Lessons Learned
 1. **Vite vs Static**: Build-time imports (`import.meta.glob`) incompatible with runtime static data loading
 2. **Asset Resolution**: Static preprocessing requires different asset resolution strategy than Vite's native system  
 3. **Default Handling**: String literals in frontmatter need explicit resolution during preprocessing
 4. **Dev Experience**: Automation prevents human error in development workflow
 5. **Consistency**: Development and build processes should mirror each other for reliability
 
-### 9. Mobile Background Performance Fix
+## 9. Mobile Background Performance Fix
 
-#### Problem Analysis
+### Problem Analysis
 - **Issue**: Background animation glitches on mobile devices showing different background states
 - **Root Cause**: `background-attachment: fixed` property causing performance issues on mobile browsers
 - **Impact**: Visual inconsistency and poor user experience on mobile devices
 
-#### Solution Design
+### Solution Design
 - **Approach**: Add mobile-specific media queries to disable `background-attachment: fixed` on mobile devices
 - **Architecture**: Use CSS media queries to override background attachment behavior
 - **Alternatives Considered**: 
@@ -624,7 +620,7 @@ function resolveImagePath(imagePath: string | undefined, contentType: 'blog' | '
   - Remove fixed attachment entirely (rejected to maintain desktop experience)
   - Use different background images (rejected due to design consistency needs)
 
-#### Implementation Details
+### Implementation Details
 ```css
 /* Home.module.css - Mobile background fix */
 @media (max-width: 768px) {
@@ -652,31 +648,31 @@ function resolveImagePath(imagePath: string | undefined, contentType: 'blog' | '
 }
 ```
 
-#### Files Modified
+### Files Modified
 - `src/styles/Home.module.css` - Added media query for mobile devices
 - `src/styles/Footer.module.css` - Added mobile-specific background attachment
 - `src/styles/Layout.module.css` - Added media query for content backgrounds
 - `src/index.css` - Added global mobile background fix
 
-#### Testing Results
+### Testing Results
 - ✅ Mobile background rendering consistency achieved
 - ✅ Performance improvements on mobile devices
 - ✅ Visual stability across different mobile browsers
 - ✅ Maintained desktop parallax effect while fixing mobile issues
 
-### 10. Background Implementation Optimization
+## 10. Background Implementation Optimization
 
-#### Problem Analysis
+### Problem Analysis
 - **Issue**: Inconsistent background implementation across different components
 - **Root Cause**: Background images assigned incorrectly in multiple components
 - **Impact**: Inconsistent visual experience and broken design language
 
-#### Solution Design
+### Solution Design
 - **Approach**: Implement unified background system with consistent image assignments
 - **Architecture**: Standardized background rules for all components
 - **Benefits**: Consistent visual identity and improved maintainability
 
-#### Implementation Details
+### Implementation Details
 ```tsx
 // Layout Component Fix - Content area background
 // Before:
@@ -710,20 +706,20 @@ function resolveImagePath(imagePath: string | undefined, contentType: 'blog' | '
 >
 ```
 
-#### Standardized Background Rules
+### Standardized Background Rules
 1. **Page Headers**: Use page-specific backgrounds
 2. **Content Areas**: All use unified `about.jpg` background
 3. **Footers**: All use unified `hero.jpg` background
 4. **Desktop Devices**: Use `background-attachment: fixed` for parallax effect
 5. **Mobile Devices**: Use `background-attachment: scroll` for performance
 
-#### Files Modified
+### Files Modified
 - `src/components/Layout.tsx` - Removed dynamic background for content area
 - `src/styles/Layout.module.css` - Added fixed background image for content areas
 - `src/styles/Footer.module.css` - Changed background image from about.jpg to hero.jpg
 - `src/pages/Archive.tsx` - Added missing headerBackground parameter
 
-#### Testing Results
+### Testing Results
 - ✅ Consistent visual experience across all pages
 - ✅ Correct background images displayed in each section
 - ✅ Desktop parallax effect working properly
