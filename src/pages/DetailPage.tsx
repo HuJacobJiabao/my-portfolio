@@ -79,7 +79,7 @@ export default function DetailPage() {
         const mockItem = {
           id: `${date}-${logType}`,
           title,
-          date: new Date(date).toISOString(),
+          date: date, // Keep the original date string from URL params
           category: 'Daily Log',
           description: `Daily ${logType.replace('-', ' ')} for ${date}`,
           link: `/my-portfolio/devlogs/${date}/${logType}`,
@@ -293,7 +293,7 @@ export default function DetailPage() {
       sidebarItemType="toc"
       onSidebarItemClick={handleSidebarItemClick}
       activeItemId={activeItemId}
-      contentItemDate={new Date(contentItem.date).toLocaleDateString()}
+      contentItemDate={contentType === 'dailylog' ? contentItem.date : new Date(contentItem.date).toLocaleDateString()}
       contentItemTags={contentItem.tags}
       contentType={contentType}
       contentItemCategory={contentItem.category}

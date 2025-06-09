@@ -87,7 +87,9 @@ export default function Layout({
                     </div>
                     <div className={styles.metaItem}>
                       <span className={styles.metaLabel}>Created:</span>
-                      <span className={styles.metaValue}>{formatDateForDisplay(contentItemDate)}</span>
+                      <span className={styles.metaValue}>
+                        {contentType === 'dailylog' ? contentItemDate : formatDateForDisplay(contentItemDate)}
+                      </span>
                     </div>
                     {contentItemLastUpdate && (
                       <div className={styles.metaItem}>
