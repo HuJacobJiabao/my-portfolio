@@ -8,23 +8,22 @@ The monolithic `DEVELOPER_LOG.md` file was becoming unwieldy with mixed chronolo
 ### Solution Overview
 Implemented comprehensive daily logging system architecture through systematic directory restructuring and content migration, and **completed the dynamic content generation system that represents a major framework milestone**.
 
-## Technical Implementations
 
-### 1. Logging System Restructure Implementation
+## 1. Logging System Restructure Implementation
 
-#### Problem Analysis
+### Problem Analysis
 - **Issue**: The monolithic `DEVELOPER_LOG.md` file was becoming unwieldy with mixed chronological entries and growing file size
 - **Root Cause**: Lack of structured approach for daily development logging that separates high-level changes from technical implementation details
 - **Impact**: Difficult navigation, poor organization, and scalability issues
 
-#### Solution Design
+### Solution Design
 - **Approach**: Created structured daily directory system for scalable logging
 - **Architecture**: Separated high-level change summaries from detailed technical implementation notes
 - **Benefits**: Improved organization, navigation, and team collaboration
 
-#### Implementation Details
+### Implementation Details
 
-#### Architecture Design
+### Architecture Design
 ```
 src/frame-logs/
 ├── 2025-06-06/
@@ -38,13 +37,13 @@ src/frame-logs/
     └── developer-log.md
 ```
 
-#### Files Modified
+### Files Modified
 - `src/frame-logs/2025-06-06/` - Created new daily log directory structure
 - `src/frame-logs/2025-06-05/` - Migrated existing content with 5 technical implementations
 - `src/frame-logs/2025-06-04/` - Migrated existing content with 3 technical implementations
 - `src/scripts/create-daily-log.ts` - Created automation script for daily log generation
-
-#### Testing Results
+  
+### Testing Results
 - ✅ All original technical content migrated successfully
 - ✅ Code examples render correctly in markdown
 - ✅ Cross-references maintained
@@ -54,19 +53,19 @@ src/frame-logs/
 - ✅ Searchable content within daily scope
 - ✅ Scalable for future daily additions
 
-### 2. Dynamic Content Generation System Implementation
+## 2. Dynamic Content Generation System Implementation
 
-#### Problem Analysis
+### Problem Analysis
 - **Issue**: Manual configuration required for each new blog post and project, making content management inefficient
 - **Root Cause**: Static hardcoded content arrays in Blog.tsx and Projects.tsx components
 - **Impact**: Scalability limitations and maintenance overhead for content management
 
-#### Solution Design
+### Solution Design
 - **Approach**: Implemented dynamic content scanning using Vite's `import.meta.glob()` for automatic markdown file discovery
 - **Architecture**: Created unified content loading system with frontmatter parsing and automatic route generation
 - **Benefits**: Zero-configuration content management with automatic card generation and routing
 
-#### Implementation Details
+### Implementation Details
 
 **Dynamic Content Loading Architecture:**
 ```typescript
@@ -147,14 +146,14 @@ export default function Blog() {
 }
 ```
 
-#### Files Modified
+### Files Modified
 - `src/pages/Blog.tsx` - Implemented dynamic blog loading with `loadBlogPosts()` function
 - `src/pages/Projects.tsx` - Implemented dynamic project loading with `loadProjects()` function
 - `src/utils/contentScanner.ts` - Enhanced content scanning utilities
 - `src/components/BlogCard.tsx` - Updated to handle dynamic content props
 - `src/components/Card.tsx` - Enhanced for dynamic project rendering
 
-#### Testing Results
+### Testing Results
 - ✅ Dynamic content loading functional for both blogs and projects
 - ✅ Frontmatter parsing working correctly with gray-matter library
 - ✅ Automatic route generation based on title slugification
@@ -164,20 +163,20 @@ export default function Blog() {
 - ✅ No manual configuration required for new content
 - ✅ Backward compatibility maintained with existing content
 
-### 2. Advanced Asset Resolution System Implementation
+## 3. Advanced Asset Resolution System Implementation
 
-#### Problem Analysis
+### Problem Analysis
 - **Issue**: Markdown files with relative image paths (`./image.png`, `../folder/image.png`) were not displaying correctly when rendered in React components
 - **Root Cause**: Vite's asset handling requires proper import resolution for files in `src/` directory, and relative paths in markdown resolve relative to browser URL, not markdown file location
 - **Impact**: Images in markdown content were broken, limiting content authoring capabilities and requiring manual asset management in `public/` directory
 
-#### Solution Design
+### Solution Design
 - **Approach**: Implemented asset resolution system using Vite's `import.meta.glob()` for automatic asset discovery and URL resolution
 - **Architecture**: Created same-folder asset scanning with path resolution for assets co-located with markdown files
 - **Benefits**: Enables co-location of assets with markdown files, provides hot reloading support, and supports same-directory relative path scenarios
 - **Current Scope**: Asset resolution works within the same folder (e.g., `./image.png`) - sufficient for current content authoring workflow
 
-#### Implementation Details
+### Implementation Details
 
 **Global Asset Discovery System:**
 ```typescript
@@ -257,7 +256,7 @@ const parsed = await parseMarkdown(content, true, assetMap);
 }
 ```
 
-#### Files Modified
+### Files Modified
 - `src/pages/Blog.tsx` - Added comprehensive asset resolution for blog posts
 - `src/pages/Projects.tsx` - Added comprehensive asset resolution for projects
 - `src/utils/markdown.ts` - Enhanced markdown parser with asset map support and HTML post-processing
@@ -265,7 +264,7 @@ const parsed = await parseMarkdown(content, true, assetMap);
 - `src/pages/DetailPage.tsx` - Integrated asset map creation for markdown rendering
 - `src/styles/DetailPage.module.css` - Added responsive image styling with hover effects
 
-#### Testing Results
+### Testing Results
 - ✅ Markdown images (`![](./path.png)`) resolve correctly for same-directory assets
 - ✅ HTML img tags (`<img src="./path.png">`) resolve correctly with post-processing
 - ✅ Hot reloading functional for both markdown content and assets
@@ -277,25 +276,25 @@ const parsed = await parseMarkdown(content, true, assetMap);
 - ⚠️ Cross-folder asset references (`../other-folder/image.png`) not yet implemented
 - ⚠️ Cross-content-type references (`../../projects/name/image.png`) not yet implemented
 
-#### Current Limitations & Future Enhancements
+### Current Limitations & Future Enhancements
 - **Current Scope**: Asset resolution works only within the same folder as the markdown file
 - **Acceptable for Now**: Most content follows co-location pattern with assets in same directory
 - **Future Enhancement**: Cross-folder and cross-content-type asset resolution can be implemented when needed
 - **Workaround**: Assets can be copied to the same directory or placed in `public/` folder for absolute paths
 
-### 3. Cross-Folder Asset Resolution Fix Implementation
+## 4. Cross-Folder Asset Resolution Fix Implementation
 
-#### Problem Analysis
+### Problem Analysis
 - **Issue**: Two identical markdown files (`src/content/blogs/test-timestamp-blog-3/index.md` and `src/content/projects/test-asset-3/index.md`) both referenced `../../projects/test-asset-project-1/wallhaven-d85ewm.png` but only blogs could resolve it
 - **Root Cause**: Blog.tsx used direct asset resolution with `import.meta.glob` while Projects.tsx relied on `createAssetMapFromCache` function in `assetResolver.ts`, which wasn't generating proper relative path keys for cross-folder references
 - **Impact**: Inconsistent asset resolution behavior between blogs and projects, breaking project content that referenced assets outside their immediate folder
 
-#### Solution Design
+### Solution Design
 - **Approach**: Enhanced the `calculateRelativePaths` function in `assetResolver.ts` to always generate accurate relative paths from markdown folder to asset location
 - **Architecture**: Unified asset resolution behavior for both blogs and projects through comprehensive path mapping
 - **Benefits**: Cross-folder asset references work consistently across both content types
 
-#### Implementation Details
+### Implementation Details
 
 **Enhanced Asset Path Calculation:**
 ```typescript
@@ -331,37 +330,37 @@ function calculateRelativePaths(markdownFolderPath: string, assetPath: string): 
 - Verified that cross-folder references like `../../projects/test-asset-project-1/wallhaven-d85ewm.png` are properly mapped
 - Confirmed unified behavior between blog and project asset resolution
 
-#### Files Modified
+### Files Modified
 - `src/utils/assetResolver.ts` - Enhanced `calculateRelativePaths` function
 - `src/pages/Projects.tsx` - Maintained existing asset resolution logic
 - `src/content/blogs/test-timestamp-blog-3/index.md` - Test case with cross-folder reference
 - `src/content/projects/test-asset-3/index.md` - Test case with cross-folder reference
 
-#### Testing Results
+### Testing Results
 - ✅ Cross-folder asset references work in both blogs and projects
 - ✅ Asset map contains comprehensive path-to-URL mappings
 - ✅ Unified asset resolution behavior across content types
 - ✅ No performance degradation with enhanced path calculation
 - ✅ Debug output shows complete asset map generation process
 
-#### Next Steps
+### Next Steps
 1. Remove debugging console.log statements
 2. Consider removing redundant assetModules fallback logic from Projects.tsx
 3. Evaluate if assetMap field can be removed from Project interface if not needed by Card component
 
-### 4. HMR Fast Refresh Fix Implementation
+## 5. HMR Fast Refresh Fix Implementation
 
-#### Problem Analysis
+### Problem Analysis
 - **Issue**: Hot Module Reload (HMR) Fast Refresh was failing with errors like "generateIdFromTitle export is incompatible" and "loadBlogPosts export is incompatible"
 - **Root Cause**: React component files (`Blog.tsx`, `Projects.tsx`) were exporting utility functions, which violates Vite's Fast Refresh requirements for consistent component exports
 - **Impact**: Development experience degraded with HMR failures requiring manual page refreshes, breaking the fast development workflow
 
-#### Solution Design
+### Solution Design
 - **Approach**: Extracted all utility functions from React component files into dedicated utility modules
 - **Architecture**: Created centralized content management utilities that can be imported by multiple components
 - **Benefits**: Clean separation of concerns, consistent HMR behavior, and reusable utility functions across the codebase
 
-#### Implementation Details
+### Implementation Details
 
 **Utility Function Extraction:**
 ```typescript
@@ -409,7 +408,7 @@ export default function Blog() {
 }
 ```
 
-#### Files Modified
+### Files Modified
 - `src/utils/contentUtils.ts` - Created for ID generation utilities
 - `src/utils/contentLoader.ts` - Created for content loading functions
 - `src/pages/Blog.tsx` - Removed utility exports, added imports from utils
@@ -417,29 +416,29 @@ export default function Blog() {
 - `src/pages/DetailPage.tsx` - Updated imports to use new utility locations
 - `src/pages/Archive.tsx` - Updated imports to use new utility locations
 
-#### Testing Results
+### Testing Results
 - ✅ HMR Fast Refresh now works correctly for all component files
 - ✅ No more "export is incompatible" errors during development
 - ✅ Clean separation between React components and utility functions
 - ✅ All existing functionality preserved with improved development experience
 - ✅ Utility functions are now reusable across multiple components
 
-### 2. Mermaid Diagram Rendering System Implementation
+## 6. Mermaid Diagram Rendering System Implementatio
 
-#### Problem Analysis
+### Problem Analysis
 - **Issue**: Mermaid diagrams failing to render properly in blog posts with mysterious DOM element disappearance
 - **Root Cause**: The `div class="mermaid-diagram" id="${diagramId}"` was mysteriously disappearing during the rendering process
 - **Impact**: Blog posts with Mermaid code blocks showing empty spaces instead of diagrams
 - **Debug Duration**: 6 hours of intensive troubleshooting
 
-#### Solution Design
+### Solution Design
 - **Approach**: Temporary div creation workaround with direct appendChild manipulation
 - **Architecture**: Separate rendering utility with downloadable SVG functionality
 - **Benefits**: Reliable diagram rendering with enhanced user experience through download capability
 
-#### Implementation Details
+### Implementation Details
 
-##### Phase 1: Mysterious Div Disappearance Investigation (2 hours)
+#### Phase 1: Mysterious Div Disappearance Investigation (2 hours)
 The initial implementation seemed straightforward:
 ```typescript
 // Original failing approach
@@ -455,7 +454,7 @@ if (diagramElement) {
 - React's virtual DOM reconciliation
 - Timing issues between component mounting and Mermaid initialization
 
-##### Phase 2: Workaround Solution Discovery (3 hours)
+#### Phase 2: Workaround Solution Discovery (3 hours)
 After extensive debugging, discovered that Mermaid's rendering process was conflicting with the existing DOM structure. The solution required a temporary div approach:
 
 ```typescript
@@ -486,7 +485,7 @@ export async function renderMermaidDiagram(diagramId: string, diagramDefinition:
 }
 ```
 
-##### Phase 3: Download Functionality Implementation (1 hour)
+#### Phase 3: Download Functionality Implementation (1 hour)
 Enhanced the solution with downloadable SVG capability using a hover-triggered button:
 
 ```typescript
@@ -505,9 +504,9 @@ function addDownloadButton(container: HTMLElement, svgContent: string, diagramId
 }
 ```
 
-#### CSS Styling Challenge Resolution
+### CSS Styling Challenge Resolution
 
-##### Phase 4: CSS Selector Conflicts (1 hour)
+#### Phase 4: CSS Selector Conflicts (1 hour)
 The final challenge was CSS selector conflicts between Mermaid's generated SVG and the download button's SVG icon. Initial styling was too broad:
 
 ```css
@@ -565,20 +564,20 @@ The final challenge was CSS selector conflicts between Mermaid's generated SVG a
 - `src/utils/markdown.ts` - Mermaid code block detection and processing
 - `src/index.css` - Comprehensive styling for diagrams and download functionality
 
-#### Testing Results
+### Testing Results
 - ✅ Mermaid diagrams render reliably across all blog posts
 - ✅ Download functionality works with proper SVG export
 - ✅ Hover interactions provide intuitive user experience
 - ✅ CSS conflicts resolved with no visual artifacts
 - ✅ Performance impact minimal with temporary div cleanup
 
-#### Key Learnings
+### Key Learnings
 1. **DOM Manipulation Timing**: Mermaid's rendering process can conflict with existing DOM elements
 2. **Temporary Element Strategy**: Sometimes workarounds are more reliable than fighting library internals
 3. **CSS Specificity**: Broad selectors can cause unexpected conflicts in component-based architectures
 4. **User Experience Enhancement**: Simple features like download buttons significantly improve content utility
 
-#### Debug Session Timeline
+### Debug Session Timeline
 - **Hours 1-2**: Initial investigation of div disappearance mystery
 - **Hours 3-4**: Discovery and implementation of temporary div workaround  
 - **Hour 5**: Addition of download functionality and SVG export
