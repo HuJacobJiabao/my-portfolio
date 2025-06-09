@@ -2,12 +2,13 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, Navigate, useLocation } from 'react-router-dom';
 import Layout from '../components/Layout';
 import MarkdownContent from '../components/MarkdownContent';
-import { loadStaticProjects, loadStaticBlogPosts, loadMarkdownContent, type Project, type BlogPost } from '../utils/staticDataLoader';
+import { loadStaticProjects, loadStaticBlogPosts, loadMarkdownContent, getFileLastModifiedTime, type Project, type BlogPost } from '../utils/staticDataLoader';
 import { parseMarkdown, type ParsedMarkdown } from '../utils/markdown';
 import { createAssetMapFromCache } from '../utils/assetResolver';
+import config from '../config/config';
 import styles from '../styles/DetailPage.module.css';
 
-type ContentType = 'project' | 'blog';
+type ContentType = 'project' | 'blog' | 'dailylog';
 
 interface ContentItem {
   id: string;
@@ -22,7 +23,7 @@ interface ContentItem {
 }
 
 export default function DetailPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id, date, logType } = useParams<{ id?: string; date?: string; logType?: string }>();
   const location = useLocation();
   const [markdownData, setMarkdownData] = useState<ParsedMarkdown | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -37,7 +38,6 @@ export default function DetailPage() {
       try {
         const posts = await loadStaticBlogPosts();
         setBlogPosts(posts);
-        console.log('Blog posts loaded in DetailPage:', posts);
       } catch (err) {
         console.error('Error loading blog posts:', err);
       }
@@ -52,7 +52,6 @@ export default function DetailPage() {
       try {
         const projectsData = await loadStaticProjects();
         setProjects(projectsData);
-        console.log('Projects loaded in DetailPage:', projectsData);
       } catch (err) {
         console.error('Error loading projects:', err);
       }
@@ -61,21 +60,40 @@ export default function DetailPage() {
     loadProjectsData();
   }, []);
 
-  // Determine if this is a project or blog based on the URL path
-  const contentType: ContentType = location.pathname.includes('/projects/') ? 'project' : 'blog';
+  // Determine if this is a project, blog, or daily log based on the URL path
+  const contentType: ContentType = useMemo(() => {
+    if (location.pathname.includes('/projects/')) return 'project';
+    if (location.pathname.includes('/devlogs/') && date && logType) return 'dailylog';
+    return 'blog';
+  }, [location.pathname, date, logType]);
   
-  // Find the content item (project or blog post)
+  // Find the content item (project, blog post, or create daily log item)
   const contentItem: ContentItem | undefined = useMemo(() => {
     if (contentType === 'project') {
       const found = projects.find(p => p.id === id);
-      console.log('Looking for project with id:', id, 'Found:', found, 'Available projects:', projects.map(p => p.id));
       return found;
+    } else if (contentType === 'dailylog') {
+      // Create a mock content item for daily logs
+      if (date && logType) {
+        const title = logType === 'developer-log' ? `Developer Log - ${date}` : `Change Log - ${date}`;
+        const mockItem = {
+          id: `${date}-${logType}`,
+          title,
+          date: new Date(date).toISOString(),
+          category: 'Daily Log',
+          description: `Daily ${logType.replace('-', ' ')} for ${date}`,
+          link: `/my-portfolio/devlogs/${date}/${logType}`,
+          tags: ['Development', 'Daily Log'],
+          contentPath: `devlogs/${date}/${logType}.md`
+        };
+        return mockItem;
+      }
+      return undefined;
     } else {
       const found = blogPosts.find(b => b.id === id);
-      console.log('Looking for blog post with id:', id, 'Found:', found, 'Available posts:', blogPosts.map(p => p.id));
       return found;
     }
-  }, [contentType, id, blogPosts, projects]);
+  }, [contentType, id, date, logType, blogPosts, projects]);
 
   // Create sidebar items from table of contents (memoized)
   const sidebarItems = useMemo(() => {
@@ -162,20 +180,41 @@ export default function DetailPage() {
         });
         
         // Load the markdown content from the file
-        const markdownContent = await loadMarkdownContent(contentItem.contentPath);
+        let markdownContent: string;
+        let assetMap: Map<string, string>;
         
-        if (!markdownContent) {
-          throw new Error('Markdown content not found');
+        if (contentType === 'dailylog') {
+          // For daily logs, load directly from frame-logs directory
+          const dailyLogPath = `${import.meta.env.BASE_URL}${contentItem.contentPath}`;
+          const response = await fetch(dailyLogPath);
+          
+          if (!response.ok) {
+            throw new Error(`Daily log not found: ${dailyLogPath}`);
+          }
+          
+          markdownContent = await response.text();
+          // Create an empty asset map for daily logs (they typically don't have assets)
+          assetMap = new Map();
+        } else {
+          // For regular content, use the existing loading method
+          markdownContent = await loadMarkdownContent(contentItem.contentPath);
+          
+          if (!markdownContent) {
+            throw new Error('Markdown content not found');
+          }
+          
+          // Create asset map for proper image resolution
+          assetMap = await createAssetMapFromCache(contentItem.contentPath);
         }
-        
-        // Create asset map for proper image resolution
-        const assetMap = await createAssetMapFromCache(contentItem.contentPath);
         
         // Parse the markdown content at runtime with asset map
         const parsedMarkdown = await parseMarkdown(markdownContent, true, assetMap);
         
+        // Get the file's last modification time
+        const lastModified = await getFileLastModifiedTime(contentItem.contentPath);
+        
         setMarkdownData(parsedMarkdown);
-        setLastUpdateTime(new Date().toLocaleDateString());
+        setLastUpdateTime(lastModified);
         
       } catch (err) {
         console.error('Error loading markdown content:', err);
@@ -188,7 +227,14 @@ export default function DetailPage() {
 
   // If content not found, redirect to appropriate page
   if (!contentItem && blogPosts.length > 0 && projects.length > 0) {
-    const redirectPath = contentType === 'project' ? '/my-portfolio/projects/' : '/my-portfolio/blogs/';
+    let redirectPath: string;
+    if (contentType === 'project') {
+      redirectPath = '/my-portfolio/projects/';
+    } else if (contentType === 'dailylog') {
+      redirectPath = '/my-portfolio/devlogs/';
+    } else {
+      redirectPath = '/my-portfolio/blogs/';
+    }
     console.log('Content item not found, redirecting to:', redirectPath);
     return <Navigate to={redirectPath} replace />;
   }
@@ -206,17 +252,34 @@ export default function DetailPage() {
 
   // Ensure contentItem and markdownData are available before rendering
   if (!contentItem || !markdownData) {
+    console.log('DetailPage: Not rendering due to missing data', {
+      hasContentItem: !!contentItem,
+      hasMarkdownData: !!markdownData,
+      contentType,
+      date,
+      logType,
+      blogPostsLength: blogPosts.length,
+      projectsLength: projects.length
+    });
     return null; // Return null instead of loading UI
   }
 
   // Determine the appropriate header background
   const getHeaderBackground = () => {
-    // If contentItem.image is empty/undefined or contains default_cover.jpg, use content-type-specific background
-    if (!contentItem.image || contentItem.image.includes('default_cover.jpg')) {
-      return contentType === 'project' 
-        ? `${import.meta.env.BASE_URL}background/default_proj.jpg`
-        : `${import.meta.env.BASE_URL}background/default_blog.png`;
+    // Get default backgrounds from config
+    const defaultBlogBackground = `${import.meta.env.BASE_URL}${config.content.blogs.defaultHeaderBackground}`;
+    const defaultProjectBackground = `${import.meta.env.BASE_URL}${config.content.projectConfig.defaultHeaderBackground}`;
+    
+    // For daily logs, use the blog background
+    if (contentType === 'dailylog') {
+      return defaultBlogBackground;
     }
+    
+    // If contentItem.image is empty/undefined or contains default_cover, use content-type-specific background
+    if (!contentItem.image || contentItem.image.includes('default_cover')) {
+      return contentType === 'project' ? defaultProjectBackground : defaultBlogBackground;
+    }
+    
     // Otherwise use the contentItem.image as is
     return contentItem.image;
   };

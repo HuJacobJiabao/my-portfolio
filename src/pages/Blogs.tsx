@@ -3,6 +3,7 @@ import Layout from '../components/Layout';
 import BlogCard from '../components/BlogCard';
 import styles from '../styles/Blog.module.css';
 import { loadStaticBlogPosts, type BlogPost } from '../utils/staticDataLoader';
+import config from '../config/config';
 
 export default function Blog() {
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -40,7 +41,7 @@ export default function Blog() {
     return (
       <Layout 
         title="Blog"
-        headerBackground={`${import.meta.env.BASE_URL}background/default_blog.png`}
+        headerBackground={`${import.meta.env.BASE_URL}${config.content.blogs.defaultHeaderBackground}`}
         sidebarItems={[]}
         sidebarItemType="blog"
         onSidebarItemClick={() => {}}
@@ -59,7 +60,7 @@ export default function Blog() {
   return (
     <Layout 
       title="Blogs"
-      headerBackground={`${import.meta.env.BASE_URL}background/default_blog.png`}
+      headerBackground={`${import.meta.env.BASE_URL}${config.content.blogs.defaultHeaderBackground}`}
       sidebarItems={sidebarItems}
       sidebarItemType="blog"
       onSidebarItemClick={handleSidebarItemClick}

@@ -7,6 +7,7 @@ import Projects from './pages/Projects'
 import DetailPage from './pages/DetailPage'
 import Blogs from './pages/Blogs'
 import Archive from './pages/Archive'
+import DeveloperLog from './pages/DeveloperLog'
 import './App.css'
 
 function ScrollToTop() {
@@ -59,6 +60,9 @@ function AppContent() {
         <Route path="/my-portfolio/blogs/:id" element={<DetailPage />} />
         <Route path="/my-portfolio/archive" element={<Archive />} />
         <Route path="/my-portfolio/archive/" element={<Archive />} />
+        <Route path="/my-portfolio/devlogs" element={<DeveloperLog />} />
+        <Route path="/my-portfolio/devlogs/" element={<DeveloperLog />} />
+        <Route path="/my-portfolio/devlogs/:date/:logType" element={<DetailPage />} />
       </Routes>
     </PageTransition>
   );

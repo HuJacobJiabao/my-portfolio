@@ -46,8 +46,8 @@ const Sidebar: React.FC<SidebarProps> = React.memo(({
   let scrollTicking = false;
 
   // Get all sections and visible sections from config (for Home page)
-  const allSections = config.site.navigation.sections as NavigationSection[];
-  const visibleSectionIds = config.site.navigation.visibleSections as string[];
+  const allSections = config.content.navigation.sections as NavigationSection[];
+  const visibleSectionIds = config.content.navigation.visibleSections as string[];
   
   // Filter sections to only show the ones listed in visibleSections
   const sections = allSections.filter(section => 
@@ -345,13 +345,13 @@ const Sidebar: React.FC<SidebarProps> = React.memo(({
         <p className={styles.profileTitle}>{config.site.hero.subtitle}</p>
         <div className={styles.contactCard}>
           <div className={styles.contactList}>
-            <a href={`mailto:${config.site.contactInfo.email}`} className={styles.contactItem}>
+            <a href={`mailto:${config.site.contact.email}`} className={styles.contactItem}>
               <i className="fas fa-envelope"></i>
             </a>
-            <a href={config.site.contactInfo.github} className={styles.contactItem}>
+            <a href={config.site.contact.github} className={styles.contactItem}>
               <i className="fab fa-github"></i>
             </a>
-            <a href={config.site.contactInfo.linkedin} className={styles.contactItem}>
+            <a href={config.site.contact.linkedin} className={styles.contactItem}>
               <i className="fab fa-linkedin"></i>
             </a>
           </div>

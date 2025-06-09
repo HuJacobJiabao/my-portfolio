@@ -103,14 +103,13 @@
 
 .markdownContent code {
   /* Inline code styling - grey background */
-  background-color: #2d3748;
-  color: #ffe066;
-  padding: 0.25rem;
+  background-color: rgb(200, 200, 200);
+  color: #000000;
   padding-left: 0.1rem;
   padding-right: 0.1rem;
   border-radius: 4px;
-  border: 1px solid #5a6f81;
-  font-family: "Source Code Pro", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  border: 1px solid #798fa2;
+  font-family: courier, "Source Code Pro", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 0.9rem;
 }
 

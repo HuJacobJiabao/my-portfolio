@@ -15,7 +15,7 @@ interface LayoutProps {
   sidebarItemType?: 'project' | 'blog' | 'archive' | 'toc';
   onSidebarItemClick?: (index: number) => void;
   activeItemId?: string;
-  contentType?: 'project' | 'blog';
+  contentType?: 'project' | 'blog' | 'dailylog';
   // Metadata props for project/blog pages
   contentItemDate?: string;
   contentItemTags?: string[];
@@ -60,8 +60,6 @@ export default function Layout({
 
   return (
     <div className={styles.wrapper}>
-      {/* Fixed Background Layer using about.jpg for middle content areas */}
-      <div className={styles.backgroundFixed}></div>
       
       <NavBar />
       
@@ -77,7 +75,11 @@ export default function Layout({
                   <div className={styles.headerMeta}>
                     <div className={styles.metaItem}>
                       <span className={styles.metaLabel}>Type:</span>
-                      <span className={styles.metaValue}>{contentType === 'project' ? '💻 Project' : '📝 Blog Post'}</span>
+                      <span className={styles.metaValue}>
+                        {contentType === 'project' ? '💻 Project' : 
+                         contentType === 'dailylog' ? '📝 Daily Log' : 
+                         '📝 Blog Post'}
+                      </span>
                     </div>
                     <div className={styles.metaItem}>
                       <span className={styles.metaLabel}>Category:</span>

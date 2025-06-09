@@ -93,7 +93,7 @@ const Home = () => {
 
     const renderRightContent = () => {
         // Find the current active section from config
-        const allSections = config.site.navigation.sections as Section[];
+        const allSections = config.content.navigation.sections as Section[];
         const currentSection = allSections.find(section => section.id === activeSection);
         
         if (!currentSection) {
@@ -324,8 +324,6 @@ const Home = () => {
 
     return (
         <div className={styles.wrapper}>
-            {/* Fixed Background Layer */}
-            <div className={styles.backgroundFixed}></div>
             
             <NavBar />
             {/* Hero Section */}

@@ -3,6 +3,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { getDefaultCoverImage } from './content-config-loader';
 
 // ANSI color codes
 const colors = {
@@ -201,7 +202,9 @@ async function processContentItem(
     // Handle default cover image resolution
     const resolveImagePath = (coverImage: string | undefined): string | undefined => {
       if (!coverImage || coverImage === 'default') {
-        return `${process.env.BASE_URL || '/my-portfolio/'}default_cover.jpg`;
+        // Use content-type specific default cover image from config
+        const defaultCover = getDefaultCoverImage(contentType);
+        return `${process.env.BASE_URL || '/my-portfolio/'}${defaultCover}`;
       }
       // If it's a relative path starting with './', resolve it relative to content path
       if (coverImage.startsWith('./')) {

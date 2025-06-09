@@ -59,11 +59,24 @@ export default function NavBar() {
       </div>
 
       <ul className={`${styles.navLinks} ${menuOpen ? styles.showMenu : ''}`}>
-        <li><Link to="/my-portfolio/" onClick={(e) => handleNavClick('/my-portfolio/', e)}>Home</Link></li>
-        <li><a href={`${import.meta.env.BASE_URL}${config.site.contact.resume}`} target="_blank" rel="noopener noreferrer">CV</a></li>
-        <li><Link to="/my-portfolio/projects/" onClick={(e) => handleNavClick('/my-portfolio/projects/', e)}>Projects</Link></li>
-        <li><Link to="/my-portfolio/blogs/" onClick={(e) => handleNavClick('/my-portfolio/blogs/', e)}>Blogs</Link></li>
-        <li><Link to="/my-portfolio/archive/" onClick={(e) => handleNavClick('/my-portfolio/archive/', e)}>Archive</Link></li>
+        {config.navbar.showHome && (
+          <li><Link to="/my-portfolio/" onClick={(e) => handleNavClick('/my-portfolio/', e)}>Home</Link></li>
+        )}
+        {config.navbar.showCV && (
+          <li><a href={`${import.meta.env.BASE_URL}${config.site.contact.resume}`} target="_blank" rel="noopener noreferrer">CV</a></li>
+        )}
+        {config.navbar.showProjects && (
+          <li><Link to="/my-portfolio/projects/" onClick={(e) => handleNavClick('/my-portfolio/projects/', e)}>Projects</Link></li>
+        )}
+        {config.navbar.showBlogs && (
+          <li><Link to="/my-portfolio/blogs/" onClick={(e) => handleNavClick('/my-portfolio/blogs/', e)}>Blogs</Link></li>
+        )}
+        {config.navbar.showLogs && (
+          <li><Link to="/my-portfolio/devlogs/" onClick={(e) => handleNavClick('/my-portfolio/devlogs/', e)}>Logs</Link></li>
+        )}
+        {config.navbar.showArchive && (
+          <li><Link to="/my-portfolio/archive/" onClick={(e) => handleNavClick('/my-portfolio/archive/', e)}>Archive</Link></li>
+        )}
       </ul>
     </nav>
   );

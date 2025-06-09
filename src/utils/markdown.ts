@@ -209,8 +209,40 @@ function createMarkdownParser() {
   md.use(markdownItMark);
   md.use(customKatexPlugin);
   md.use(markdownItDeflist);
+  
+  // Add custom link renderer
+  customLinkRenderer(md);
 
   return md;
+}
+
+// Custom link renderer to transform devlog links
+function customLinkRenderer(md: MarkdownIt) {
+  // Store the default link renderer
+  const defaultRender = md.renderer.rules.link_open || function(tokens, idx, options, _env, renderer) {
+    return renderer.renderToken(tokens, idx, options);
+  };
+
+  md.renderer.rules.link_open = function(tokens, idx, options, env, renderer) {
+    const token = tokens[idx];
+    const hrefIndex = token.attrIndex('href');
+    
+    if (hrefIndex >= 0) {
+      const href = token.attrGet('href');
+      
+      // Transform devlog file links to React Router links
+      if (href && href.match(/^\.\/devlogs\/(\d{4}-\d{2}-\d{2})\/(change-log|developer-log)\.md$/)) {
+        const match = href.match(/^\.\/devlogs\/(\d{4}-\d{2}-\d{2})\/(change-log|developer-log)\.md$/);
+        if (match) {
+          const [, date, logType] = match;
+          const newHref = `/my-portfolio/devlogs/${date}/${logType}`;
+          token.attrSet('href', newHref);
+        }
+      }
+    }
+    
+    return defaultRender(tokens, idx, options, env, renderer);
+  };
 }
 
 // Custom renderer for code blocks with syntax highlighting
@@ -330,7 +362,26 @@ function customCodeRenderer(md: MarkdownIt, toc: TocItem[]) {
     
     // Get the heading text from the next token
     const textToken = tokens[idx + 1];
-    const text = textToken && textToken.type === 'inline' ? textToken.content : '';
+    let text = '';
+    
+    if (textToken && textToken.type === 'inline' && textToken.children) {
+      // Extract only the text content from inline tokens, ignoring markdown formatting
+      text = textToken.children
+        .filter(child => child.type === 'text' || child.type === 'link_open' || child.type === 'link_close')
+        .map(child => {
+          if (child.type === 'text') {
+            return child.content;
+          }
+          return '';
+        })
+        .join('')
+        .trim();
+    } else if (textToken && textToken.type === 'inline') {
+      // Fallback: use content but strip markdown link syntax
+      text = textToken.content
+        .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Remove markdown links, keep text
+        .trim();
+    }
     
     // Generate ID from text
     const id = text
@@ -381,7 +432,7 @@ export async function parseMarkdown(
   
   // Parse frontmatter and body using safeMatter (no eval)
   const parsed = safeMatter(content);
-  const frontmatter = parsed.data;
+  const frontmatter = parsed.data || {}; // Provide empty object default for files without frontmatter
   let bodyContent = parsed.content;
   
   // Process template variables in body content using frontmatter values

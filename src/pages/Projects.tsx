@@ -3,6 +3,7 @@ import Layout from '../components/Layout';
 import Card from '../components/Card';
 import styles from '../styles/Projects.module.css';
 import { loadStaticProjects, type Project } from '../utils/staticDataLoader';
+import config from '../config/config';
 
 export default function Projects() {
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -41,7 +42,7 @@ export default function Projects() {
     return (
       <Layout 
         title="Projects"
-        headerBackground={`${import.meta.env.BASE_URL}background/default_proj.jpg`}
+        headerBackground={`${import.meta.env.BASE_URL}${config.content.projectConfig.defaultHeaderBackground}`}
         sidebarItems={[]}
         sidebarItemType="project"
         onSidebarItemClick={() => {}}
@@ -60,7 +61,7 @@ export default function Projects() {
   return (
     <Layout 
       title="Projects"
-      headerBackground={`${import.meta.env.BASE_URL}background/default_proj.jpg`}
+      headerBackground={`${import.meta.env.BASE_URL}${config.content.projectConfig.defaultHeaderBackground}`}
       sidebarItems={sidebarItems}
       sidebarItemType="project"
       onSidebarItemClick={handleSidebarItemClick}

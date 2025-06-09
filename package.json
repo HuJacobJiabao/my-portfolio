@@ -16,7 +16,8 @@
     "log": "tsx src/scripts/create-daily-log.ts",
     "preprocess": "tsx src/scripts/preprocess-content.ts",
     "p": "tsx src/scripts/preprocess-content.ts"
-  },  "dependencies": {
+  },
+  "dependencies": {
     "@fortawesome/fontawesome-free": "^6.7.2",
     "@types/markdown-it": "^14.1.2",
     "@types/react-transition-group": "^4.4.12",
@@ -31,13 +32,13 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^6.30.1",
-    "react-transition-group": "^4.4.5"
+    "react-transition-group": "^4.4.5",
+    "yaml": "^2.8.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
     "@rollup/plugin-yaml": "^4.1.2",
     "@types/katex": "^0.16.7",
-
     "@types/node": "^22.15.29",
     "@types/prismjs": "^1.26.5",
     "@types/react": "^19.1.2",

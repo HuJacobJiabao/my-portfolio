@@ -8,8 +8,8 @@ const Footer = () => {
       <div className={styles.backgroundFixed}></div>
       
       <div className={styles.footerText}>
-        <p>{config.site.footer.copyright}</p>
-        <p>{config.site.footer.message}</p>
+        <p>{config.footer.copyright}</p>
+        <p>{config.footer.message}</p>
       </div>
     </footer>
   );

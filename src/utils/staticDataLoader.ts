@@ -109,3 +109,31 @@ export async function findProjectById(id: string): Promise<Project | null> {
   const projects = await loadStaticProjects();
   return projects.find(project => project.id === id) || null;
 }
+
+/**
+ * Get the last modification time of a content file
+ * @param contentPath - Path relative to content/ folder (from static data)
+ */
+export async function getFileLastModifiedTime(contentPath: string): Promise<string> {
+  try {
+    // Convert content path to public content path
+    const publicPath = `${import.meta.env.BASE_URL}content/${contentPath}`;
+    const response = await fetch(publicPath, { method: 'HEAD' });
+    
+    if (!response.ok) {
+      throw new Error(`Failed to get file metadata: ${response.statusText}`);
+    }
+    
+    // Try to get Last-Modified header
+    const lastModified = response.headers.get('Last-Modified');
+    if (lastModified) {
+      return new Date(lastModified).toLocaleDateString();
+    }
+    
+    // Fallback to current date if header is not available
+    return new Date().toLocaleDateString();
+  } catch (error) {
+    console.error(`Error getting last modified time for ${contentPath}:`, error);
+    return new Date().toLocaleDateString();
+  }
+}
