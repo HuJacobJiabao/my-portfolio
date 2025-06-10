@@ -1,3 +1,6 @@
+/* APlayer CSS imports */
+@import 'aplayer/dist/APlayer.min.css';
+
 html, body, #root {
   margin: 0;
   padding: 0;
@@ -616,6 +619,14 @@ mark.highlighted-text {
    Mobile background issues now fixed with position:fixed backgrounds instead of
    background-attachment:fixed which causes performance problems on mobile devices
 */
+
+@media (max-width: 480px) {
+  #aplayer {
+    width: calc(100vw - 30px) !important;
+    bottom: 10px !important;
+    left: 15px !important;
+  }
+}
 
 
 

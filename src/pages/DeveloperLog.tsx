@@ -9,7 +9,7 @@ export default function DeveloperLog() {
   const [markdownData, setMarkdownData] = useState<ParsedMarkdown | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [activeItemId, setActiveItemId] = useState<string>('');
-  const [title, setTitle] = useState<string>('Developer Log');
+  const [title, setTitle] = useState<string>('Developer Logs');
 
   // Create sidebar items from table of contents (memoized)
   const sidebarItems = useMemo(() => {

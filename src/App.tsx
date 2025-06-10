@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import PageTransition from './components/PageTransition'
+import MetingPlayer from './components/MetingPlayer'
 import Home from './pages/Home'
 import Projects from './pages/Projects'
 import DetailPage from './pages/DetailPage'
@@ -81,6 +82,7 @@ function App() {
       
       <ScrollToTop />
       <AppContent />
+      <MetingPlayer />
     </Router>
   )
 }

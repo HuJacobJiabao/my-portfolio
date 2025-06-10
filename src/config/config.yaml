@@ -1,6 +1,4 @@
 # Resume configuration
-resume:
-  filename: "Jiabao_Resume.pdf"
 
 home:
   hero:
@@ -11,18 +9,18 @@ home:
 
   navigation:
     about:
-      title: "About Me"
-      icon: "👤"
-      type: "about"
-      content: >
-        Hi, I'm Jiabao, currently a Master's student in 
-        [Computer Science](https://www.cs.usc.edu/academic-programs/masters/) at 
-        [University of Southern California (USC)](https://www.usc.edu/).
-        I'm a passionate developer with a love for front-end design,
-        interactive experiences, and elegant code. I enjoy transforming creative
-        ideas into beautiful, functional websites, and I thrive on crafting digital
-        experiences that feel alive and engaging.
-      photo: "seattle.jpg"
+        title: "About Me"
+        icon: "👤"
+        type: "about"
+        content: >
+          Hi, I'm Jiabao, currently a Master's student in 
+          [Computer Science](https://www.cs.usc.edu/academic-programs/masters/) at 
+          [University of Southern California (USC)](https://www.usc.edu/).
+          I'm a passionate developer with a love for front-end design,
+          interactive experiences, and elegant code. I enjoy transforming creative
+          ideas into beautiful, functional websites, and I thrive on crafting digital
+          experiences that feel alive and engaging.
+        photo: "seattle.jpg"
 
     education:
       title: "Education"
@@ -174,7 +172,6 @@ home:
       email: "hujiabao1224@gmail.com"
       github: "https://github.com/HuJacobJiabao"
       linkedin: "https://www.linkedin.com/in/jiabao-hu-920664221/"
-      twitter: "https://twitter.com/yourusername"
 
 # Navigation bar configuration
 navbar:
@@ -199,7 +196,38 @@ content:
   logs:
     defaultHeaderBackground: "background/default_blog.png"
 
+resume:
+  filename: "Jiabao_Resume.pdf"
+
 # Footer configuration
 footer:
   copyright: "© 2025 Jiabao Hu. All rights reserved."
   message: "Welcome to my portfolio website!"
+
+# Audio Player configuration
+audioPlayer:
+  enabled: true
+  fixed: true   # Set to true for floating player
+  volume: 0.7
+  showLrc: true
+  
+  # MetingJS configuration
+  meting:
+    enabled: true   # Set to true to use MetingJS instead of local audio files
+    server: "netease"   # Music server: netease, tencent, kugou, xiami, baidu
+    type: "album"    # Type: song, playlist, album, search, artist
+    id: "110646"    # Music ID from the platform
+    mutex: true         # Prevent multiple players from playing simultaneously
+    listFolded: false   # Whether to fold the playlist
+    listMaxHeight: "340px"  # Maximum height of the playlist
+    order: "random"       # Play order: list, random
+    loop: "all"         # Loop mode: all, one, none
+    preload: "auto"     # Preload: auto, metadata, none
+    
+  # Local audio files (used when meting.enabled is false)
+  audio:
+    - name: "未だ知られぬ物語 ～ Anticipated Dream"
+      artist: "凋叶棕"
+      url: "/audio/touhou-dream.mp3"
+      cover: "/background/hero.jpg"
+    #   cover: "/background/default_cover.jpg"
