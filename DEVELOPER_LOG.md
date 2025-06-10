@@ -1,6 +1,9 @@
 
 ## 2025.06
 
+**Jun 10** - MetingPlayer component enhancement with dual-mode support and build configuration optimization  
+[Change Log](./devlogs/2025-06-10/change-log.md) | [Developer Log](./devlogs/2025-06-10/developer-log.md)
+
 **Jun 9** - Configuration system enhancement, developer log page implementation, and sidebar navigation bug fixes  
 [Change Log](./devlogs/2025-06-09/change-log.md) | [Developer Log](./devlogs/2025-06-09/developer-log.md)
 
