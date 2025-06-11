@@ -256,6 +256,15 @@
   width: 100%;
 }
 
+/* Desktop and Mobile Sidebar Control */
+.desktopSidebar {
+  display: block;
+}
+
+.mobileSidebar {
+  display: none;
+}
+
 .rightContentArea {
   display: flex;
   flex-direction: column;
@@ -384,10 +393,24 @@
     width: 100%;
   }
 
+  /* Hide desktop sidebar on mobile */
+  .desktopSidebar {
+    display: none;
+  }
+
+  /* Show mobile sidebar on mobile - full width container */
+  .mobileSidebar {
+    display: block;
+    order: 2; /* Place after content */
+    width: 100%;
+    padding: 0 20px; /* Same padding as content for alignment */
+    box-sizing: border-box;
+  }
+
   .rightContentArea {
     order: 1;
     width: 100%;
-    max-width: 80vw; /* 匹配sidebar的宽度 */
+    max-width: 100%; /* Take full width since sidebar is hidden */
   }
 
   .rightContent {
@@ -408,5 +431,57 @@
 
   .main {
     padding: 40px 0 40px; /* 移除左右内边距 */
+  }
+}
+
+/* Floating Navigation Overlay for Mobile TOC */
+.floatingNavigationOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  z-index: 1002;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10vh 5vw; /* Responsive padding */
+  box-sizing: border-box;
+  animation: overlayFadeIn 0.3s ease-out;
+}
+
+.floatingNavigationCard {
+  position: relative;
+  z-index: 1003;
+  animation: cardSlideIn 0.3s ease-out;
+}
+
+/* Animations for floating navigation */
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes cardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Hide floating navigation on desktop */
+@media (min-width: 769px) {
+  .floatingNavigationOverlay {
+    display: none !important;
   }
 }

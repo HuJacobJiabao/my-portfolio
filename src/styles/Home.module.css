@@ -493,11 +493,13 @@
   }
 
   /* Show mobile sidebar on mobile */
+  /* Show mobile sidebar on mobile - full width container */
   .mobileSidebar {
     display: block;
     order: 2; /* Place after content */
     width: 100%;
-    max-width: 400px; /* Limit width for better appearance */
+    padding: 0;
+    box-sizing: border-box;
   }
 
   .rightContentArea {
@@ -546,7 +548,7 @@
 
   .aboutWrapper {
     margin: 0 auto;
-    padding: 0 5px; /* Reduced horizontal padding for more content space */
+    padding: 0;
     width: 100%;
     max-width: 100%; /* 使用全宽 */
     box-sizing: border-box;
