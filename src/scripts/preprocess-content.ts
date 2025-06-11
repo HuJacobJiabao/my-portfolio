@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { getDefaultCoverImage } from './content-config-loader';
+import generateFileMetadata from './generate-file-metadata';
 
 // ANSI color codes
 const colors = {
@@ -297,6 +298,10 @@ async function generateStaticData() {
     
     fs.writeFileSync(blogsPath, JSON.stringify(blogs, null, 2));
     fs.writeFileSync(projectsPath, JSON.stringify(projects, null, 2));
+
+    // Generate file metadata with actual modification times
+    console.log('\n📄 Generating file metadata...');
+    generateFileMetadata();
 
     console.log('');
     console.log(colorize('✅ Content preprocessing completed!', colors.green + colors.bright));

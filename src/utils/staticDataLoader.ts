@@ -116,32 +116,62 @@ export async function findProjectById(id: string): Promise<Project | null> {
  */
 export async function getFileLastModifiedTime(contentPath: string): Promise<string> {
   try {
-    // Determine the correct base path
-    let publicPath: string;
+    // Try to load file metadata first (generated at build time with actual fs.statSync)
+    try {
+      const metadataResponse = await fetch(`${import.meta.env.BASE_URL}data/file-metadata.json`);
+      if (metadataResponse.ok) {
+        const metadata = await metadataResponse.json();
+        const fileMetadata = metadata[contentPath];
+        
+        if (fileMetadata && fileMetadata.lastModified) {
+          return new Date(fileMetadata.lastModified).toLocaleDateString();
+        }
+      }
+    } catch (metadataError) {
+      console.warn('Could not load file metadata, falling back to other methods');
+    }
+
+    // For devlogs, extract date from path as fallback if metadata is not available
     if (contentPath.startsWith('devlogs/')) {
-      // For devlogs, files are in public/devlogs/, not public/content/devlogs/
-      publicPath = `${import.meta.env.BASE_URL}${contentPath}`;
-    } else {
-      // For regular content, files are in public/content/
-      publicPath = `${import.meta.env.BASE_URL}content/${contentPath}`;
+      const dateMatch = contentPath.match(/devlogs\/(\d{4}-\d{2}-\d{2})\//);
+      if (dateMatch) {
+        const dateStr = dateMatch[1];
+        const date = new Date(dateStr);
+        if (!isNaN(date.getTime())) {
+          return date.toLocaleDateString();
+        }
+      }
+    }
+
+    // For blogs/projects, try to extract date from the filename if metadata not available
+    if (contentPath.includes('blogs/') || contentPath.includes('projects/')) {
+      const dateMatch = contentPath.match(/(\d{4}-\d{2}-\d{2})/);
+      if (dateMatch) {
+        const dateStr = dateMatch[1];
+        const date = new Date(dateStr);
+        if (!isNaN(date.getTime())) {
+          return date.toLocaleDateString();
+        }
+      }
     }
     
-    const response = await fetch(publicPath, { method: 'HEAD' });
-    
-    if (!response.ok) {
-      throw new Error(`Failed to get file metadata: ${response.statusText}`);
-    }
-    
-    // Try to get Last-Modified header
-    const lastModified = response.headers.get('Last-Modified');
-    if (lastModified) {
-      return new Date(lastModified).toLocaleDateString();
-    }
-    
-    // Fallback to current date if header is not available
+    // Final fallback to current date
     return new Date().toLocaleDateString();
   } catch (error) {
     console.error(`Error getting last modified time for ${contentPath}:`, error);
+    
+    // Even in error case, try to extract date from path for devlogs
+    if (contentPath.startsWith('devlogs/')) {
+      const dateMatch = contentPath.match(/devlogs\/(\d{4}-\d{2}-\d{2})\//);
+      if (dateMatch) {
+        const dateStr = dateMatch[1];
+        const date = new Date(dateStr);
+        if (!isNaN(date.getTime())) {
+          return date.toLocaleDateString();
+        }
+      }
+    }
+    
     return new Date().toLocaleDateString();
   }
 }

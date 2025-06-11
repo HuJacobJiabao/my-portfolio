@@ -391,7 +391,7 @@ export default function Layout({ children, ...props }: LayoutProps) => {
 ### Implementation Details
 ```typescript
 // staticDataLoader.ts - Fixed path handling for devlogs
-export async function getFileLastModifiedTime(contentPath: string): Promise<string | null> {
+export async function getFileLastModifiedTime(contentPath: string): Promise<string> {
   try {
     // Handle devlog paths correctly - they should use /devlogs/ not /content/devlogs/
     let metadataUrl: string;
@@ -427,6 +427,91 @@ export async function getFileLastModifiedTime(contentPath: string): Promise<stri
 - ✅ Last modified times display correctly for devlog files
 - ✅ Regular blog/project content still works correctly
 - ✅ Console errors eliminated for devlog metadata fetching
+
+## 8. File Metadata System Implementation
+
+### Problem Analysis
+- **Issue**: GitHub Pages doesn't provide `Last-Modified` headers, causing all devlog pages to show current date instead of actual file modification times
+- **Root Cause**: Relying on HTTP headers in production environment where static file servers don't provide reliable metadata
+- **Impact**: Users seeing incorrect "Last Update" times, making it difficult to track when content was actually modified
+
+### Solution Design
+- **Approach**: Generate file metadata at build time using Node.js `fs.statSync()` to capture actual filesystem modification times
+- **Architecture**: Build-time preprocessing pipeline that creates static JSON metadata accessible to browser
+- **Alternatives Considered**: Git commit timestamps, manual metadata in frontmatter, server-side solutions
+
+### Implementation Details
+```typescript
+// generate-file-metadata.ts - Build-time metadata generation using fs.statSync()
+import fs from 'fs';
+import path from 'path';
+
+function generateFileMetadata() {
+  const metadata: Record<string, FileMetadata> = {};
+  
+  // Process devlog files with actual filesystem timestamps
+  const devlogsDir = path.join(process.cwd(), 'public/devlogs');
+  if (fs.existsSync(devlogsDir)) {
+    const dates = fs.readdirSync(devlogsDir);
+    
+    for (const date of dates) {
+      const datePath = path.join(devlogsDir, date);
+      if (fs.statSync(datePath).isDirectory()) {
+        const files = fs.readdirSync(datePath);
+        
+        for (const file of files) {
+          if (file.endsWith('.md')) {
+            const filePath = path.join(datePath, file);
+            const stats = fs.statSync(filePath); // Get actual file stats
+            const relativePath = `devlogs/${date}/${file}`;
+            
+            metadata[relativePath] = {
+              path: relativePath,
+              lastModified: stats.mtime.toISOString(), // Real modification time
+              created: stats.birthtime.toISOString()
+            };
+          }
+        }
+      }
+    }
+  }
+  
+  // Write metadata to public/data/file-metadata.json
+  fs.writeFileSync(outputPath, JSON.stringify(metadata, null, 2));
+}
+
+// staticDataLoader.ts - Updated to use build-time metadata
+export async function getFileLastModifiedTime(contentPath: string): Promise<string> {
+  try {
+    // Load pre-generated metadata with actual file timestamps
+    const metadataResponse = await fetch(`${import.meta.env.BASE_URL}data/file-metadata.json`);
+    if (metadataResponse.ok) {
+      const metadata = await metadataResponse.json();
+      const fileMetadata = metadata[contentPath];
+      
+      if (fileMetadata && fileMetadata.lastModified) {
+        return new Date(fileMetadata.lastModified).toLocaleDateString();
+      }
+    }
+    
+    // Fallback logic for cases where metadata is unavailable
+    // ...existing fallback code...
+  } catch (error) {
+    // ...existing error handling...
+  }
+}
+```
+
+### Files Modified
+- `src/scripts/generate-file-metadata.ts` - Fixed ES module compatibility and devlog path detection
+- `src/scripts/preprocess-content.ts` - Integrated metadata generation into build pipeline
+- `src/utils/staticDataLoader.ts` - Updated to prioritize build-time metadata over HTTP headers
+
+### Testing Results
+- ✅ Actual file modification times now displayed correctly for all devlog pages
+- ✅ No more fallback to current date in production
+- ✅ Metadata generation integrated into build process (`npm run preprocess`)
+- ✅ Generated metadata for 24 files including all devlogs and content files
 
 ## Performance Impact
 
