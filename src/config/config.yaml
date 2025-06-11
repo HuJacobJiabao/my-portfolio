@@ -57,6 +57,20 @@ home:
           logoSrc: "zju.png"
           highlights: []
 
+    experience:
+      title: "Experience"
+      icon: "💼"
+      type: "experience"
+      items:
+        - companyName: "ZJU/UIUC Institute"
+          position: "Undergraduate Research Assistant"
+          duration: "Sep 2022 - Apr 2023"
+          location: "Haining, China"
+          logoSrc: "zjui.jpg"
+          highlights:
+            - "Engineered a modular 3D simulation platform in Python/Blender"
+            - "Built scalable data generation pipelines for CV model training"
+            - "Integrated and trained deep learning pipelines (PyTorch)"
     projects:
       title: "Projects"
       icon: "💻"
@@ -85,22 +99,6 @@ home:
             - "Built scalable data generation pipelines"
             - "Integrated deep learning training workflows"
             - "Modular architecture for extensibility"
-
-    experience:
-      title: "Experience"
-      icon: "💼"
-      type: "experience"
-      items:
-        - companyName: "ZJU/UIUC Institute"
-          position: "Undergraduate Research Assistant"
-          duration: "Sep 2022 - Apr 2023"
-          location: "Haining, China"
-          logoSrc: "zjui.jpg"
-          highlights:
-            - "Engineered a modular 3D simulation platform in Python/Blender"
-            - "Built scalable data generation pipelines for CV model training"
-            - "Integrated and trained deep learning pipelines (PyTorch)"
-
     # certificates:
     #   title: "Certificates & Achievements"
     #   icon: "🏆"

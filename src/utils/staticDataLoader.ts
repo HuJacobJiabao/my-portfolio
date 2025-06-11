@@ -112,12 +112,20 @@ export async function findProjectById(id: string): Promise<Project | null> {
 
 /**
  * Get the last modification time of a content file
- * @param contentPath - Path relative to content/ folder (from static data)
+ * @param contentPath - Path relative to content/ folder (from static data) or devlogs/ for daily logs
  */
 export async function getFileLastModifiedTime(contentPath: string): Promise<string> {
   try {
-    // Convert content path to public content path
-    const publicPath = `${import.meta.env.BASE_URL}content/${contentPath}`;
+    // Determine the correct base path
+    let publicPath: string;
+    if (contentPath.startsWith('devlogs/')) {
+      // For devlogs, files are in public/devlogs/, not public/content/devlogs/
+      publicPath = `${import.meta.env.BASE_URL}${contentPath}`;
+    } else {
+      // For regular content, files are in public/content/
+      publicPath = `${import.meta.env.BASE_URL}content/${contentPath}`;
+    }
+    
     const response = await fetch(publicPath, { method: 'HEAD' });
     
     if (!response.ok) {
