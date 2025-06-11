@@ -1,6 +1,9 @@
 
 ## 2025.06
 
+**Jun 11** - Comprehensive mobile responsive design implementation with navigation system restructuring and component modularization  
+[Change Log](./devlogs/2025-06-11/change-log.md) | [Developer Log](./devlogs/2025-06-11/developer-log.md)
+
 **Jun 10** - MetingPlayer component enhancement with dual-mode support and build configuration optimization  
 [Change Log](./devlogs/2025-06-10/change-log.md) | [Developer Log](./devlogs/2025-06-10/developer-log.md)
 
