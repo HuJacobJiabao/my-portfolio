@@ -5,6 +5,7 @@ import EducationCard from "../components/EducationCard"
 import WorkCard from "../components/WorkCard"
 import ProjectCard from "../components/ProjectCard"
 import Sidebar from "../components/Sidebar"
+import MobileTabs from "../components/MobileTabs"
 import ScrollToTop from "../components/ScrollToTop"
 import Footer from "../components/Footer"
 import config from "../config/config"
@@ -87,10 +88,10 @@ const Home = () => {
             case 'about':
                 return (
                     <div className={styles.rightContent}>
+                        <h2>{icon} <span>{title}</span></h2>
                         <div className={styles.introWrapper}>
                             <div className={styles.introTextSection}>
                                 <div className={styles.aboutContent}>
-                                    <h2>{icon} <span>{title}</span></h2>
                                     {content && 
                                         <p dangerouslySetInnerHTML={{ __html: parseMarkdownLinks(content) }} />
                                     }
@@ -243,6 +244,13 @@ const Home = () => {
         <div className={styles.wrapper}>
             
             <NavBar />
+            
+            {/* Mobile Side Tabs - Fixed positioned on left side, only visible on mobile */}
+            <MobileTabs 
+                activeSection={activeSection}
+                onSectionChange={handleSectionChange}
+            />
+            
             {/* Hero Section */}
             <section className={styles.hero}>
                 <div className={styles.heroContent}>
@@ -269,15 +277,25 @@ const Home = () => {
             <section id="about" className={styles.about}>
                 <div className={styles.aboutWrapper}>
                     <div className={styles.aboutContainer}>
-                        {/* Left Sidebar */}
-                        <Sidebar 
-                            activeSection={activeSection}
-                            onSectionChange={handleSectionChange}
-                        />
+                        {/* Left Sidebar - Hidden on mobile */}
+                        <div className={styles.desktopSidebar}>
+                            <Sidebar 
+                                activeSection={activeSection}
+                                onSectionChange={handleSectionChange}
+                            />
+                        </div>
 
                         {/* Right Content Area */}
                         <div className={styles.rightContentArea}>
                             {renderNavigationSection(activeSection)}
+                        </div>
+                        
+                        {/* Mobile Sidebar - Only visible on mobile, placed below content */}
+                        <div className={styles.mobileSidebar}>
+                            <Sidebar 
+                                activeSection={activeSection}
+                                onSectionChange={handleSectionChange}
+                            />
                         </div>
                     </div>
                 </div>

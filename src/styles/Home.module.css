@@ -123,7 +123,7 @@
   color: #222;
   padding: 20px;
   text-align: left;
-  max-width: 1400px;
+  max-width: 1400px; /* Reverted back to original */
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -132,16 +132,25 @@
 
 .aboutContainer {
   display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 30px;
+  grid-template-columns: 300px 1fr; /* Reverted back to original */
+  gap: 30px; /* Reverted back to original */
   width: 100%;
+}
+
+/* Desktop and Mobile Sidebar Control */
+.desktopSidebar {
+  display: block;
+}
+
+.mobileSidebar {
+  display: none;
 }
 
 /* About content specific container for content + photo layout */
 .aboutContentContainer {
   display: grid;
-  grid-template-columns: 1fr 300px;
-  gap: 30px;
+  grid-template-columns: 1fr 120px; /* Much smaller - reduced from 200px to 120px */
+  gap: 20px; /* Reduced gap since image is smaller */
   align-items: start;
 }
 
@@ -204,7 +213,7 @@
   /* Remove white background to let cards float on the about.jpg background */
   background: rgba(255, 255, 255, 0.95);
   border-radius: 20px;
-  padding: 40px;
+  padding: 40px; /* Reverted back to original */
   animation: fadeIn 1s ease-in-out;
   min-height: 500px;
   overflow-x: visible; /* Allow horizontal overflow */
@@ -335,7 +344,7 @@
 
 .introWrapper {
   display: flex;
-  gap: 30px;
+  gap: 25px; /* Reduced from 30px */
   align-items: flex-start;
   background: rgba(0, 0, 0, 0);
   width: 100%;
@@ -349,19 +358,18 @@
 
 .introImageSection {
   flex-shrink: 0;
-  width: 300px;
+  width: 240px;
   display: flex;
   justify-content: center;
 }
 
 .introPhotoWrapper {
   position: relative;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  border-radius: 10px; /* Smaller radius for smaller image */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); /* Adjusted shadow for smaller size */
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   width: 100%;
-  max-width: 300px;
+  max-width: 240px; 
 }
 
 
@@ -369,12 +377,12 @@
   width: 100%;
   height: auto;
   display: block;
-  border-radius: 15px;
+  border-radius: 10px; /* Match wrapper radius */
   object-fit: cover;
 }
 
 .aboutContent {
-  padding: 20px 0;
+  padding: 15px 0; /* Reduced from 20px */
 }
 
 .aboutContent h2 {
@@ -479,15 +487,32 @@
     width: 100%;
   }
 
+  /* Hide desktop sidebar on mobile */
+  .desktopSidebar {
+    display: none;
+  }
+
+  /* Show mobile sidebar on mobile */
+  .mobileSidebar {
+    display: block;
+    order: 2; /* Place after content */
+    width: 100%;
+    max-width: 400px; /* Limit width for better appearance */
+  }
+
   .rightContentArea {
     order: 1;
     width: 100%;
-    max-width: 80vw; /* 匹配sidebar的宽度 */
+    max-width: 100%; /* Take full width since sidebar is hidden */
+    position: relative; /* Add position relative for mobile tabs positioning */
+    /* max-width: 100vw; */
   }
 
   .rightContent {
-    padding: 20px;
-    min-height: 300px;
+    padding: 30px; /* Increased for more content space */
+    min-height: 350px; /* Increased minimum height */
+    margin: 0; /* Remove any margins */
+    width: 100%; /* Ensure full width usage */
   }
   
   .sectionHeader {
@@ -521,7 +546,7 @@
 
   .aboutWrapper {
     margin: 0 auto;
-    padding: 0; /* 移除内边距以给sidebar更多空间 */
+    padding: 0 5px; /* Reduced horizontal padding for more content space */
     width: 100%;
     max-width: 100%; /* 使用全宽 */
     box-sizing: border-box;
@@ -540,7 +565,7 @@
 
   .introWrapper {
     flex-direction: column-reverse;
-    gap: 20px;
+    gap: 10px; /* Smaller gap for mobile */
   }
   
   .introImageSection {
@@ -549,7 +574,7 @@
   }
   
   .introPhotoWrapper {
-    max-width: 250px;
+    max-width: 100px; /* Much smaller on mobile - reduced from 180px to 100px */
     margin: 0 auto;
   }
 }

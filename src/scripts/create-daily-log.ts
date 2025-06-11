@@ -225,8 +225,8 @@ async function createDailyLog(dateStr?: string) {
   }
 
   console.log(colorize(`\n✅ Daily logs ready for ${displayDate}`, colors.green + colors.bright));
-  console.log(colorize(`   Change Log: public/frame-logs/${formattedDate}/change-log.md`, colors.gray));
-  console.log(colorize(`   Developer Log: public/frame-logs/${formattedDate}/developer-log.md`, colors.gray));
+  console.log(colorize(`   Change Log: public/devlogs/${formattedDate}/change-log.md`, colors.gray));
+  console.log(colorize(`   Developer Log: public/devlogs/${formattedDate}/developer-log.md`, colors.gray));
 }
 
 function showUsage() {
@@ -241,8 +241,8 @@ function showUsage() {
   console.log(`  ${colorize('npm run', colors.gray)} ${colorize('log', colors.blue)} ${colorize('2025-06-07', colors.magenta)} ${colorize('# Creates logs for specific date', colors.gray)}`);
   console.log('');
   console.log(colorize('What it creates:', colors.yellow + colors.bright));
-  console.log(`  ${colorize('public/frame-logs/YYYY-MM-DD/change-log.md', colors.green)}     ${colorize('# High-level daily changes', colors.gray)}`);
-  console.log(`  ${colorize('public/frame-logs/YYYY-MM-DD/developer-log.md', colors.green)}  ${colorize('# Detailed technical notes', colors.gray)}`);
+  console.log(`  ${colorize('public/devlogs/YYYY-MM-DD/change-log.md', colors.green)}     ${colorize('# High-level daily changes', colors.gray)}`);
+  console.log(`  ${colorize('public/devlogs/YYYY-MM-DD/developer-log.md', colors.green)}  ${colorize('# Detailed technical notes', colors.gray)}`);
 }
 
 async function main() {

@@ -246,6 +246,10 @@
     margin: 0; /* Remove margin, let parent container control centering */
     box-sizing: border-box;
   }
+
+  .leftSidebar {
+    display: none; /* Hide sidebar on mobile */
+  }
 }
 
 /* TOC-specific styles for enhanced catalog display with nested structure */
@@ -477,4 +481,25 @@
   width: 100%;
   text-align: left;
   font-weight: 400;
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  .leftSidebar {
+    display: flex; /* Show sidebar on mobile when specifically placed */
+    max-width: 100%;
+    width: 100%;
+  }
+  
+  /* Hide navigation card on mobile */
+  .navigationCard {
+    display: none;
+  }
+  
+  /* Ensure profile card is visible and well-styled on mobile */
+  .profileCard {
+    width: 100%;
+    margin: 0;
+    padding: 20px;
+  }
 }

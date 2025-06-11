@@ -199,7 +199,7 @@ const Sidebar: React.FC<SidebarProps> = React.memo(({
     performInitialMeasurement();
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize, { passive: true });
     
     // Also listen for DOMContentLoaded and load events to ensure proper measurement
     if (document.readyState === 'loading') {
