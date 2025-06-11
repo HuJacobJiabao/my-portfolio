@@ -1,5 +1,12 @@
 # Resume configuration
 
+# Website metadata configuration
+website:
+  title: "Jiabao Hu"
+  titleSeparator: " | "
+  favicon: "/favicon.png"
+  description: "Portfolio website of Jiabao Hu - Full-stack Developer and MSCS student at USC"
+
 home:
   hero:
     name: "Jiabao Hu"
@@ -215,8 +222,8 @@ audioPlayer:
   meting:
     enabled: true   # Set to true to use MetingJS instead of local audio files
     server: "netease"   # Music server: netease, tencent, kugou, xiami, baidu
-    type: "album"    # Type: song, playlist, album, search, artist
-    id: "110646"    # Music ID from the platform
+    type: "playlist"    # Type: song, playlist, album, search, artist
+    id: "8399234499"    # Music ID from the platform
     mutex: true         # Prevent multiple players from playing simultaneously
     listFolded: false   # Whether to fold the playlist
     listMaxHeight: "340px"  # Maximum height of the playlist

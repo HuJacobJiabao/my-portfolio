@@ -8,6 +8,7 @@ import Sidebar from "../components/Sidebar"
 import ScrollToTop from "../components/ScrollToTop"
 import Footer from "../components/Footer"
 import config from "../config/config"
+import usePageTitle from "../hooks/usePageTitle"
 
 // Define types for config data
 interface Education {
@@ -67,6 +68,9 @@ const getImagePath = (type: string, filename: string): string => {
 
 const Home = () => {
     const [activeSection, setActiveSection] = useState('about')
+    
+    // Set page title for home page (just the website title)
+    usePageTitle('');
 
     const handleSectionChange = (sectionId: string) => {
         setActiveSection(sectionId);

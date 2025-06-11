@@ -31,8 +31,17 @@ export interface AudioPlayerConfig {
   }>;
 }
 
+// Define website metadata configuration
+export interface WebsiteConfig {
+  title: string;
+  titleSeparator?: string;
+  favicon?: string;
+  description?: string;
+}
+
 // Define config interface
 export interface Config {
+  website?: WebsiteConfig;
   audioPlayer?: AudioPlayerConfig;
   [key: string]: any; // Allow other config properties
 }

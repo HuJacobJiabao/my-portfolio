@@ -4,8 +4,12 @@ import BlogCard from '../components/BlogCard';
 import styles from '../styles/Blog.module.css';
 import { loadStaticBlogPosts, type BlogPost } from '../utils/staticDataLoader';
 import config from '../config/config';
+import usePageTitle from '../hooks/usePageTitle';
 
 export default function Blog() {
+  // Set page title
+  usePageTitle('Blogs');
+
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [error, setError] = useState<string | null>(null);

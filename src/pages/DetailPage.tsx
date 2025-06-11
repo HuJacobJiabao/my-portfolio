@@ -7,6 +7,7 @@ import { parseMarkdown, type ParsedMarkdown } from '../utils/markdown';
 import { createAssetMapFromCache } from '../utils/assetResolver';
 import config from '../config/config';
 import styles from '../styles/DetailPage.module.css';
+import usePageTitle from '../hooks/usePageTitle';
 
 type ContentType = 'project' | 'blog' | 'dailylog';
 
@@ -94,6 +95,9 @@ export default function DetailPage() {
       return found;
     }
   }, [contentType, id, date, logType, blogPosts, projects]);
+
+  // Set dynamic page title based on content
+  usePageTitle(contentItem?.title || 'Content');
 
   // Create sidebar items from table of contents (memoized)
   const sidebarItems = useMemo(() => {

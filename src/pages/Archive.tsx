@@ -4,6 +4,7 @@ import TimelineItem from '../components/TimelineItem';
 import Pagination from '../components/Pagination';
 import styles from '../styles/Archive.module.css';
 import config from '../config/config';
+import usePageTitle from '../hooks/usePageTitle';
 
 // Import data from static loader
 import { loadStaticBlogPosts, loadStaticProjects, type BlogPost, type Project } from '../utils/staticDataLoader';
@@ -24,6 +25,9 @@ interface ArchiveItem {
 const ITEMS_PER_PAGE = 12;
 
 export default function Archive() {
+  // Set page title
+  usePageTitle('Archive');
+  
   const [currentPage, setCurrentPage] = useState(1);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);

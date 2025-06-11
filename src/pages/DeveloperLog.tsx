@@ -4,8 +4,12 @@ import MarkdownContent from '../components/MarkdownContent';
 import { parseMarkdown, fetchMarkdownContent, type ParsedMarkdown } from '../utils/markdown';
 import styles from '../styles/DetailPage.module.css';
 import config from '../config/config';
+import usePageTitle from '../hooks/usePageTitle';
 
 export default function DeveloperLog() {
+  // Set page title
+  usePageTitle('Developer Logs');
+
   const [markdownData, setMarkdownData] = useState<ParsedMarkdown | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [activeItemId, setActiveItemId] = useState<string>('');

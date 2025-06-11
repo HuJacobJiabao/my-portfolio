@@ -4,8 +4,12 @@ import Card from '../components/Card';
 import styles from '../styles/Projects.module.css';
 import { loadStaticProjects, type Project } from '../utils/staticDataLoader';
 import config from '../config/config';
+import usePageTitle from '../hooks/usePageTitle';
 
 export default function Projects() {
+  // Set page title
+  usePageTitle('Projects');
+
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [error, setError] = useState<string | null>(null);

@@ -81,8 +81,8 @@ export async function createAssetMap(markdownPath: string): Promise<Map<string, 
   const pathParts = markdownPath.split('/');
   const folderPath = pathParts.slice(0, -1).join('/'); // Remove index.md to get folder path
   
-  console.log('Creating asset map for markdownPath:', markdownPath);
-  console.log('Folder path:', folderPath);
+  // console.log('Creating asset map for markdownPath:', markdownPath);
+  // console.log('Folder path:', folderPath);
   
   // Get all available assets from the static data
   const assetsFromStatic = await getAllStaticAssets();
@@ -98,7 +98,7 @@ export async function createAssetMap(markdownPath: string): Promise<Map<string, 
     // Add all possible relative paths to the map
     relativePaths.forEach(relativePath => {
       assetMap.set(relativePath, staticUrl);
-      console.log(`Asset mapping: ${relativePath} -> ${staticUrl}`);
+      // console.log(`Asset mapping: ${relativePath} -> ${staticUrl}`);
     });
   }
   
@@ -111,13 +111,13 @@ export async function createAssetMap(markdownPath: string): Promise<Map<string, 
 function calculateRelativePaths(markdownFolderPath: string, assetPath: string): string[] {
   const relativePaths: string[] = [];
   
-  console.log(`Calculating relative paths from ${markdownFolderPath} to ${assetPath}`);
+  // console.log(`Calculating relative paths from ${markdownFolderPath} to ${assetPath}`);
   
   // Normalize paths by removing leading '../'
   const normalizeMarkdownPath = markdownFolderPath.replace(/^\.\.\//, '');
   const normalizeAssetPath = assetPath.replace(/^\.\.\//, '');
   
-  console.log(`Normalized: ${normalizeMarkdownPath} -> ${normalizeAssetPath}`);
+  // console.log(`Normalized: ${normalizeMarkdownPath} -> ${normalizeAssetPath}`);
   
   const markdownParts = normalizeMarkdownPath.split('/');
   const assetParts = normalizeAssetPath.split('/');
@@ -129,7 +129,7 @@ function calculateRelativePaths(markdownFolderPath: string, assetPath: string): 
   if (markdownParts.join('/') === assetParts.slice(0, -1).join('/')) {
     relativePaths.push(`./${assetFilename}`);
     relativePaths.push(assetFilename);
-    console.log('Case 1: Same directory');
+    // console.log('Case 1: Same directory');
     
     // Also add the self-referencing pattern for same directory
     // For projects/test-asset-project-1/, also match ../../projects/test-asset-project-1/
@@ -138,7 +138,7 @@ function calculateRelativePaths(markdownFolderPath: string, assetPath: string): 
       const currentDirName = markdownParts[markdownParts.length - 1]; // "test-asset-project-1"
       const selfRefPattern = `../../${parentDirName}/${currentDirName}/${assetFilename}`;
       relativePaths.push(selfRefPattern);
-      console.log(`Case 1b: Self-reference pattern: ${selfRefPattern}`);
+      // console.log(`Case 1b: Self-reference pattern: ${selfRefPattern}`);
     }
   }
   
@@ -150,7 +150,7 @@ function calculateRelativePaths(markdownFolderPath: string, assetPath: string): 
     const relativePath = assetDir.substring(markdownDir.length + 1) + '/' + assetFilename;
     relativePaths.push(relativePath);
     relativePaths.push(`./${relativePath}`);
-    console.log('Case 2: Subdirectory');
+    // console.log('Case 2: Subdirectory');
   }
   
   // Case 3: Asset is in a parent or sibling directory
@@ -173,7 +173,7 @@ function calculateRelativePaths(markdownFolderPath: string, assetPath: string): 
       const upPath = '../'.repeat(upLevels);
       const fullRelativePath = upPath + downPath;
       relativePaths.push(fullRelativePath);
-      console.log(`Case 3: Parent/sibling directory, upLevels: ${upLevels}, downPath: ${downPath}, result: ${fullRelativePath}`);
+      // console.log(`Case 3: Parent/sibling directory, upLevels: ${upLevels}, downPath: ${downPath}, result: ${fullRelativePath}`);
     }
   }
   
@@ -187,7 +187,7 @@ function calculateRelativePaths(markdownFolderPath: string, assetPath: string): 
       const assetFolderName = assetParts[assetParts.length - 2]; // e.g., "test-project-1"
       const siblingPattern = `../${assetFolderName}/${assetFilename}`;
       relativePaths.push(siblingPattern);
-      console.log(`Case 4: Sibling directory pattern: ${siblingPattern}`);
+      // console.log(`Case 4: Sibling directory pattern: ${siblingPattern}`);
     }
   }
   
@@ -207,7 +207,7 @@ function calculateRelativePaths(markdownFolderPath: string, assetPath: string): 
     // ignore
   }
   
-  console.log(`Final relative paths: ${relativePaths}`);
+  // console.log(`Final relative paths: ${relativePaths}`);
   return relativePaths;
 }
 
@@ -234,7 +234,7 @@ async function loadGlobalAssetCache(): Promise<void> {
         globalAssetCache.set(assetPath, staticUrl);
       }
       
-      console.log('Loaded global asset cache:', Array.from(globalAssetCache.entries()));
+      // console.log('Loaded global asset cache:', Array.from(globalAssetCache.entries()));
     } catch (error) {
       console.warn('Could not load global asset cache:', error);
     }
@@ -253,18 +253,18 @@ export async function createAssetMapFromCache(markdownPath: string): Promise<Map
   const pathParts = markdownPath.split('/');
   const folderPath = pathParts.slice(0, -1).join('/');
   
-  console.log('Creating asset map for:', markdownPath);
-  console.log('Folder path:', folderPath);
-  console.log('Available assets:', Array.from(globalAssetCache.keys()));
+  // console.log('Creating asset map for:', markdownPath);
+  // console.log('Folder path:', folderPath);
+  // console.log('Available assets:', Array.from(globalAssetCache.keys()));
   
   for (const [assetPath, assetUrl] of globalAssetCache) {
     const relativePaths = calculateRelativePaths(folderPath, assetPath);
-    console.log(`Asset ${assetPath} -> relative paths:`, relativePaths);
+    // console.log(`Asset ${assetPath} -> relative paths:`, relativePaths);
     relativePaths.forEach(relativePath => {
       assetMap.set(relativePath, assetUrl);
     });
   }
   
-  console.log('Final asset map:', Array.from(assetMap.entries()));
+  // console.log('Final asset map:', Array.from(assetMap.entries()));
   return assetMap;
 }
