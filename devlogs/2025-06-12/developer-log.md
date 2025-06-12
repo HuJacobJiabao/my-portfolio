@@ -56,7 +56,7 @@ Implemented comprehensive mobile-first responsive design improvements by consoli
   inset: 0;
   width: 100%;
   height: 100%;
-  background-image: url('/my-portfolio/background/about.jpg');
+  background-image: url('/my-portfolio/background/global.png');
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
