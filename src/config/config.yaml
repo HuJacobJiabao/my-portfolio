@@ -182,7 +182,6 @@ home:
           duration: "Apr 2024 - Jun 2024"
           projectLink:
             url: "https://smarthomehub-demo.vercel.app"
-            textColor: "#ffffff"
           githubLink:
             url: "https://github.com/HuJacobJiabao/smart-home-hub"
             backgroundColor: "#15803d"
@@ -206,7 +205,6 @@ home:
           duration: "Feb 2024 - Apr 2024"
           projectLink:
             url: "https://ecommerce-analytics-demo.netlify.app"
-            textColor: "#ffffff"
           githubLink:
             url: "https://github.com/HuJacobJiabao/ecommerce-analytics"
             backgroundColor: "#1d4ed8"
@@ -230,7 +228,6 @@ home:
           duration: "Oct 2023 - Dec 2023"
           projectLink:
             url: "https://arnav-demo.dev"
-            textColor: "#ffffff"
           githubLink:
             url: "https://github.com/HuJacobJiabao/ar-navigation"
             backgroundColor: "#9a3412"
