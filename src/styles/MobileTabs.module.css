@@ -28,8 +28,9 @@
   position: fixed;
   left: 8px;
   top: 40%;
-  width: 40px;
-  height: 40px;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 30px;
   background: rgba(255, 255, 255, 0.95);
   border: 2px solid rgba(52, 152, 219, 0.4);
   border-radius: 50%;
@@ -73,7 +74,7 @@
 }
 
 .toggleIcon {
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: bold;
   transition: transform 0.3s ease;
 }

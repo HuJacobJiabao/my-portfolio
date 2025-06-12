@@ -83,7 +83,7 @@ export default function Layout({
         
         {title && (
           <header className={styles.pageHeader} style={headerStyle}>
-            <div className={styles.headerContent}>
+            <div className={`${styles.headerContent} ${!contentType ? styles.titleOnlyHeader : ''}`}>
               <div className={styles.titleArea}>
                 <h1 className={getTitleClasses()}>{title}</h1>
               </div>
@@ -91,14 +91,6 @@ export default function Layout({
                 <>
                   <div className={styles.metadataArea}>
                     <div className={styles.headerMeta}>
-                      <div className={styles.metaItem}>
-                        <span className={styles.metaLabel}>Type:</span>
-                        <span className={styles.metaValue}>
-                          {contentType === 'project' ? '💻 Project' : 
-                           contentType === 'dailylog' ? '📝 Daily Log' : 
-                           '📝 Blog Post'}
-                        </span>
-                      </div>
                       <div className={styles.metaItem}>
                         <span className={styles.metaLabel}>Category:</span>
                         <span className={styles.metaValue}>{contentItemCategory}</span>
@@ -115,6 +107,14 @@ export default function Layout({
                           <span className={styles.metaValue}>{formatDateForDisplay(contentItemLastUpdate)}</span>
                         </div>
                       )}
+                      <div className={styles.metaItem}>
+                        <span className={styles.metaLabel}>Type:</span>
+                        <span className={styles.metaValue}>
+                          {contentType === 'project' ? '💻 Project' : 
+                           contentType === 'dailylog' ? '📝 Daily Log' : 
+                           '📝 Blog Post'}
+                        </span>
+                      </div>
                     </div>
                   </div>
                   {contentItemTags && contentItemTags.length > 0 && (

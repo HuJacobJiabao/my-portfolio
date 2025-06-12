@@ -18,6 +18,7 @@
     "p": "tsx src/scripts/preprocess-content.ts"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.7.2",
     "@types/markdown-it": "^14.1.2",
     "@types/react-transition-group": "^4.4.12",
     "aplayer": "^1.10.1",

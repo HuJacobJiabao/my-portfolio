@@ -4,9 +4,9 @@
   flex-direction: column;
   gap: 2.5rem;
   width: 100%;
-  max-width: 1000px; /* Constrain maximum width */
+  max-width: 1400px; /* 与Layout.module.css的aboutWrapper保持一致 */
   margin: 0 auto;
-  padding: 0 1rem; /* Add horizontal padding for smaller screens */
+  padding: 0; /* 移除外层padding，让Layout处理 */
 }
 
 .archiveHeader {
@@ -285,7 +285,8 @@
 @media (max-width: 768px) {
   .archiveContainer {
     gap: 2rem;
-    padding: 0 0.5rem;
+    padding: 0;
+    max-width: 100%; /* 移动端使用全宽 */
   }
   
   .archiveTitle {
@@ -299,8 +300,9 @@
   }
   
   .timelineWrapper {
-    padding: 1.5rem;
+    padding: 1.5rem; /* 修复：确保内部 padding 一致 */
     border-radius: 20px;
+    margin: 0; /* 确保没有额外的 margin */
   }
   
   .timeline {
@@ -360,7 +362,7 @@
 @media (max-width: 480px) {
   .archiveContainer {
     gap: 1.5rem;
-    padding: 0 0.25rem;
+    padding: 0;
   }
   
   .archiveTitle {
@@ -376,8 +378,9 @@
   }
   
   .timelineWrapper {
-    padding: 1rem;
+    padding: 1rem; /* 修复：确保内部 padding 一致 */
     border-radius: 16px;
+    margin: 0; /* 确保没有额外的 margin */
   }
   
   .timeline {

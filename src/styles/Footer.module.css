@@ -2,7 +2,11 @@
   position: relative;
   width: 100%;
   min-height: 100px;
-  /* Remove background styles - now handled by .backgroundFixed */
+  background-image: url('/my-portfolio/background/hero.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   color: #ccc;
   display: flex;
   align-items: center;
@@ -14,29 +18,6 @@
   line-height: 1.8;
   overflow: hidden;
   box-sizing: border-box;
-}
-
-/* Fixed Background Layer for Footer - using hero.jpg with fixed attachment for desktop */
-.backgroundFixed {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url('/background/hero.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  z-index: -1;
-  pointer-events: none;
-}
-
-/* Mobile background fix - use scroll instead of fixed for performance */
-@media (max-width: 768px) {
-  .backgroundFixed {
-    background-attachment: scroll;
-  }
 }
 
 .footer::before {
@@ -63,4 +44,27 @@
 
 .footer p {
   margin: 4px 0;
+}
+
+/* Background fixed layer for footer */
+.backgroundFixed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/my-portfolio/background/hero.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Mobile background fix - use scroll instead of fixed for performance */
+@media (max-width: 768px) {
+  .backgroundFixed {
+    background-attachment: scroll;
+  }
 }
