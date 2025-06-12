@@ -45,7 +45,7 @@ export default function Blog() {
     return (
       <Layout 
         title="Blog"
-        headerBackground={`${import.meta.env.BASE_URL}${config.content.blogs.defaultHeaderBackground}`}
+        headerBackground={config.content.blogs.defaultHeaderBackground}
         sidebarItems={[]}
         sidebarItemType="blog"
         onSidebarItemClick={() => {}}
@@ -64,7 +64,7 @@ export default function Blog() {
   return (
     <Layout 
       title="Blogs"
-      headerBackground={`${import.meta.env.BASE_URL}${config.content.blogs.defaultHeaderBackground}`}
+      headerBackground={config.content.blogs.defaultHeaderBackground}
       sidebarItems={sidebarItems}
       sidebarItemType="blog"
       onSidebarItemClick={handleSidebarItemClick}

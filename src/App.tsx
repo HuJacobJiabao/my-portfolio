@@ -9,6 +9,7 @@ import DetailPage from './pages/DetailPage'
 import Blogs from './pages/Blogs'
 import Archive from './pages/Archive'
 import DeveloperLog from './pages/DeveloperLog'
+import { config } from './config/config'
 import './App.css'
 
 function ScrollToTop() {
@@ -75,10 +76,18 @@ function App() {
     window.scrollTo(0, 0);
   }, []);
 
+  // Get global background from config (already processed with full URL)
+  const backgroundUrl = config.backgrounds?.global || `${import.meta.env.BASE_URL}background/about.jpg`;
+
   return (
    <Router>
-      {/* Global fixed background layer */}
-      <div className="global-background-fixed"></div>
+      {/* Global fixed background layer with dynamic background */}
+      <div 
+        className="global-background-fixed"
+        style={{
+          backgroundImage: `url('${backgroundUrl}')`
+        }}
+      ></div>
       
       <ScrollToTop />
       <AppContent />

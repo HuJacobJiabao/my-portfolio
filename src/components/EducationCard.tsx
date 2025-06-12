@@ -8,6 +8,10 @@ interface EducationCardProps {
   logoSrc: string;
   logoAlt: string;
   highlights: string[];
+  borderColor?: string;
+  borderHoverColor?: string;
+  logoBackgroundColor?: string;
+  highlightColor?: string; // For li::before color
 }
 
 const EducationCard = ({
@@ -18,11 +22,35 @@ const EducationCard = ({
   logoSrc,
   logoAlt,
   highlights,
+  borderColor,
+  borderHoverColor,
+  logoBackgroundColor,
+  highlightColor,
 }: EducationCardProps) => {
+  // Create CSS custom properties for border and hover effects
+  const cssVariables: React.CSSProperties = {
+    ...(borderColor && { '--border-color': borderColor } as React.CSSProperties),
+    ...(borderHoverColor && { '--border-hover-color': borderHoverColor } as React.CSSProperties),
+    ...(logoBackgroundColor && { '--logo-background-color': logoBackgroundColor } as React.CSSProperties),
+    ...(highlightColor && { '--highlight-color': highlightColor } as React.CSSProperties),
+  };
+
+  const logoStyle: React.CSSProperties = {
+    ...(logoBackgroundColor && { backgroundColor: logoBackgroundColor }),
+  };
+
   return (
-    <div className={styles.educationCard}>
+    <div 
+      className={styles.educationCard} 
+      style={cssVariables}
+    >
       <div className={styles.schoolLogo}>
-        <img src={logoSrc} alt={logoAlt} className={styles.logoImage} />
+        <img 
+          src={logoSrc} 
+          alt={logoAlt} 
+          className={styles.logoImage}
+          style={logoStyle}
+        />
       </div>
       <div className={styles.educationContent}>
         <div className={styles.schoolInfo}>

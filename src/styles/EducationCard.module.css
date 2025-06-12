@@ -7,7 +7,7 @@
   border-radius: 15px;
   transition: all 0.3s ease;
   display: flex;
-  border-left: 4px solid #1db6e0;
+  border-left: 4px solid var(--border-color, #1db6e0);
   align-items: flex-start;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
@@ -15,7 +15,7 @@
 .educationCard:hover {
   background: rgba(248, 249, 250, 1);
   transform: translateY(-3px);
-  border-left-color: #2980b9;
+  border-left-color: var(--border-hover-color, var(--border-color, #2980b9));
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
 }
 
@@ -37,12 +37,6 @@
   border-radius: 8px;
   transition: box-shadow 0.2s, border-color 0.2s;
   display: block;
-}
-
-.logoImage[src*="usc"] {
-  background: rgb(152,28,29);
-  width: 100%; /* Fill the 80px parent .schoolLogo container */
-  height: 100%; /* Fill the 80px parent .schoolLogo container */
 }
 
 
@@ -113,7 +107,7 @@
 
 .highlights li::before {
   content: "▸";
-  color: #3498db;
+  color: var(--highlight-color, #3498db);
   font-weight: bold;
   position: absolute;
   left: 0;

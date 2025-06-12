@@ -2,15 +2,34 @@ import React from 'react';
 import styles from '../styles/ProjectCard.module.css';
 
 interface ProjectCardProps {
+  // Basic project information
   projectName: string;
   description: string;
   technologies: string[];
   duration: string;
-  projectUrl?: string;
-  githubUrl?: string;
-  imageSrc: string;
-  imageAlt: string;
   highlights: React.ReactNode[];
+  imageSrc: string; // Will be used in component (compatibility with coverImage)
+  imageAlt: string;
+  
+  // URLs and related styling
+  projectUrl?: string;
+  projectLinkTextColor?: string;
+  // projectLinkBackgroundColor is removed as it's always transparent
+  
+  githubUrl?: string;
+  githubLinkBackgroundColor?: string;
+  githubLinkTextColor?: string;
+  
+  // Card styling
+  borderColor?: string;
+  borderHoverColor?: string;
+  
+  // Tag styling for technologies
+  tagBackgroundColor?: string;
+  tagTextColor?: string;
+  
+  // Highlight bullet points
+  highlightColor?: string; // For li::before color
 }
 
 const ProjectCard = ({
@@ -23,9 +42,29 @@ const ProjectCard = ({
   imageSrc,
   imageAlt,
   highlights,
+  borderColor,
+  borderHoverColor,
+  tagBackgroundColor,
+  tagTextColor,
+  highlightColor,
+  projectLinkTextColor,
+  githubLinkBackgroundColor,
+  githubLinkTextColor,
 }: ProjectCardProps) => {
+  // Create style object with CSS variables for dynamic colors
+  const cardStyle = {
+    '--border-color': borderColor || '#9b59b6',
+    '--border-hover-color': borderHoverColor || '#7d3c98',
+    '--tag-background-color': tagBackgroundColor || 'linear-gradient(135deg, #9b59b6, #8e44ad)',
+    '--tag-text-color': tagTextColor || 'white',
+    '--highlight-color': highlightColor || '#9b59b6',
+    '--project-link-text-color': projectLinkTextColor || '#9b59b6',
+    '--github-link-background-color': githubLinkBackgroundColor || 'rgba(155, 89, 182, 0.1)',
+    '--github-link-text-color': githubLinkTextColor || '#9b59b6',
+  } as React.CSSProperties;
+
   return (
-    <div className={styles.projectCard}>
+    <div className={styles.projectCard} style={cardStyle}>
       <div className={styles.projectImageSection}>
         <div className={styles.projectImage}>
           <img src={imageSrc} alt={imageAlt} className={styles.image} />

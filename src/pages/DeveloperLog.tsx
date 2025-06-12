@@ -132,7 +132,7 @@ export default function DeveloperLog() {
 
   // Determine the appropriate header background
   const getHeaderBackground = () => {
-    return `${import.meta.env.BASE_URL}${config.content.logs.defaultHeaderBackground}`;
+    return config.content.logs.defaultHeaderBackground;
   };
 
   // Only render Layout when all data is ready

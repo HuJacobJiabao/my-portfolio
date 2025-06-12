@@ -132,7 +132,7 @@ export default function Archive() {
   return (
     <Layout 
       title="Archive"
-      headerBackground={`${import.meta.env.BASE_URL}${config.content.archive.defaultHeaderBackground}`}
+      headerBackground={config.content.archive.defaultHeaderBackground}
       sidebarItems={sidebarItems}
       sidebarItemType="archive"
       onSidebarItemClick={handleSidebarItemClick}

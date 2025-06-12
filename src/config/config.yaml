@@ -5,7 +5,15 @@ website:
   title: "Jiabao Hu"
   titleSeparator: " | "
   favicon: "/favicon.png"
-  description: "Portfolio website of Jiabao Hu - Full-stack Developer and MSCS student at USC"
+  description: "Portfolio website of Jiabao Hu, a full-stack developer and Master's student at USC. Explore my projects, skills, and experiences in computer science and civil engineering."
+
+
+# Background configuration
+backgrounds:
+  # Global fixed background for all pages - test with external URL
+  global: "background/global.png"
+  # Hero section background (Home page) - using local path
+  hero: "background/hero.jpg"
 
 home:
   hero:
@@ -33,12 +41,24 @@ home:
       title: "Education"
       icon: "🎓"
       type: "education"
+      # Color properties support various CSS color formats:
+      # - Hex: "#990000", "#cc0000"
+      # - RGB: "rgb(19, 41, 75)"
+      # - RGBA: "rgba(19, 41, 75, 0.8)"
+      # - HSL: "hsl(210, 100%, 30%)"
+      # - Named colors: "red", "blue", etc.
       items:
         - schoolName: "University of Southern California"
           degree: "Master of Science in Computer Science"
           duration: "Aug. 2023 - Dec. 2025"
           location: "Los Angeles, CA"
-          logoSrc: "usc.png"
+          logo:
+            src: "schools/usc.png"
+            backgroundColor: "#990000"
+          border:
+            color: "#990000"
+            hoverColor: "#cc0000"
+          highlightColor: "#990000"
           highlights:
             - "Related Courses: Operating System, Networking, Algorithms, Web Technologies"
 
@@ -46,7 +66,13 @@ home:
           degree: "Bachelor of Science in Civil Engineering with Honors"
           duration: "Sep. 2019 - Jun. 2023"
           location: "Urbana, IL"
-          logoSrc: "uiuc.png"
+          logo:
+            src: "schools/uiuc.png"
+            backgroundColor: "#13294b"
+          border:
+            color: "#000080"
+            hoverColor: "#ff5f05"
+          highlightColor: "#ff5f05"
           highlights:
             - "Minor in Computer Science"
 
@@ -54,7 +80,13 @@ home:
           degree: "Bachelor of Engineering in Civil Engineering"
           duration: "Sep. 2019 - Jun. 2023"
           location: "Hangzhou, China"
-          logoSrc: "zju.png"
+          logo:
+            src: "schools/zju.png"
+            # backgroundColor: "#003c71"
+          border:
+            color: "#0056b3"
+            hoverColor: "#0080ff"
+          highlightColor: "#0056b3"
           highlights: []
 
     experience:
@@ -66,7 +98,13 @@ home:
           position: "Undergraduate Research Assistant"
           duration: "Sep 2022 - Apr 2023"
           location: "Haining, China"
-          logoSrc: "zjui.jpg"
+          logo:
+            src: "schools/zjui.jpg"
+            # backgroundColor: "#e74d29"
+          border:
+            color: "#e74d29"
+            hoverColor: "#e77e29"
+          highlightColor: "#e74d29"
           highlights:
             - "Engineered a modular 3D simulation platform in Python/Blender"
             - "Built scalable data generation pipelines for CV model training"
@@ -75,14 +113,20 @@ home:
       title: "Projects"
       icon: "💻"
       type: "projects"
+      defaultCover: "default_cover.jpg"
       items:
         - projectName: "Portfolio Website"
           description: "A modern, responsive portfolio website built with React and TypeScript"
-          technologies: ["React", "TypeScript", "CSS Modules", "Vite"]
+          tag:
+            items: ["React", "TypeScript", "CSS Modules", "Vite"]
           duration: "Dec 2024 - Jan 2025"
-          projectUrl: "https://hujacobjiabao.github.io/my-portfolio/"
-          githubUrl: "https://github.com/HuJacobJiabao/my-portfolio"
-          imageSrc: "default_cover.jpg"
+          projectLink:
+            url: "https://hujacobjiabao.github.io/my-portfolio/"
+            textColor: ""
+          githubLink:
+            url: "https://github.com/HuJacobJiabao/my-portfolio/"
+            textColor: ""
+            backgroundColor: "#2c3e50"
           highlights:
             - "Responsive design with mobile-first approach"
             - "Component-based architecture with reusable cards"
@@ -90,19 +134,122 @@ home:
             
         - projectName: "3D Simulation Platform"
           description: "A modular 3D simulation platform for computer vision research"
-          technologies: ["Python", "Blender", "PyTorch", "OpenCV"]
+          tag:
+            items: ["Python", "Blender", "PyTorch", "OpenCV"]
+            backgroundColor: "#fef2f2"
+            textColor: "#dc2626"
           duration: "Sep 2022 - Apr 2023"
-          projectUrl: ""
-          githubUrl: "https://github.com/HuJacobJiabao/3d-simulation"
-          imageSrc: "default_cover.jpg"
+          projectLink:
+            url: ""
+            textColor: "#ffffff"
+          githubLink:
+            url: "https://github.com/HuJacobJiabao/3d-simulation"
+            backgroundColor: "#34495e"
+            textColor: "#ffffff"
+          coverImage: "default_cover.jpg"
+          border:
+            color: "#e74c3c"
+            hoverColor: "#c0392b"
+          highlightColor: "#e74c3c"
           highlights:
             - "Built scalable data generation pipelines"
             - "Integrated deep learning training workflows"
             - "Modular architecture for extensibility"
+        
+        - projectName: "AI Legal Document Analyzer"
+          description: "A web-based tool that automatically analyzes and summarizes legal documents using NLP"
+          tag:
+            items: ["TypeScript", "React", "Node.js", "OpenAI API", "MongoDB"]
+            # backgroundColor: "#eff6ff"
+            # textColor: "#2563eb"
+          duration: "Jan 2024 - May 2024"
+          projectLink:
+            url: "https://legalsummary.ai"
+          githubLink:
+            url: "https://github.com/HuJacobJiabao/legal-analyzer"
+          # coverImage: "default_cover.jpg"
+          highlights:
+            - "Parsed legal documents into structured sections using custom NLP pipelines"
+            - "Implemented summarization using OpenAI's GPT API"
+            - "Designed a clean, user-friendly UI with real-time preview"
+            
+        - projectName: "Smart Home IoT Hub"
+          description: "A centralized IoT platform for smart home device management and automation"
+          tag:
+            items: ["Node.js", "MQTT", "React", "Express", "MongoDB"]
+            backgroundColor: "#f0fdf4"
+            textColor: "#16a34a"
+          duration: "Apr 2024 - Jun 2024"
+          projectLink:
+            url: "https://smarthomehub-demo.vercel.app"
+            textColor: "#ffffff"
+          githubLink:
+            url: "https://github.com/HuJacobJiabao/smart-home-hub"
+            backgroundColor: "#15803d"
+            textColor: "#ffffff"
+          coverImage: "default_cover.jpg"
+          border:
+            color: "#16a34a"
+            hoverColor: "#15803d"
+          highlightColor: "#16a34a"
+          highlights:
+            - "Implemented real-time device synchronization using MQTT protocol"
+            - "Developed custom automation rules engine with scheduling capabilities"
+            - "Created responsive dashboard with real-time device status visualization"
+            
+        - projectName: "E-commerce Analytics Dashboard"
+          description: "A comprehensive analytics platform for tracking e-commerce performance metrics"
+          tag:
+            items: ["Python", "Django", "React", "PostgreSQL", "D3.js"]
+            backgroundColor: "#eff6ff"
+            textColor: "#3b82f6"
+          duration: "Feb 2024 - Apr 2024"
+          projectLink:
+            url: "https://ecommerce-analytics-demo.netlify.app"
+            textColor: "#ffffff"
+          githubLink:
+            url: "https://github.com/HuJacobJiabao/ecommerce-analytics"
+            backgroundColor: "#1d4ed8"
+            textColor: "#ffffff"
+          coverImage: "default_cover.jpg"
+          border:
+            color: "#3b82f6"
+            hoverColor: "#1d4ed8"
+          highlightColor: "#3b82f6"
+          highlights:
+            - "Built scalable data processing pipeline handling millions of transactions"
+            - "Implemented machine learning models for sales forecasting and inventory optimization"
+            - "Designed interactive visualizations for key performance metrics"
+            
+        - projectName: "Augmented Reality Navigation App"
+          description: "A mobile AR app that overlays directional guidance on real-world environments"
+          tag:
+            items: ["Swift", "ARKit", "CoreLocation", "MapKit", "Firebase"]
+            backgroundColor: "#fff7ed"
+            textColor: "#ea580c"
+          duration: "Oct 2023 - Dec 2023"
+          projectLink:
+            url: "https://arnav-demo.dev"
+            textColor: "#ffffff"
+          githubLink:
+            url: "https://github.com/HuJacobJiabao/ar-navigation"
+            backgroundColor: "#9a3412"
+            textColor: "#ffffff"
+          coverImage: "default_cover.jpg"
+          border:
+            color: "#ea580c"
+            hoverColor: "#9a3412"
+          highlightColor: "#ea580c"
+          highlights:
+            - "Developed precise location tracking using sensor fusion algorithms"
+            - "Created 3D path visualization system for intuitive navigation"
+            - "Implemented offline map caching for use without cellular connectivity"
+
     # certificates:
     #   title: "Certificates & Achievements"
     #   icon: "🏆"
     #   type: "projects"
+    #   defaultCover: "background/hero.jpg"
     #   items:
     #     - projectName: "AWS Solutions Architect Associate"
     #       description: "Comprehensive certification covering AWS architecture best practices and cloud solutions design"
@@ -127,47 +274,7 @@ home:
     #         - "Advanced component architecture and optimization"
     #         - "State management with Redux and Context API"
     #         - "Testing strategies for React applications"
-
-    # skills:
-    #   title: "Technical Skills"
-    #   icon: "⚡"
-    #   type: "projects"
-    #   items:
-    #     - projectName: "Frontend Development"
-    #       description: "Modern frontend technologies and frameworks for creating responsive, interactive user interfaces"
-    #       technologies: ["React", "TypeScript", "Vue.js", "CSS3", "HTML5"]
-    #       duration: "2019 - Present"
-    #       projectUrl: ""
-    #       githubUrl: ""
-    #       imageSrc: "default_cover.jpg"
-    #       highlights:
-    #         - "Component-based architecture design"
-    #         - "Responsive design and mobile-first development"
-    #         - "Modern CSS techniques and animations"
-            
-    #     - projectName: "Backend Development"
-    #       description: "Server-side development with various languages and frameworks for scalable applications"
-    #       technologies: ["Node.js", "Python", "Java", "PostgreSQL", "MongoDB"]
-    #       duration: "2020 - Present"
-    #       projectUrl: ""
-    #       githubUrl: ""
-    #       imageSrc: "default_cover.jpg"
-    #       highlights:
-    #         - "RESTful API design and implementation"
-    #         - "Database design and optimization"
-    #         - "Microservices architecture"
-            
-    #     - projectName: "DevOps & Cloud"
-    #       description: "Cloud platforms and DevOps practices for deployment and infrastructure management"
-    #       technologies: ["AWS", "Docker", "Kubernetes", "CI/CD", "Terraform"]
-    #       duration: "2021 - Present"
-    #       projectUrl: ""
-    #       githubUrl: ""
-    #       imageSrc: "default_cover.jpg"
-    #       highlights:
-    #         - "Container orchestration and deployment"
-    #         - "Infrastructure as Code (IaC)"
-    #         - "Automated testing and deployment pipelines"
+    
 
     contact:
       title: "Get In Touch"
@@ -177,6 +284,10 @@ home:
       email: "hujiabao1224@gmail.com"
       github: "https://github.com/HuJacobJiabao"
       linkedin: "https://www.linkedin.com/in/jiabao-hu-920664221/"
+      # Contact color configuration - simplified to only include text and icon colors
+      # Icons and text use the same color settings
+      # Supports various CSS color formats: hex, RGB, RGBA, HSL, named colors
+      textColor: "#2958e7" # Color for both icons and text/links (including underlines)
 
 # Navigation bar configuration
 navbar:

@@ -8,6 +8,10 @@ interface WorkCardProps {
   highlights: string[];
   logoSrc?: string;
   logoAlt?: string;
+  borderColor?: string;
+  borderHoverColor?: string;
+  logoBackgroundColor?: string;
+  highlightColor?: string; // For li::before color
 }
 
 const WorkCard = ({
@@ -18,9 +22,21 @@ const WorkCard = ({
   highlights,
   logoSrc,
   logoAlt,
+  borderColor,
+  borderHoverColor,
+  logoBackgroundColor,
+  highlightColor,
 }: WorkCardProps) => {
+  // Create style object with CSS variables for dynamic colors
+  const cardStyle = {
+    '--border-color': borderColor || '#e74c3c',
+    '--border-hover-color': borderHoverColor || '#c0392b',
+    '--logo-background-color': logoBackgroundColor || 'transparent',
+    '--highlight-color': highlightColor || '#e74c3c',
+  } as React.CSSProperties;
+
   return (
-    <div className={styles.workCard}>
+    <div className={styles.workCard} style={cardStyle}>
       {logoSrc && (
         <div className={styles.companyLogo}>
           <img src={logoSrc} alt={logoAlt} className={styles.logoImage} />

@@ -17,8 +17,16 @@ interface Education {
     degree: string;
     duration: string;
     location: string;
-    logoSrc: string;
+    logo: {
+        src: string;
+        backgroundColor?: string;
+    };
     highlights: string[];
+    border: {
+        color?: string;
+        hoverColor?: string;
+    };
+    highlightColor?: string;
 }
 
 interface WorkExperience {
@@ -26,19 +34,53 @@ interface WorkExperience {
     position: string;
     duration: string;
     location: string;
-    logoSrc: string;
+    logo: {
+        src: string;
+        backgroundColor?: string;
+    };
     highlights: string[];
+    border: {
+        color?: string;
+        hoverColor?: string;
+    };
+    highlightColor?: string;
 }
 
 interface ProjectType {
+    // Basic project information
     projectName: string;
     description: string;
-    technologies: string[];
     duration: string;
-    projectUrl?: string;
-    githubUrl?: string;
-    imageSrc: string;
     highlights: string[];
+    coverImage: string;
+    
+    // URLs and related styling - grouped structure
+    projectLink?: {
+        url?: string;
+        textColor?: string;
+    };
+    
+    githubLink?: {
+        url?: string;
+        backgroundColor?: string;
+        textColor?: string;
+    };
+    
+    // Card styling in grouped format
+    border: {
+        color?: string;
+        hoverColor?: string;
+    };
+    
+    // Tag styling for technologies in grouped format
+    tag: {
+        items: string[];
+        backgroundColor?: string;
+        textColor?: string;
+    };
+    
+    // Highlight bullet points
+    highlightColor?: string;
 }
 
 // Helper function to parse markdown links
@@ -46,32 +88,14 @@ const parseMarkdownLinks = (text: string): string => {
     return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
 };
 
-// Helper function to build image paths consistently
-const getImagePath = (type: string, filename: string): string => {
-    if (!filename) return '';
-    
-    const baseUrl = import.meta.env.BASE_URL;
-    
-    // Handle default_cover.jpg specifically - it's in the public root
-    if (filename === 'default_cover.jpg') {
-        return `${baseUrl}default_cover.jpg`;
-    }
-    
-    switch (type) {
-        case 'schools':
-            return `${baseUrl}schools/${filename}`;
-        case 'background':
-            return `${baseUrl}background/${filename}`;
-        default:
-            return `${baseUrl}${filename}`;
-    }
-};
-
 const Home = () => {
     const [activeSection, setActiveSection] = useState('about')
     
     // Set page title for home page (just the website title)
     usePageTitle('');
+
+    // Get hero background from config (already processed with full URL)
+    const heroBackgroundUrl = config.backgrounds?.hero || `${import.meta.env.BASE_URL}background/hero.jpg`;
 
     const handleSectionChange = (sectionId: string) => {
         setActiveSection(sectionId);
@@ -101,7 +125,7 @@ const Home = () => {
                                 <div className={styles.introImageSection}>
                                     <div className={styles.introPhotoWrapper}>
                                         <img 
-                                            src={getImagePath('', navigationSection.photo)} 
+                                            src={navigationSection.photo} 
                                             alt="About me" 
                                             className={styles.introPhoto}
                                         />
@@ -123,9 +147,13 @@ const Home = () => {
                                 degree={edu.degree}
                                 duration={edu.duration}
                                 location={edu.location}
-                                logoSrc={getImagePath('schools', edu.logoSrc)}
+                                logoSrc={edu.logo?.src}
                                 logoAlt={`${edu.schoolName} Logo`}
                                 highlights={edu.highlights}
+                                borderColor={edu.border?.color}
+                                borderHoverColor={edu.border?.hoverColor}
+                                logoBackgroundColor={edu.logo?.backgroundColor}
+                                highlightColor={edu.highlightColor}
                             />
                         ))}
                     </div>
@@ -142,9 +170,13 @@ const Home = () => {
                                 position={exp.position}
                                 duration={exp.duration}
                                 location={exp.location}
-                                logoSrc={getImagePath('schools', exp.logoSrc)}
+                                logoSrc={exp.logo?.src}
                                 logoAlt={`${exp.companyName} Logo`}
                                 highlights={exp.highlights}
+                                borderColor={exp.border?.color}
+                                borderHoverColor={exp.border?.hoverColor}
+                                logoBackgroundColor={exp.logo?.backgroundColor}
+                                highlightColor={exp.highlightColor}
                             />
                         ))}
                     </div>
@@ -160,13 +192,21 @@ const Home = () => {
                                     key={index}
                                     projectName={project.projectName}
                                     description={project.description}
-                                    technologies={project.technologies}
+                                    technologies={project.tag?.items || []}
                                     duration={project.duration}
-                                    projectUrl={project.projectUrl}
-                                    githubUrl={project.githubUrl}
-                                    imageSrc={getImagePath('background', project.imageSrc)}
+                                    projectUrl={project.projectLink?.url}
+                                    githubUrl={project.githubLink?.url}
+                                    imageSrc={project.coverImage || config.home.navigation[sectionId].defaultCover || 'default_cover.jpg'}
                                     imageAlt={`${project.projectName} Project`}
                                     highlights={project.highlights}
+                                    borderColor={project.border?.color}
+                                    borderHoverColor={project.border?.hoverColor}
+                                    tagBackgroundColor={project.tag?.backgroundColor}
+                                    tagTextColor={project.tag?.textColor}
+                                    highlightColor={project.highlightColor}
+                                    projectLinkTextColor={project.projectLink?.textColor}
+                                    githubLinkBackgroundColor={project.githubLink?.backgroundColor}
+                                    githubLinkTextColor={project.githubLink?.textColor}
                                 />
                             ))}
                             <button 
@@ -200,13 +240,18 @@ const Home = () => {
                 );
 
             case 'contact':
+                // Get contact color configuration
+                const contactColors = navigationSection.textColor ? {
+                    '--contact-text-color': navigationSection.textColor
+                } as React.CSSProperties : {};
+
                 return (
                     <div className={styles.rightContent}>
                         <h2>{icon} <span>{title}</span></h2>
                         {content && 
                             <p dangerouslySetInnerHTML={{ __html: parseMarkdownLinks(content) }} />
                         }
-                        <div className={styles.contactSection}>
+                        <div className={styles.contactSection} style={contactColors}>
                             {navigationSection.email && (
                                 <div className={styles.contactItem}>
                                     <i className="fas fa-envelope"></i>
@@ -252,7 +297,12 @@ const Home = () => {
             />
             
             {/* Hero Section */}
-            <section className={styles.hero}>
+            <section 
+                className={styles.hero}
+                style={{
+                    backgroundImage: `url('${heroBackgroundUrl}')`
+                }}
+            >
                 <div className={styles.heroContent}>
                     <h1>{config.home.hero.name}</h1>
                     <p>{config.home.hero.quote}</p>
