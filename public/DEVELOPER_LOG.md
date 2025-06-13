@@ -1,15 +1,6 @@
 
 ## 2025.06
 
-**Jun 13** - Global color configuration system for categories and tags, plus responsive table optimization  
-[Change Log](./devlogs/2025-06-13/change-log.md) | [Developer Log](./devlogs/2025-06-13/developer-log.md)
-
-**Jun 12** - DIY Home Page Style System, enhanced URL support, and mobile UI optimization  
-[Change Log](./devlogs/2025-06-12/change-log.md) | [Developer Log](./devlogs/2025-06-12/developer-log.md)
-
-**Jun 11** - Comprehensive mobile responsive design implementation with navigation system restructuring and component modularization  
-[Change Log](./devlogs/2025-06-11/change-log.md) | [Developer Log](./devlogs/2025-06-11/developer-log.md)
-
 **Jun 10** - MetingPlayer component enhancement with dual-mode support and build configuration optimization  
 [Change Log](./devlogs/2025-06-10/change-log.md) | [Developer Log](./devlogs/2025-06-10/developer-log.md)
 

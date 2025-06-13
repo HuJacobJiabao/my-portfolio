@@ -77,7 +77,7 @@ function App() {
   }, []);
 
   // Get global background from config (already processed with full URL)
-  const backgroundUrl = config.backgrounds?.global || `${import.meta.env.BASE_URL}background/about.jpg`;
+  const backgroundUrl = config.backgrounds?.global || `${import.meta.env.BASE_URL}background/global.png`;
 
   return (
    <Router>

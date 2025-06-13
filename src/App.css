@@ -15,6 +15,9 @@
   transform: translateZ(0);
 }
 
+
+
+
 /* Mobile and narrow screen optimizations */
 @media (max-width: 768px) {
   .global-background-fixed {
