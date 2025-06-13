@@ -313,7 +313,7 @@ content:
   # Each category only uses textColor for the text display
   categoryColors:
     default: # Default fallback for all unspecified categories
-      textColor: "#6b7280"
+      textColor: "#5a0cea"
     "Full Stack": 
       textColor: "#059669"
     "Frontend":
@@ -338,6 +338,8 @@ content:
       textColor: "#6366f1"
     "Personal":
       textColor: "#ec4899"
+    "Documentation":
+      textColor: "#f43f5e"
 
   # Global tag colors (shared across blogs, projects, and archive)  
   # Each tag uses both backgroundColor and textColor

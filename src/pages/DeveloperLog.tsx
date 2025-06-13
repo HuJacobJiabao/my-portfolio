@@ -132,7 +132,7 @@ export default function DeveloperLog() {
 
   // Determine the appropriate header background
   const getHeaderBackground = () => {
-    return config.content.logs.defaultHeaderBackground;
+    return config.content?.logs?.defaultHeaderBackground || '/background/default_blog.png';
   };
 
   // Only render Layout when all data is ready

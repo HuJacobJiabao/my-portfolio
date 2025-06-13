@@ -149,11 +149,11 @@
 
 .itemCategory {
   color: #8b5cf6;
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(139, 92, 246, 0.05));
-  padding: 0.25rem 0.5rem;
-  border-radius: 8px;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
   font-size: 0.8rem;
-  border: 1px solid rgba(139, 92, 246, 0.2);
+  border: none;
 }
 
 .itemDate i,

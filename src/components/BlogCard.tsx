@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import styles from '../styles/BlogCard.module.css';
 import { formatDateForDisplay } from '../utils/dateFormatter';
+import { getCategoryColor, getTagColor } from '../config/config';
 
 interface BlogCardProps {
   title: string;
@@ -67,7 +68,10 @@ export default function BlogCard({
               </span>
             )}
             {category && (
-              <span className={styles.cardCategory}>
+              <span 
+                className={styles.cardCategory}
+                style={{ color: getCategoryColor(category) }}
+              >
                 <i className="fas fa-tag"></i>
                 {category}
               </span>
@@ -80,7 +84,14 @@ export default function BlogCard({
         {tags.length > 0 && (
           <div className={styles.cardTags}>
             {tags.map((tag, index) => (
-              <span key={index} className={styles.tag}>
+              <span 
+                key={index} 
+                className={styles.tag}
+                style={{
+                  backgroundColor: getTagColor(tag).backgroundColor,
+                  color: getTagColor(tag).textColor
+                }}
+              >
                 {tag}
               </span>
             ))}
