@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import styles from '../styles/TimelineItem.module.css';
 import { formatDateForDisplay } from '../utils/dateFormatter';
+import { getCategoryColor } from '../config/config';
 
 interface TimelineItemProps {
   title: string;
@@ -59,7 +60,10 @@ export default function TimelineItem({
             {formatDateForDisplay(date)}
           </span>
           {category && (
-            <span className={styles.itemCategory}>
+            <span 
+              className={styles.itemCategory}
+              style={{ color: getCategoryColor(category) }}
+            >
               <i className="fas fa-tag"></i>
               {category}
             </span>

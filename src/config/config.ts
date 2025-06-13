@@ -13,8 +13,10 @@ function buildUrl(path: string): string {
     return path;
   }
   
-  // For local paths, prepend the base URL
-  return `${import.meta.env.BASE_URL}${path}`;
+  // For local paths, prepend the base URL, but make sure to avoid double slashes
+  const baseUrl = import.meta.env.BASE_URL || '/';
+  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+  return `${baseUrl}${cleanPath}`;
 }
 
 // Removed buildImagePath - using buildUrl for all paths
@@ -132,15 +134,89 @@ export interface ContactConfig {
   textColor?: string;
 }
 
+// Define content configuration interfaces
+export interface CategoryColor {
+  textColor: string;
+}
+
+export interface TagColor {
+  backgroundColor: string;
+  textColor: string;
+}
+
+export interface ContentConfig {
+  blogs?: {
+    defaultCover?: string;
+    defaultHeaderBackground?: string;
+  };
+  projects?: {
+    defaultCover?: string;
+    defaultHeaderBackground?: string;
+  };
+  archive?: {
+    defaultCover?: string;
+    defaultHeaderBackground?: string;
+  };
+  logs?: {
+    defaultHeaderBackground?: string;
+  };
+  categoryColors?: {
+    [key: string]: CategoryColor;
+  };
+  tagColors?: {
+    [key: string]: TagColor;
+  };
+}
+
 // Define config interface
 export interface Config {
   website?: WebsiteConfig;
   backgrounds?: BackgroundConfig;
   audioPlayer?: AudioPlayerConfig;
+  content?: ContentConfig;
   [key: string]: any; // Allow other config properties
 }
 
 // The YAML file is imported, parsed, and processed to convert relative URLs to absolute URLs
 export const config: Config = processConfig(configData);
+
+// Helper functions to get category and tag colors
+export function getCategoryColor(category: string): string {
+  const categoryColors = config.content?.categoryColors;
+  if (!categoryColors) return '#6b7280'; // Default gray
+  
+  // First try to find exact match
+  const categoryColor = categoryColors[category];
+  if (categoryColor) {
+    return categoryColor.textColor;
+  }
+  
+  // Fall back to default
+  const defaultColor = categoryColors['default'];
+  return defaultColor ? defaultColor.textColor : '#6b7280';
+}
+
+export function getTagColor(tag: string): { backgroundColor: string; textColor: string } {
+  const tagColors = config.content?.tagColors;
+  const defaultColors = { backgroundColor: '#f3f4f6', textColor: '#374151' };
+  
+  if (!tagColors) return defaultColors;
+  
+  // First try to find exact match
+  const tagColor = tagColors[tag];
+  if (tagColor) {
+    return {
+      backgroundColor: tagColor.backgroundColor,
+      textColor: tagColor.textColor
+    };
+  }
+  
+  // Fall back to default
+  const defaultColor = tagColors['default'];
+  return defaultColor ? {
+    backgroundColor: defaultColor.backgroundColor,
+    textColor: defaultColor.textColor
+  } : defaultColors;
+}
 
 export default config;
