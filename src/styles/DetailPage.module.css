@@ -201,38 +201,95 @@ dd .katex, dt .katex {
   text-align: right;
 }
 
+/* 桌面端表格样式 - 与移动端保持一致 */
 .markdownContent table {
+  display: table;
   width: 100%;
-  border-collapse: collapse; /* 让边框合并，避免双线 */
+  min-width: 100%;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
   margin: 1.5em 0;
   font-size: 0.95rem;
-  overflow: hidden;
-  background-color: #f9fafb;
+  background-color: #fdfdfd;
   color: #1e293b;
+  border: 1px solid #e2e8f0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  
+  /* 滚动条样式 */
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f8fafc;
+}
+
+/* 桌面端表格滚动条样式 */
+.markdownContent table::-webkit-scrollbar {
+  height: 8px;
+  background-color: #f8fafc;
+}
+
+.markdownContent table::-webkit-scrollbar-track {
+  background-color: #f8fafc;
+  border-radius: 4px;
+}
+
+.markdownContent table::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 4px;
+}
+
+.markdownContent table::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8;
 }
 
 .markdownContent th,
 .markdownContent td {
   padding: 0.75em 1em;
-  border: 1px solid #d6deeb; /* 👈 每格都有边框，包含列线 */
+  border-right: 1px solid #9fa8ba;
+  border-bottom: 1px solid #9fa8ba;
+  word-wrap: break-word;
+  width: auto;
   text-align: left;
 }
 
+.markdownContent th:last-child,
+.markdownContent td:last-child {
+  border-right: none;
+}
+
+.markdownContent tr:last-child td {
+  border-bottom: none;
+}
+
 .markdownContent th {
-  background-color: #e2e8f0;
+  background: #E2E8F0;
   font-weight: 600;
-  color: #0f172a;
+  color: #374151;
+  text-align: center;
+  border-bottom: 1px solid #9fa8ba;
+}
+
+.markdownContent td:first-child {
+  text-align: left;
+  font-weight: 500;
+  color: #374151;
+}
+
+.markdownContent tbody tr:hover {
+  background-color: #f8fafc;
 }
 
 
 
 .markdownContent td code {
-  background-color: #2d3748;
-  color: #ffe066;
-  padding: 0.2em 0.5em;
+  background-color: rgb(200, 200, 200);
+  color: #000000;
+  padding-left: 0.1rem;
+  padding-right: 0.1rem;
   border-radius: 4px;
+  border: 1px solid #798fa2;
   font-size: 0.85rem;
-  font-family: "Source Code Pro", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-family: courier, "Source Code Pro", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 th[align="left"],
@@ -249,55 +306,116 @@ td[align="right"] {
 }
 
 @media (max-width: 768px) {
-  .markdownContent table,
-  .markdownContent thead,
-  .markdownContent tbody,
+  /* 移动端表格样式与桌面端保持一致 */
+  .markdownContent table {
+    font-size: 14px;
+  }
+
+  /* 移动端表格滚动条样式 */
+  .markdownContent table::-webkit-scrollbar {
+    height: 8px;
+    background-color: #f8fafc;
+  }
+  
+  .markdownContent table::-webkit-scrollbar-track {
+    background-color: #f8fafc;
+    border-radius: 4px;
+  }
+  
+  .markdownContent table::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 4px;
+  }
+  
+  .markdownContent table::-webkit-scrollbar-thumb:hover {
+    background-color: #94a3b8;
+  }
+
+  /* 移动端表格字体调整 */
+  .markdownContent table {
+    font-size: 14px;
+  }
+
   .markdownContent th,
-  .markdownContent td,
-  .markdownContent tr {
-    display: block;
-    width: 100%;
-  }
-
-  .markdownContent thead {
-    display: none; /* 隐藏表头，移动端用 data-label 显示 */
-  }
-
-  .markdownContent tr {
-    margin-bottom: 1rem;
-    border: 1px solid #d6deeb;
-    border-radius: 6px;
-    background-color: #ffffff;
-    padding: 0.5rem;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-  }
-
   .markdownContent td {
-    position: relative;
-    padding-left: 50%;
-    text-align: left !important;
-    border: none;
-    border-bottom: 1px solid #e2e8f0;
-    background-color: #f9fafb;
+    padding: 12px 8px;
+    font-size: 13px;
   }
 
-  .markdownContent td:last-child {
-    border-bottom: none;
-  }
-
-  .markdownContent td::before {
-    content: attr(data-label);
-    position: absolute;
-    left: 1em;
-    top: 0.75em;
-    font-weight: 600;
-    color: #334155;
+  /* 优化代码在表格中的显示 */
+  .markdownContent td code {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.4rem;
     white-space: nowrap;
-    font-size: 0.9rem;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+  }
+}
+
+/* 更小屏幕的表格优化 */
+@media (max-width: 480px) {
+  .markdownContent table {
+    font-size: 0.8rem;
+    border-radius: 8px;
+  }
+
+  .markdownContent th,
+  .markdownContent td {
+    padding: 0.5rem 0.4rem;
+    min-width: 100px;
+    font-size: 0.8rem;
+  }
+
+  .markdownContent th {
+    font-size: 0.75rem;
   }
 
   .markdownContent td code {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.3rem;
+    max-width: 80px;
+  }
+
+  .markdownContent table::after {
+    font-size: 0.7rem;
+    padding: 0.375rem;
+  }
+}
+
+
+/* 超小屏幕优化 - 480px 以下 */
+@media (max-width: 480px) {
+  .markdownContent table {
+    font-size: 12px;
+  }
+
+  .markdownContent th,
+  .markdownContent td {
+    padding: 8px 6px;
+  }
+
+  .markdownContent th {
+    font-size: 12px;
+  }
+
+  /* 在超小屏幕上隐藏中间的列，只保留第一列和最后列 */
+  .markdownContent th:not(:first-child):not(:last-child),
+  .markdownContent td:not(:first-child):not(:last-child) {
+    display: none;
+  }
+
+  /* 如果只有3列，则显示所有列但缩小间距 */
+  .markdownContent table:has(th:nth-child(3):last-child) th,
+  .markdownContent table:has(td:nth-child(3):last-child) td {
+    display: table-cell;
+    padding: 6px 4px;
+  }
+
+  /* 移除滚动提示 */
+  .markdownContent table::after {
+    display: none;
   }
 }
 
@@ -363,36 +481,6 @@ td[align="right"] {
   border: 1px solid rgba(231, 76, 60, 0.3);
   color: #e74c3c;
   padding: 0.2rem 0.4rem;
-  border-radius: 4px;
-  font-family: monospace;
-  font-size: 0.9em;
-}
-
-/* Math equations within paragraphs */
-.markdownContent p .math-inline,
-.markdownContent p .katex {
-  display: inline;
-  margin: 0 0.1em;
-  vertical-align: baseline;
-  font-size: 1.1em; /* Make inline math larger */
-}
-
-.markdownContent .math-inline {
-  display: inline;
-  vertical-align: baseline;
-  margin: 0 0.1em;
-  font-size: 1.1em; /* Make inline math larger */
-}
-
-.markdownContent .math-inline .katex {
-  display: inline;
-  vertical-align: baseline;
-  font-size: 1.1em; /* Ensure KaTeX inherits the larger size */
-}
-
-
-.markdownContent :global(.footnotes-sep) {
-  border: none;
   height: 1px;
   margin: 2em 0 1em;
 }

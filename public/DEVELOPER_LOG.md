@@ -1,6 +1,9 @@
 
 ## 2025.06
 
+**Jun 13** - Global color configuration system for categories and tags, plus responsive table optimization  
+[Change Log](./devlogs/2025-06-13/change-log.md) | [Developer Log](./devlogs/2025-06-13/developer-log.md)
+
 **Jun 12** - DIY Home Page Style System, enhanced URL support, and mobile UI optimization  
 [Change Log](./devlogs/2025-06-12/change-log.md) | [Developer Log](./devlogs/2025-06-12/developer-log.md)
 
