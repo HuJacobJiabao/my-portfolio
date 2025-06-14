@@ -686,7 +686,7 @@ function resolveImagePath(imagePath: string | undefined, contentType: 'blog' | '
 ```css
 /* Layout.module.css - Fixed content area background */
 .backgroundFixed {
-  background-image: url('/background/global.png');
+  background-image: url('/background/about.jpg');
   background-attachment: fixed;
 }
 
@@ -701,7 +701,7 @@ function resolveImagePath(imagePath: string | undefined, contentType: 'blog' | '
 // Archive Component - Added missing background
 <Layout 
   title="Archive"
-  headerBackground={`${import.meta.env.BASE_URL}background/global.png`}
+  headerBackground={`${import.meta.env.BASE_URL}background/about.jpg`}
   /* ...other props... */
 >
 ```

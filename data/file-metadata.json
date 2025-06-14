@@ -41,13 +41,13 @@
   },
   "devlogs/2025-06-08/change-log.md": {
     "path": "devlogs/2025-06-08/change-log.md",
-    "lastModified": "2025-06-12T20:45:51.044Z",
-    "created": "2025-06-09T21:33:08.803Z"
+    "lastModified": "2025-06-13T14:28:44.859Z",
+    "created": "2025-06-13T14:28:44.859Z"
   },
   "devlogs/2025-06-08/developer-log.md": {
     "path": "devlogs/2025-06-08/developer-log.md",
-    "lastModified": "2025-06-12T20:45:51.044Z",
-    "created": "2025-06-09T21:33:08.799Z"
+    "lastModified": "2025-06-13T14:28:44.859Z",
+    "created": "2025-06-13T14:28:44.859Z"
   },
   "devlogs/2025-06-09/change-log.md": {
     "path": "devlogs/2025-06-09/change-log.md",
@@ -86,8 +86,18 @@
   },
   "devlogs/2025-06-12/developer-log.md": {
     "path": "devlogs/2025-06-12/developer-log.md",
-    "lastModified": "2025-06-12T20:45:42.904Z",
-    "created": "2025-06-12T14:31:19.294Z"
+    "lastModified": "2025-06-13T14:28:44.859Z",
+    "created": "2025-06-13T14:28:44.859Z"
+  },
+  "devlogs/2025-06-13/change-log.md": {
+    "path": "devlogs/2025-06-13/change-log.md",
+    "lastModified": "2025-06-13T18:21:19.252Z",
+    "created": "2025-06-13T16:19:33.722Z"
+  },
+  "devlogs/2025-06-13/developer-log.md": {
+    "path": "devlogs/2025-06-13/developer-log.md",
+    "lastModified": "2025-06-13T18:04:56.685Z",
+    "created": "2025-06-13T16:19:33.722Z"
   },
   "blogs/definition-list-test/index.md": {
     "path": "blogs/definition-list-test/index.md",
@@ -99,19 +109,19 @@
     "lastModified": "2025-06-08T15:29:50.308Z",
     "created": "2025-06-08T15:29:50.308Z"
   },
-  "blogs/highlight-demo-2.md": {
-    "path": "blogs/highlight-demo-2.md",
-    "lastModified": "2025-06-08T15:44:41.718Z",
-    "created": "2025-06-08T15:44:41.718Z"
-  },
   "blogs/highlight-test/index.md": {
     "path": "blogs/highlight-test/index.md",
     "lastModified": "2025-06-08T16:54:10.735Z",
     "created": "2025-06-08T15:29:50.308Z"
   },
+  "blogs/markdown-demo/index.md": {
+    "path": "blogs/markdown-demo/index.md",
+    "lastModified": "2025-06-14T00:07:04.783Z",
+    "created": "2025-06-13T16:30:55.814Z"
+  },
   "blogs/math-demo/index.md": {
     "path": "blogs/math-demo/index.md",
-    "lastModified": "2025-06-08T16:53:11.850Z",
+    "lastModified": "2025-06-13T16:00:29.078Z",
     "created": "2025-06-08T15:29:50.308Z"
   },
   "blogs/test-project-1/index.md": {

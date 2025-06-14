@@ -16,7 +16,7 @@ This is a demonstration of math equation rendering using KaTeX.
 |:------------ |:--------------:| -------------:|
 | Apple        | Banana         | Cherry        |
 | Dog          | Elephant       | Fox           |
-| 100          | 200            | 300           |
+| 100          | 200            | `300`           |
 
 ```latex
 $$

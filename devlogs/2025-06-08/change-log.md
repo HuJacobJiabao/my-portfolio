@@ -107,7 +107,7 @@ Implemented a unified background system for consistent visual experience across 
   ```css
   /* Content area backgrounds */
   .backgroundFixed {
-    background-image: url('/background/global.png');
+    background-image: url('/background/about.jpg');
     background-attachment: fixed;
   }
 
