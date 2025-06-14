@@ -2,6 +2,7 @@ import MarkdownIt from 'markdown-it';
 import markdownItFootnote from 'markdown-it-footnote';
 import markdownItMark from 'markdown-it-mark';
 import markdownItDeflist from 'markdown-it-deflist';
+import markdownItTaskLists from 'markdown-it-task-lists';
 import Prism from 'prismjs';
 import { safeMatter } from './safeMatter';
 import { Buffer } from 'buffer';
@@ -207,6 +208,7 @@ function createMarkdownParser() {
   // Add plugins
   md.use(markdownItFootnote);
   md.use(markdownItMark);
+  md.use(markdownItTaskLists, { enabled: true });
   md.use(customKatexPlugin);
   md.use(markdownItDeflist);
   

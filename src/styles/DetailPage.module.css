@@ -201,58 +201,26 @@ dd .katex, dt .katex {
   text-align: right;
 }
 
-/* 移除 markdownContent 的水平滚动，只保留垂直滚动 */
-.markdownContent {
-  overflow-x: visible; /* 不允许水平滚动 */
-  overflow-y: visible; /* 允许垂直滚动 */
-}
+/* 移除 markdownContent 的滚动条样式 - 只让表格本身滚动 */
 
-/* 基础表格样式 - 适用于所有设备 */
+/* 表格样式 - 桌面端使用标准表格布局 */
 .markdownContent table {
   width: 100%;
   border-collapse: collapse;
   margin: 1.5em 0;
   font-size: 0.95rem;
-  background-color: transparent;
   color: #1e293b;
-  
-  /* 默认使用 block 显示以支持水平滚动 */
-  display: block;
-  overflow-x: auto;
-  white-space: nowrap;
-  -webkit-overflow-scrolling: touch;
+  table-layout: auto; /* 桌面端使用自动布局 */
+  display: table; /* 桌面端使用标准表格显示 */
 }
 
-
-
-/* 表格滚动条样式 */
-.markdownContent table::-webkit-scrollbar {
-  height: 8px;
-  background-color: #f8fafc;
-  display: block;
-}
-
-.markdownContent table::-webkit-scrollbar-track {
-  background-color: #f8fafc;
-  border-radius: 4px;
-}
-
-.markdownContent table::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1;
-  border-radius: 4px;
-}
-
-.markdownContent table::-webkit-scrollbar-thumb:hover {
-  background-color: #94a3b8;
-}
+/* 移除 markdownContent 的滚动设置，只让表格本身滚动 */
 
 /* 桌面端表格单元格样式 */
 .markdownContent th,
 .markdownContent td {
   padding: 0.75em 1em;
   border: 1px solid #9fa8ba;
-  border-bottom: 1px solid #9fa8ba;
-  border-right: 1px solid #9fa8ba;
   text-align: left;
   vertical-align: top; /* 确保垂直对齐 */
 }
@@ -262,15 +230,9 @@ dd .katex, dt .katex {
   background: #E2E8F0;
   font-weight: 600;
   color: #374151;
-  text-align: center;
   border-bottom: 1px solid #9fa8ba;
 }
 
-.markdownContent td:first-child {
-  text-align: left;
-  font-weight: 500;
-  color: #374151;
-}
 
 
 
@@ -319,12 +281,12 @@ td[align="right"] {
 
 
 .markdownContent :global(.info) {
-  display: inline-block;
+  display: block;
   padding: 0.25rem 0.6rem;
-  font-size: 0.85rem;
+  font-size: 1rem;
   font-weight: 500;
   border-radius: 4px;
-  line-height: 1.8;
+  line-height: 2rem;
 }
 
 :global(.info-blue) {
@@ -348,6 +310,7 @@ td[align="right"] {
     display: block;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    border-radius: 6px;
   }
 
   /* 确保移动端滚动条样式一致 */
@@ -380,6 +343,7 @@ td[align="right"] {
 @media (max-width: 480px) {
   .markdownContent table {
     font-size: 0.8rem;
+    border-radius: 6px;
     margin: 1rem 0;
   }
 
@@ -640,27 +604,21 @@ td[align="right"] {
 
 
 
-
 .markdownContent tbody tr:hover {
   background-color: #f8fafc;
 }
 
-/* 桌面端表格样式 - 智能滚动 */
+/* 桌面端专用表格样式 - 支持横向滚动 */
 @media (min-width: 769px) {
   .markdownContent table {
+    display: block; /* 使用 block 显示以支持滚动 */
+    overflow-x: auto; /* 启用横向滚动 */
+    table-layout: auto; /* 自动列宽 */
     width: 100%;
-    max-width: 100%;
-    table-layout: auto;
-    font-size: 0.95rem;
-    display: block; /* 改为 block 以支持滚动 */
-    overflow-x: auto; /* 启用水平滚动 */
-    white-space: nowrap; /* 防止换行 */
-    border-collapse: collapse;
-    margin: 1.5em 0;
-    background-color: transparent; /* 透明背景 */
     -webkit-overflow-scrolling: touch;
   }
   
+  /* 表格滚动条样式 */
   .markdownContent table::-webkit-scrollbar {
     height: 8px;
     background-color: #f8fafc;
@@ -683,25 +641,31 @@ td[align="right"] {
   
   .markdownContent th,
   .markdownContent td {
-    display: table-cell;
-    padding: 0.75em 1em;
-    font-size: 0.95rem;
-    white-space: nowrap;
-    min-width: 100px;
+    white-space: nowrap; /* 防止文本换行以便滚动 */
+    min-width: 100px; /* 设置最小宽度 */
   }
-  
-  .markdownContent th {
-    font-weight: 600;
-    background: #E2E8F0;
-    color: #374151;
-    text-align: center;
-  }
-  
-  .markdownContent td code {
-    font-size: 0.85rem;
-    padding: 0.15rem 0.3rem;
-    max-width: 150px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+}
+
+/* Task list nested indentation */
+:global(.task-list-item .task-list-item) {
+  margin-left: 1.5rem;
+  padding-left: 0;
+}
+
+/* Alternative approach for deeper nesting */
+:global(ul li.task-list-item) {
+  margin-left: 0;
+}
+
+:global(ul ul li.task-list-item) {
+  margin-left: 1.5rem;
+}
+
+:global(ul ul ul li.task-list-item) {
+  margin-left: 3rem;
+}
+
+/* Ensure checkbox alignment for nested items */
+:global(.task-list-item .task-list-item input[type="checkbox"]) {
+  margin-right: 0.5rem;
 }

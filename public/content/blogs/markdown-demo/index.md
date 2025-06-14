@@ -38,6 +38,16 @@ This document serves as a comprehensive demonstration of all the markdown featur
 ##### H5 - Minor Headers
 ###### H6 - Smallest Headers
 
+**Markdown Code:**
+```markdown
+# H1 - Main Document Title
+## H2 - Major Section Headers
+### H3 - Subsection Headers
+#### H4 - Sub-subsection Headers
+##### H5 - Minor Headers
+###### H6 - Smallest Headers
+```
+
 ### Horizontal Rules
 
 Content above the line.
@@ -47,6 +57,17 @@ Content above the line.
 Content below the line.
 
 ***
+
+**Markdown Code:**
+```markdown
+Content above the line.
+
+---
+
+Content below the line.
+
+***
+```
 
 Alternative horizontal rule style.
 
@@ -68,9 +89,27 @@ Another alternative style.
 
 `Inline code` with backticks
 
+**Markdown Code:**
+```markdown
+**Bold text** and __alternative bold syntax__
+
+*Italic text* and _alternative italic syntax_
+
+***Bold and italic*** combined
+
+~~Strikethrough text~~
+
+`Inline code` with backticks
+```
+
 ### Advanced Typography
 
 - **Mark/Highlight**: ==highlighted text==
+
+**Markdown Code:**
+```markdown
+==highlighted text==
+```
 
 
 ## Lists and Organization
@@ -85,6 +124,17 @@ Another alternative style.
     - Deeply nested item 2.2.2
 - Main item 3
 
+**Markdown Code:**
+```markdown
+- Main item 1
+- Main item 2
+  - Nested item 2.1
+  - Nested item 2.2
+    - Deeply nested item 2.2.1
+    - Deeply nested item 2.2.2
+- Main item 3
+```
+
 ### Ordered Lists
 
 1. First ordered item
@@ -95,7 +145,19 @@ Another alternative style.
       2. Another deeply nested item
 3. Third ordered item
 
+**Markdown Code:**
+```markdown
+1. First ordered item
+2. Second ordered item
+   1. Nested numbered item
+   2. Another nested item
+      1. Deeply nested numbered item
+      2. Another deeply nested item
+3. Third ordered item
+```
+
 ### Task Lists
+
 
 - [x] Completed task
 - [x] Another completed task
@@ -103,6 +165,16 @@ Another alternative style.
 - [ ] Another pending task
   - [x] Completed subtask
   - [ ] Pending subtask
+
+**Markdown Code:**
+```markdown
+- [x] Completed task
+- [x] Another completed task
+- [ ] Pending task
+- [ ] Another pending task
+  - [x] Completed subtask
+  - [ ] Pending subtask
+```
 
 ### Definition Lists
 
@@ -116,6 +188,22 @@ Term 2
 Complex Term
 : This is a more complex definition that spans multiple lines
   and includes detailed explanations with **formatting**.
+
+**Markdown Code:**
+```markdown
+Term 1
+: Definition for term 1
+
+Term 2
+: Definition for term 2
+: Alternative definition for term 2
+
+Complex Term
+: This is a more complex definition that spans multiple lines
+  and includes detailed explanations with **formatting**.
+```
+
+
 
 ## Links and References
 
@@ -155,6 +243,21 @@ This is a [reference link][ref1] and another [reference link][ref2].
 ![Reference Image][demo-img]
 
 [demo-img]: https://w.wallhaven.cc/full/l8/wallhaven-l83e5l.png "Reference Image"
+
+```markdown
+
+![Alt text](https://w.wallhaven.cc/full/l8/wallhaven-l83e5l.png "Demo Image")
+
+### Images with Links
+
+[![Linked Image](https://w.wallhaven.cc/full/l8/wallhaven-l83e5l.png "Click me!")](https://example.com)
+
+### Image References
+
+![Reference Image][demo-img]
+
+[demo-img]: https://w.wallhaven.cc/full/l8/wallhaven-l83e5l.png "Reference Image"
+```
 
 ## Code and Syntax Highlighting
 
@@ -371,6 +474,18 @@ ORDER BY rank;
 | Code | ✅ Full | Syntax highlighting |
 | Tables | ✅ Full | Responsive design |
 
+**Markdown Code:**
+```markdown
+| Feature | Support | Notes |
+|---------|---------|-------|
+| Headers | ✅ Full | All heading levels |
+| Lists | ✅ Full | Ordered, unordered, tasks |
+| Links | ✅ Full | Internal and external |
+| Images | ✅ Full | With alt text and titles |
+| Code | ✅ Full | Syntax highlighting |
+| Tables | ✅ Full | Responsive design |
+```
+
 ### Advanced Table with Alignment
 
 | Left Aligned | Center Aligned | Right Aligned | Description |
@@ -379,6 +494,16 @@ ORDER BY rank;
 | Dog          | Elephant       | Fox           | Animals |
 | 100          | 200            | 300           | Numbers |
 | Short        | Medium length  | Very long text content | Text lengths |
+
+**Markdown Code:**
+```markdown
+| Left Aligned | Center Aligned | Right Aligned | Description |
+|:-------------|:--------------:|--------------:|:------------|
+| Apple        | Banana         | Cherry        | Fruits |
+| Dog          | Elephant       | Fox           | Animals |
+| 100          | 200            | 300           | Numbers |
+| Short        | Medium length  | Very long text content | Text lengths |
+```
 
 ### Complex Table with Rich Content
 
@@ -389,6 +514,17 @@ ORDER BY rank;
 | **JavaScript** | 🟡 Medium | 1-3 months | Programming language for web |
 | **React** | 🔴 Hard | 3-6 months | Component-based UI library |
 | **TypeScript** | 🔴 Hard | 2-4 months | Typed superset of JavaScript |
+
+**Markdown Code:**
+```markdown
+| Technology | Difficulty | Learning Time | Description |
+|------------|:----------:|:-------------:|-------------|
+| **HTML** | 🟢 Easy | 1-2 weeks | Foundation of web development |
+| **CSS** | 🟡 Medium | 2-4 weeks | Styling and layout language |
+| **JavaScript** | 🟡 Medium | 1-3 months | Programming language for web |
+| **React** | 🔴 Hard | 3-6 months | Component-based UI library |
+| **TypeScript** | 🔴 Hard | 2-4 months | Typed superset of JavaScript |
+```
 
 ### Wide Table (Testing Horizontal Scroll)
 
@@ -406,13 +542,20 @@ Here's an inline equation: $E = mc^2$ which is Einstein's famous equation.
 
 The quadratic formula is $x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$.
 
+**Markdown Code:**
+```markdown
+Here's an inline equation: $E = mc^2$ which is Einstein's famous equation.
+
+The quadratic formula is $x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$.
+```
+
 ### Block Math
 
-
-Note: KaTeX does not support single quote (') in derivatives; use \prime instead for correct rendering.
+Note: KaTeX does not support single quote (') in derivatives; use `\prime` instead for correct rendering.
 <div class="info info-blue">
     > ℹ️ For block math, leave a blank line before and after the block for correct rendering.
 </div>
+
 
 $$
 \begin{align}
@@ -422,11 +565,29 @@ f^{\prime\prime}(x) &= 2a
 \end{align}
 $$
 
+**Markdown Code:**
+```Latex
+$$
+\begin{align}
+f(x) &= ax^2 + bx + c \\
+f^{\prime}(x) &= 2ax + b \\
+f^{\prime\prime}(x) &= 2a
+\end{align}
+$$
+```
+
 Complex mathematical expressions:
 
 $$
 \int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi}
 $$
+
+**Markdown Code:**
+```latex
+$$
+\int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi}
+$$
+```
 
 Matrix notation:
 
@@ -456,6 +617,15 @@ $$
 > **Important Note**: This blockquote contains **bold text** and *italic text*
 > to demonstrate that formatting works within quotes.
 
+**Markdown Code:**
+```markdown
+> This is a simple blockquote. It can contain multiple lines
+> and will be styled consistently throughout.
+
+> **Important Note**: This blockquote contains **bold text** and *italic text*
+> to demonstrate that formatting works within quotes.
+```
+
 ### Nested Blockquotes
 
 > This is the first level of quoting.
@@ -466,11 +636,29 @@ $$
 >
 > Back to the first level.
 
+**Markdown Code:**
+```markdown
+> This is the first level of quoting.
+>
+> > This is nested blockquote.
+> >
+> > > This is a third level nested quote.
+>
+> Back to the first level.
+```
+
 ### Blockquotes with Attribution
 
 > "The best way to predict the future is to create it."
 >
 > — Peter Drucker
+
+**Markdown Code:**
+```markdown
+> "The best way to predict the future is to create it."
+>
+> — Peter Drucker
+```
 
 > "In the middle of difficulty lies opportunity."
 >
@@ -482,8 +670,6 @@ $$
 
 This text has a footnote[^1]. Here's another reference[^note].
 
-You can also use inline footnotes^[This is an inline footnote].
-
 
 ### Keyboard Keys
 
@@ -492,6 +678,15 @@ Press <kbd>Ctrl</kbd> + <kbd>C</kbd> to copy.
 Use <kbd>Cmd</kbd> + <kbd>V</kbd> on Mac to paste.
 
 Navigate with <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> arrow keys.
+
+**Markdown Code:**
+```markdown
+Press <kbd>Ctrl</kbd> + <kbd>C</kbd> to copy.
+
+Use <kbd>Cmd</kbd> + <kbd>V</kbd> on Mac to paste.
+
+Navigate with <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> arrow keys.
+```
 
 ### Emoji Support
 
@@ -506,6 +701,21 @@ Here are some common emojis:
 - 💡 Idea
 - 🎯 Goal
 - 📊 Data
+
+**Markdown Code:**
+```markdown
+Web development is fun! 😄 🚀 💻
+
+Here are some common emojis:
+- ✅ Success
+- ❌ Error  
+- ⚠️ Warning
+- 📝 Note
+- 🔥 Popular
+- 💡 Idea
+- 🎯 Goal
+- 📊 Data
+```
 
 ### Special Characters and Symbols
 
