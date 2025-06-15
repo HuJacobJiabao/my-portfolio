@@ -4,8 +4,8 @@ title: "Math Demo"
 createTime: "2025-06-06T15:22:00.000Z"
 description: "A demonstration of markdown math equation functionality."
 tags: ["Markdown", "Footnotes", "Demo"]
-category: "Documentation"
-coverImage: "default"
+category: "Markdown"
+coverImage: "./content/assets/markdown.png"
 ---
 
 # Math Equations Demo

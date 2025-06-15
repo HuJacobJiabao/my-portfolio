@@ -4,8 +4,8 @@ title: "Markdown Highlights Demo"
 createTime: "2025-06-06T16:30:00.000Z"
 description: "A demonstration of markdown highlight functionality."
 tags: ["Markdown", "Highlight", "Demo"]
-category: "Documentation"
-coverImage: "./default_blog.png"
+category: "Markdown"
+coverImage: "./content/assets/markdown.png"
 ---
 
 # Highlight Demonstration

@@ -35,7 +35,7 @@ const Sidebar: React.FC<SidebarProps> = React.memo(({
   const placeholderRef = useRef<HTMLDivElement>(null);
   
   // Throttling variable for scroll events
-  let scrollTicking = false;
+  const scrollTickingRef = useRef(false);
 
   // Get contact data directly from navigation
   const contactData = config.home.navigation.contact;
@@ -123,7 +123,7 @@ const Sidebar: React.FC<SidebarProps> = React.memo(({
       }
 
       // Throttle scroll events using requestAnimationFrame
-      if (!scrollTicking) {
+      if (!scrollTickingRef.current) {
         requestAnimationFrame(() => {
           const currentScrollPos = window.pageYOffset || document.documentElement.scrollTop;
           
@@ -165,9 +165,9 @@ const Sidebar: React.FC<SidebarProps> = React.memo(({
             setIsSticky(false);
           }
           
-          scrollTicking = false;
+          scrollTickingRef.current = false;
         });
-        scrollTicking = true;
+        scrollTickingRef.current = true;
       }
     };
 

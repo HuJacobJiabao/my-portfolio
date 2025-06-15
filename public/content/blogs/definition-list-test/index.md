@@ -1,11 +1,11 @@
 ---
 type: "blog"
-title: "definition list test"
+title: "Definition List Test"
 createTime: "2025-06-07T17:26:30.142Z"
-description: "This is the default description for blog."
-tags: ["Markdown", "world"]
-category: "Demo"
-coverImage: "default"
+description: "A simple markdown demo to test definition list rendering."
+tags: ["Markdown", "definition list", "Demo"]
+category: "Markdown"
+coverImage: "./content/assets/markdown.png"
 ---
 
 # Definition List Test

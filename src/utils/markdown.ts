@@ -38,6 +38,36 @@ import '../styles/prism-night-owl-theme.css';
 // Import KaTeX CSS for math rendering
 import 'katex/dist/katex.min.css';
 
+/**
+ * Convert relative paths to BASE_URL-based paths
+ * All markdown assets should be resolved relative to the BASE_URL
+ */
+function convertToBaseUrlPath(path: string): string {
+  // Already absolute paths (http/https) or base URLs - return as is
+  if (path.startsWith('http') || path.startsWith(import.meta.env.BASE_URL)) {
+    return path;
+  }
+  
+  // Skip anchors, mailto, tel links
+  if (path.startsWith('#') || path.startsWith('mailto:') || path.startsWith('tel:')) {
+    return path;
+  }
+  
+  // Remove leading './' if present
+  let cleanPath = path.startsWith('./') ? path.slice(2) : path;
+  
+  // Remove leading '../' patterns as we want everything relative to BASE_URL
+  cleanPath = cleanPath.replace(/^(\.\.\/)+/, '');
+  
+  // If path starts with '/', treat it as absolute from BASE_URL
+  if (cleanPath.startsWith('/')) {
+    return `${import.meta.env.BASE_URL}${cleanPath.slice(1)}`;
+  }
+  
+  // For all other paths, treat them as relative to BASE_URL
+  return `${import.meta.env.BASE_URL}${cleanPath}`;
+}
+
 export interface TocItem {
   id: string;
   title: string;
@@ -417,14 +447,23 @@ function customCodeRenderer(md: MarkdownIt, toc: TocItem[]) {
     return `<${token.tag} id="${id}">`;
   };
 
-  // Override image renderer to support asset mapping
+  // Override image renderer to support asset mapping with public-based paths
   md.renderer.rules.image = function(tokens, idx, options, env, renderer) {
     const token = tokens[idx];
     const srcIndex = token.attrIndex('src');
     
-    if (srcIndex >= 0 && env.assetMap) {
+    if (srcIndex >= 0) {
       const src = token.attrs![srcIndex][1];
-      const resolvedSrc = env.assetMap.get(src) || src;
+      let resolvedSrc = src;
+      
+      // First check if there's an asset map resolution
+      if (env.assetMap && env.assetMap.has(src)) {
+        resolvedSrc = env.assetMap.get(src)!;
+      } else {
+        // Convert relative paths to BASE_URL-based paths
+        resolvedSrc = convertToBaseUrlPath(src);
+      }
+      
       token.attrs![srcIndex][1] = resolvedSrc;
     }
     
@@ -482,17 +521,23 @@ export async function parseMarkdown(
       html = html.replace(/<h1[^>]*>.*?<\/h1>/, '');
     }
     
-    // Post-process for asset mapping if provided
+    // Post-process for asset mapping and public-based path conversion
     if (assetMap && assetMap.size > 0) {
       // Replace relative paths in HTML a href attributes
       html = html.replace(
         /<a([^>]*)\shref=["']([^"']*?)["']([^>]*)>/gi,
-        (fullMatch, before, href, after) => {
+        (_fullMatch, before, href, after) => {
+          let resolvedHref = href;
+          
+          // First check asset map
           if (assetMap.has(href)) {
-            const resolvedHref = assetMap.get(href);
-            return `<a${before} href="${resolvedHref}"${after}>`;
+            resolvedHref = assetMap.get(href)!;
+          } else {
+            // Convert to BASE_URL-based path
+            resolvedHref = convertToBaseUrlPath(href);
           }
-          return fullMatch;
+          
+          return `<a${before} href="${resolvedHref}"${after}>`;
         }
       );
       
@@ -503,7 +548,55 @@ export async function parseMarkdown(
           const updatedStyle = styleContent.replace(
             /url\(["']?([^"')]*?)["']?\)/gi,
             (_urlMatch: string, urlPath: string) => {
-              const resolvedUrl = assetMap.get(urlPath) || urlPath;
+              let resolvedUrl = urlPath;
+              
+              // First check asset map
+              if (assetMap.has(urlPath)) {
+                resolvedUrl = assetMap.get(urlPath)!;
+              } else {
+                // Convert to BASE_URL-based path
+                resolvedUrl = convertToBaseUrlPath(urlPath);
+              }
+              
+              return `url("${resolvedUrl}")`;
+            }
+          );
+          return `style="${updatedStyle}"`;
+        }
+      );
+    } else {
+      // Even without asset map, convert relative paths to BASE_URL-based paths
+      
+      // Convert image src attributes
+      html = html.replace(
+        /<img([^>]*)\ssrc=["']([^"']*?)["']([^>]*)>/gi,
+        (_fullMatch, before, src, after) => {
+          const resolvedSrc = convertToBaseUrlPath(src);
+          return `<img${before} src="${resolvedSrc}"${after}>`;
+        }
+      );
+      
+      // Convert a href attributes
+      html = html.replace(
+        /<a([^>]*)\shref=["']([^"']*?)["']([^>]*)>/gi,
+        (_fullMatch, before, href, after) => {
+          // Only convert relative paths, not external URLs or anchors
+          if (!href.startsWith('http') && !href.startsWith('#') && !href.startsWith('mailto:')) {
+            const resolvedHref = convertToBaseUrlPath(href);
+            return `<a${before} href="${resolvedHref}"${after}>`;
+          }
+          return _fullMatch;
+        }
+      );
+      
+      // Convert CSS url() functions
+      html = html.replace(
+        /style=["']([^"']*?)["']/gi,
+        (_fullMatch, styleContent) => {
+          const updatedStyle = styleContent.replace(
+            /url\(["']?([^"')]*?)["']?\)/gi,
+            (_urlMatch: string, urlPath: string) => {
+              const resolvedUrl = convertToBaseUrlPath(urlPath);
               return `url("${resolvedUrl}")`;
             }
           );

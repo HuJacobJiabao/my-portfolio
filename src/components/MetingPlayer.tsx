@@ -143,7 +143,7 @@ const MetingPlayer: React.FC<MetingPlayerProps> = () => {
             // without modifying the library itself
             console.log('APlayer elements found:', aplayerElements.length);
           }
-        } catch {
+        } catch (error) {
           // Silently ignore - this is just an optimization attempt
         }
       }, 100);

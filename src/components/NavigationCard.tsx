@@ -38,7 +38,7 @@ const NavigationCard: React.FC<NavigationCardProps> = React.memo(({
   const placeholderRef = useRef<HTMLDivElement>(null);
   
   // Throttling variable for scroll events
-  let scrollTicking = false;
+  const scrollTickingRef = useRef(false);
 
   // Scroll to active item when mobile floating mode is enabled
   useEffect(() => {
@@ -184,7 +184,7 @@ const NavigationCard: React.FC<NavigationCardProps> = React.memo(({
         });
       });
     }
-  }, [isMobileFloating, activeItemId]);
+  }, [isMobileFloating, activeItemId, items]);
 
   // Function to scroll an element to center when clicked
   const scrollToCenter = (element: HTMLElement) => {
@@ -290,7 +290,7 @@ const NavigationCard: React.FC<NavigationCardProps> = React.memo(({
       }
 
       // Throttle scroll events using requestAnimationFrame
-      if (!scrollTicking) {
+      if (!scrollTickingRef.current) {
         requestAnimationFrame(() => {
           const currentScrollPos = window.pageYOffset || document.documentElement.scrollTop;
           
@@ -332,9 +332,9 @@ const NavigationCard: React.FC<NavigationCardProps> = React.memo(({
             setIsSticky(false);
           }
           
-          scrollTicking = false;
+          scrollTickingRef.current = false;
         });
-        scrollTicking = true;
+        scrollTickingRef.current = true;
       }
     };
 

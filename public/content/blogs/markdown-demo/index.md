@@ -4,8 +4,8 @@ title: "Complete Markdown Features Demo"
 createTime: "2025-06-13T16:30:55.818Z"
 description: "A comprehensive demonstration of all markdown features supported by this portfolio framework, including advanced syntax, tables, code blocks, and custom extensions."
 tags: ["Markdown", "Demo", "Documentation", "Tutorial", "Features"]
-category: "Documentation"
-coverImage: "default"
+category: "Markdown"
+coverImage: "./content/assets/markdown.png"
 ---
 
 # {{title}}
@@ -73,7 +73,6 @@ Alternative horizontal rule style.
 
 ___
 
-Another alternative style.
 
 ## Text Formatting
 

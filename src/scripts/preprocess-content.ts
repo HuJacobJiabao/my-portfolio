@@ -200,20 +200,37 @@ async function processContentItem(
       contentPath
     };
 
-    // Handle default cover image resolution
+    // Handle cover image resolution - all paths should be relative to BASE_URL
     const resolveImagePath = (coverImage: string | undefined): string | undefined => {
       if (!coverImage || coverImage === 'default') {
         // Use content-type specific default cover image from config
         const defaultCover = getDefaultCoverImage(contentType);
         return `${process.env.BASE_URL || '/my-portfolio/'}${defaultCover}`;
       }
-      // If it's a relative path starting with './', resolve it relative to content path
-      if (coverImage.startsWith('./')) {
-        const resolvedPath = path.join(path.dirname(contentPath), coverImage.slice(2));
-        return `${process.env.BASE_URL || '/my-portfolio/'}content/${resolvedPath}`;
+      
+      // Skip if it's already an absolute URL
+      if (coverImage.startsWith('http') || coverImage.startsWith(process.env.BASE_URL || '/my-portfolio/')) {
+        return coverImage;
       }
-      // If it's already an absolute path or URL, use as is
-      return coverImage;
+      
+      // For all relative paths, convert them to be relative to BASE_URL
+      let cleanPath = coverImage;
+      
+      // Remove leading './' if present
+      if (cleanPath.startsWith('./')) {
+        cleanPath = cleanPath.slice(2);
+      }
+      
+      // Remove leading '../' patterns and treat as relative to BASE_URL
+      cleanPath = cleanPath.replace(/^(\.\.\/)+/, '');
+      
+      // If path starts with '/', treat it as absolute from BASE_URL
+      if (cleanPath.startsWith('/')) {
+        return `${process.env.BASE_URL || '/my-portfolio/'}${cleanPath.slice(1)}`;
+      }
+      
+      // Otherwise, assume it's a path relative to BASE_URL
+      return `${process.env.BASE_URL || '/my-portfolio/'}${cleanPath}`;
     };
 
     if (contentType === 'blogs') {

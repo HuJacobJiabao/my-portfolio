@@ -16,6 +16,7 @@
   text-align: center;
   margin-top: 0;
   overflow: hidden;
+  background-color: #ffffff;
   animation: fadeInDown 1s ease-in-out;
   min-height: 200px; /* Reduced from 240px to 200px */
   height: 200px; /* Reduced fixed height to 200px */
