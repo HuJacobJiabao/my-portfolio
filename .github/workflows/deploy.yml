@@ -52,14 +52,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         
-      - name: Download build
+      - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
           name: github-pages
-          path: ./dist
+          path: ./artifact
+          
+      - name: Extract build files
+        run: |
+          cd ./artifact
+          tar -xf artifact.tar
+          ls -la
           
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: dist
+          folder: artifact
           branch: gh-pages
