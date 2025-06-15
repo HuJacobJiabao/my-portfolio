@@ -1,6 +1,21 @@
 
 ## 2025.06
 
+**Jun 15** - Markdown static asset resolution refactor and GitHub Actions deployment fix  
+[Change Log](./devlogs/2025-06-15/change-log.md) | [Developer Log](./devlogs/2025-06-15/developer-log.md)
+
+**Jun 14** - Navigation enhancement, work experience consolidation, and CI/CD setup  
+[Change Log](./devlogs/2025-06-14/change-log.md) | [Developer Log](./devlogs/2025-06-14/developer-log.md)
+
+**Jun 13** - Development planning and setup  
+[Change Log](./devlogs/2025-06-13/change-log.md) | [Developer Log](./devlogs/2025-06-13/developer-log.md)
+
+**Jun 12** - Mobile responsive design and background optimization  
+[Change Log](./devlogs/2025-06-12/change-log.md) | [Developer Log](./devlogs/2025-06-12/developer-log.md)
+
+**Jun 11** - Mobile navigation and component modularization  
+[Change Log](./devlogs/2025-06-11/change-log.md) | [Developer Log](./devlogs/2025-06-11/developer-log.md)
+
 **Jun 10** - MetingPlayer component enhancement with dual-mode support and build configuration optimization  
 [Change Log](./devlogs/2025-06-10/change-log.md) | [Developer Log](./devlogs/2025-06-10/developer-log.md)
 
