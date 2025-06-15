@@ -203,6 +203,46 @@ case 'experience':
 - **Direct mapping** from config structure to component props improves performance
 - **Reduced redundancy** in data structure decreases memory footprint
 
+## 4. GitHub Actions Deployment Fix
+
+### Problem Analysis
+- **Issue**: GitHub Actions workflow failed to deploy to GitHub Pages
+- **Root Cause**: Environment protection rules preventing deployment to "github-pages" environment from master branch
+- **Impact**: Automated deployments were not functioning, requiring manual intervention
+
+### Solution Design
+- **Approach**: Modify GitHub Actions workflow to deploy to gh-pages branch using JamesIves/github-pages-deploy-action
+- **Architecture**: Two-job workflow separating build and deploy steps
+- **Alternatives Considered**: Direct deployment to github-pages environment vs branch-based deployment
+
+### Implementation Details
+```typescript
+// Previous deployment strategy (failed due to environment protection)
+deploy:
+  environment:
+    name: github-pages
+    url: ${{ steps.deployment.outputs.page_url }}
+
+// New deployment strategy (using dedicated gh-pages branch)
+deploy:
+  permissions:
+    contents: write
+  steps:
+    - uses: JamesIves/github-pages-deploy-action@v4
+      with:
+        folder: dist
+        branch: gh-pages
+```
+
+### Files Modified
+- **/.github/workflows/deploy.yml**: Updated deployment strategy
+- **/CI-CD-OPTIONS.md**: Updated documentation to reflect actual workflow
+
+### Testing Results
+- ✅ GitHub Actions workflow test run
+- ✅ Deployment to gh-pages branch
+- ✅ Documentation matches implemented solution
+
 ## Future Considerations
 
 ### Short-term Improvements

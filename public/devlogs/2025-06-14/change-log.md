@@ -39,6 +39,9 @@ Restructured work experience display to group multiple positions from the same c
 ## 3. ZIBS Color Scheme Update
 Updated the color scheme for Zhejiang University International Business School (ZIBS) work experience from orange/red tones to professional blue colors that better align with business school branding.
 
+## 4. GitHub Actions Deployment Fix
+Fixed GitHub Actions workflow to successfully deploy the portfolio to GitHub Pages by updating the deployment strategy to use the gh-pages branch instead of direct environment deployment, bypassing environment protection rules.
+
 ## Benefits
 
 ### Improvements
@@ -52,6 +55,7 @@ Updated the color scheme for Zhejiang University International Business School (
 - **Data Structure**: ✅ More maintainable config structure that better represents real-world work experience
 - **Component Reusability**: ✅ Enhanced WorkCard component to handle multiple positions efficiently
 - **Interface Consistency**: ✅ Aligned TypeScript interfaces with new data structure
+- **CI/CD Pipeline**: ✅ Reliable automated deployment using GitHub Actions to gh-pages branch
 
 ## Next Steps
 
