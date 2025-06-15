@@ -203,7 +203,7 @@ function calculateRelativePaths(markdownFolderPath: string, assetPath: string): 
     if (rel && !relativePaths.includes(rel)) {
       relativePaths.push(rel);
     }
-  } catch (e) {
+  } catch {
     // ignore
   }
   

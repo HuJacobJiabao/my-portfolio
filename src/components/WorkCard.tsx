@@ -1,11 +1,15 @@
 import styles from '../styles/WorkCard.module.css';
 
+interface Position {
+  title: string;
+  duration: string;
+  highlights: string[];
+}
+
 interface WorkCardProps {
   companyName: string;
-  position: string;
-  duration: string;
+  positions: Position[]; // Changed from single position to array of positions
   location: string;
-  highlights: string[];
   logoSrc?: string;
   logoAlt?: string;
   borderColor?: string;
@@ -16,10 +20,8 @@ interface WorkCardProps {
 
 const WorkCard = ({
   companyName,
-  position,
-  duration,
+  positions,
   location,
-  highlights,
   logoSrc,
   logoAlt,
   borderColor,
@@ -44,14 +46,21 @@ const WorkCard = ({
       )}
       <div className={styles.workContent}>
         <h3 className={styles.companyName}>{companyName}</h3>
-        <p className={styles.position}>{position}</p>
-        <p className={styles.workDuration}>{duration}</p>
         <p className={styles.location}>{location}</p>
-        <ul className={styles.workHighlights}>
-          {highlights.map((highlight, index) => (
-            <li key={index}>{highlight}</li>
-          ))}
-        </ul>
+        
+        {positions.map((position, index) => (
+          <div key={index} className={styles.positionGroup}>
+            <div className={styles.positionHeader}>
+              <p className={styles.position}>{position.title}</p>
+              <p className={styles.workDuration}>{position.duration}</p>
+            </div>
+            <ul className={styles.workHighlights}>
+              {position.highlights.map((highlight, highlightIndex) => (
+                <li key={highlightIndex}>{highlight}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
     </div>
   );

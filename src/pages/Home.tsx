@@ -31,19 +31,21 @@ interface Education {
 
 interface WorkExperience {
     companyName: string;
-    position: string;
-    duration: string;
     location: string;
     logo: {
         src: string;
         backgroundColor?: string;
     };
-    highlights: string[];
     border: {
         color?: string;
         hoverColor?: string;
     };
     highlightColor?: string;
+    positions: {
+        position: string;
+        duration: string;
+        highlights: string[];
+    }[];
 }
 
 interface ProjectType {
@@ -159,20 +161,26 @@ const Home = () => {
                     </div>
                 );
 
-            case 'experience':
+            case 'experience': {
+                // Since experiences are already grouped by company in the config,
+                // we just need to map them to the expected format
+                const workExperiences = items as WorkExperience[];
+
                 return (
                     <div className={styles.rightContent}>
                         <h2>{icon} <span>{title}</span></h2>
-                        {items?.map((exp: WorkExperience, index: number) => (
+                        {workExperiences.map((exp: WorkExperience, index: number) => (
                             <WorkCard 
                                 key={index}
                                 companyName={exp.companyName}
-                                position={exp.position}
-                                duration={exp.duration}
+                                positions={exp.positions.map(pos => ({
+                                    title: pos.position,
+                                    duration: pos.duration,
+                                    highlights: pos.highlights
+                                }))}
                                 location={exp.location}
                                 logoSrc={exp.logo?.src}
                                 logoAlt={`${exp.companyName} Logo`}
-                                highlights={exp.highlights}
                                 borderColor={exp.border?.color}
                                 borderHoverColor={exp.border?.hoverColor}
                                 logoBackgroundColor={exp.logo?.backgroundColor}
@@ -181,8 +189,9 @@ const Home = () => {
                         ))}
                     </div>
                 );
+            }
 
-            case 'projects':
+            case 'projects': {
                 return (
                     <div className={styles.rightContent}>
                         <h2 id={`${sectionId}-section`}>{icon} <span>{title}</span></h2>
@@ -238,8 +247,9 @@ const Home = () => {
                         </div>
                     </div>
                 );
+            }
 
-            case 'contact':
+            case 'contact': {
                 // Get contact color configuration
                 const contactColors = navigationSection.textColor ? {
                     '--contact-text-color': navigationSection.textColor
@@ -279,6 +289,7 @@ const Home = () => {
                         </div>
                     </div>
                 );
+            }
 
             default:
                 return null;

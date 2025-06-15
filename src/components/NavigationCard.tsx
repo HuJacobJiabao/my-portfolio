@@ -464,7 +464,7 @@ const NavigationCard: React.FC<NavigationCardProps> = React.memo(({
     });
 
     // Find which level 2 section should be expanded based on activeItemId
-    let expandedLevel2HierarchyIds: Set<string> = new Set();
+    const expandedLevel2HierarchyIds: Set<string> = new Set();
     let activeItemTitle: string | null = null;
     
     if (activeItemId) {

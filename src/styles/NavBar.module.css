@@ -85,6 +85,26 @@
   color: #66ccff;
 }
 
+/* logo 链接样式 */
+.logoLink {
+  text-decoration: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.transparent .logoLink {
+  color: white;
+}
+
+.solid .logoLink {
+  color: rgb(76, 73, 72);
+}
+
+.logoLink:hover {
+  color: #66ccff;
+}
+
 /* ✅ 移动端折叠处理 */
 @media (max-width: 768px) {
   .hamburger {

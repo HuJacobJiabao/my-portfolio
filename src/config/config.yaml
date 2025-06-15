@@ -31,10 +31,13 @@ home:
           Hi, I'm Jiabao, currently a Master's student in 
           [Computer Science](https://www.cs.usc.edu/academic-programs/masters/) at 
           [University of Southern California (USC)](https://www.usc.edu/).
-          I'm a passionate developer with a love for front-end design,
-          interactive experiences, and elegant code. I enjoy transforming creative
-          ideas into beautiful, functional websites, and I thrive on crafting digital
-          experiences that feel alive and engaging.
+          With a strong foundation in both engineering and software development, 
+          I'm passionate about building robust, user-centric applications that 
+          combine performance with elegant design. My experience spans full-stack web development, 
+          systems programming, and computer vision research, and I enjoy working across the stack to 
+          bring dynamic digital experiences to life. Whether I'm designing scalable backend systems 
+          or crafting intuitive user interfaces, I strive to write clean, 
+          maintainable code that solves real-world problems.
         photo: "seattle.jpg"
 
     education:
@@ -95,8 +98,6 @@ home:
       type: "experience"
       items:
         - companyName: "ZJU/UIUC Institute"
-          position: "Undergraduate Research Assistant"
-          duration: "Sep 2022 - Apr 2023"
           location: "Haining, China"
           logo:
             src: "schools/zjui.jpg"
@@ -105,10 +106,43 @@ home:
             color: "#e74d29"
             hoverColor: "#e77e29"
           highlightColor: "#e74d29"
-          highlights:
-            - "Engineered a modular 3D simulation platform in Python/Blender"
-            - "Built scalable data generation pipelines for CV model training"
-            - "Integrated and trained deep learning pipelines (PyTorch)"
+          positions:
+            - position: "Teaching Assistant - CEE 300"
+              duration: "Feb 2023 - Jun 2023"
+              highlights:
+                - "Assisted students in understanding material properties and testing concepts in CEE 300: Behavior of Materials course."
+                - "Provided tutoring and graded assignments to help students improve lab report writing skills."
+                - "Collaborated with professors to ensure students' success in grasping complex engineering concepts."
+            - position: "Undergraduate Research Assistant"
+              duration: "Sep 2022 - Apr 2023"
+              highlights:
+                - "Engineered a modular 3D simulation platform in Python/Blender"
+                - "Built scalable data generation pipelines for CV model training"
+                - "Integrated and trained deep learning pipelines (PyTorch)"
+            - position: "Teaching Assistant - MATH 221"
+              duration: "Feb 2023 - Jun 2023"
+              highlights:
+                - "Led weekly discussion sessions for 30+ students in Calculus I at ZJUI."
+                - "Held office hours to support student learning."
+                - "Collaborated with professors to ensure alignment with course objectives and student needs."
+        - companyName: "Zhejiang University International Business School"
+          location: "Haining, China"
+          logo:
+            src: "schools/zibs.webp"
+            backgroundColor: "#1e40af"
+          border:
+            color: "#1e40af"
+            hoverColor: "#3b82f6"
+          highlightColor: "#1e40af"
+          positions:
+            - position: "Unimate - Academic Administrator"
+              duration: "Oct 2021 - Jun 2022"
+              highlights:
+                - Coordinated onboarding for incoming international students at Zhejiang University International Business School (ZIBS).
+                - Led a team of 10+ students to provide peer support and orientation guidance.
+                - Acted as a liaison between faculty and students to ensure smooth communication and collaboration.
+
+
     projects:
       title: "Projects"
       icon: "💻"

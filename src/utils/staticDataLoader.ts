@@ -127,7 +127,7 @@ export async function getFileLastModifiedTime(contentPath: string): Promise<stri
           return new Date(fileMetadata.lastModified).toLocaleDateString();
         }
       }
-    } catch (metadataError) {
+    } catch {
       console.warn('Could not load file metadata, falling back to other methods');
     }
 

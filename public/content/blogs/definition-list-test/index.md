@@ -3,8 +3,8 @@ type: "blog"
 title: "definition list test"
 createTime: "2025-06-07T17:26:30.142Z"
 description: "This is the default description for blog."
-tags: ["Hello", "world"]
-category: "default"
+tags: ["Markdown", "world"]
+category: "Demo"
 coverImage: "default"
 ---
 

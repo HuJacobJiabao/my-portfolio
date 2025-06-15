@@ -18,14 +18,12 @@ const MarkdownContent = React.memo<MarkdownContentProps>(({
   useEffect(() => {
     console.log('MarkdownContent useEffect triggered');
 
-    let rafId: number;
-
     const run = async () => {
       console.log('Initializing code blocks...');
       initializeCodeBlocks();
     };
 
-    rafId = requestAnimationFrame(run);
+    const rafId = requestAnimationFrame(run);
 
     return () => cancelAnimationFrame(rafId);
   }, [markdownData.html]);

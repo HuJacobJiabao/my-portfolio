@@ -388,7 +388,7 @@ function customCodeRenderer(md: MarkdownIt, toc: TocItem[]) {
     }
     
     // Generate ID from text
-    let baseId = text
+    const baseId = text
       .toLowerCase()
       .replace(/[^\w\s-]/g, '')
       .replace(/\s+/g, '-')

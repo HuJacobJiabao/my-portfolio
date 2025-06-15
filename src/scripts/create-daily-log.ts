@@ -48,7 +48,7 @@ function createChangeLogTemplate(dateStr: string, displayDate: string): string {
     return template
       .replace(/{{displayDate}}/g, displayDate)
       .replace(/{{dateStr}}/g, dateStr);
-  } catch (error) {
+  } catch {
     // Fallback to hardcoded template if file doesn't exist
     return `# Change Log - ${displayDate}
 
@@ -98,7 +98,7 @@ function createDeveloperLogTemplate(dateStr: string, displayDate: string): strin
       .replace(/{{displayDate}}/g, displayDate)
       .replace(/{{dateStr}}/g, dateStr)
       .replace(/{{currentDate}}/g, currentDate);
-  } catch (error) {
+  } catch {
     // Fallback to hardcoded template if file doesn't exist
     return `# Developer Log - ${displayDate}
 

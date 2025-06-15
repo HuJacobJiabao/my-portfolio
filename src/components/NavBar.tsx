@@ -52,7 +52,9 @@ export default function NavBar() {
   
   return (
     <nav className={`${styles.nav} ${visible ? styles.show : styles.hide} ${atTop ? styles.transparent : styles.solid}`}>
-      <div className={styles.logo}>🌟 {config.home.hero.name}</div>
+      <Link to="/my-portfolio/" onClick={(e) => handleNavClick('/my-portfolio/', e)} className={styles.logoLink}>
+        <div className={styles.logo}>🌟 {config.home.hero.name}</div>
+      </Link>
 
       <div className={styles.hamburger} onClick={() => setMenuOpen(!menuOpen)}>
         ☰

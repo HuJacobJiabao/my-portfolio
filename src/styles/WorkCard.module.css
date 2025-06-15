@@ -105,6 +105,28 @@
   left: 0;
 }
 
+/* Position group styling for multiple positions within same company */
+.positionGroup {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(149, 165, 166, 0.2);
+}
+
+.positionGroup:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.positionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 /* Responsive design for work cards */
 @media (max-width: 768px) {
   .workCard {
@@ -148,5 +170,14 @@
   
   .position {
     font-size: 1rem;
+  }
+}
+
+/* Responsive design for position headers */
+@media (max-width: 600px) {
+  .positionHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
   }
 }
