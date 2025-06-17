@@ -1,7 +1,10 @@
 
 ## 2025.06
 
-**Jun 15** - Markdown static asset resolution refactor and GitHub Actions deployment fix  
+**Jun 17** - Current development session and project maintenance  
+[Change Log](./devlogs/2025-06-17/change-log.md) | [Developer Log](./devlogs/2025-06-17/developer-log.md)
+
+**Jun 15** - 🚀 **🍙 OnigiriPress Framework Launch** - Published to npm + Asset resolution & deployment fixes  
 [Change Log](./devlogs/2025-06-15/change-log.md) | [Developer Log](./devlogs/2025-06-15/developer-log.md)
 
 **Jun 14** - Navigation enhancement, work experience consolidation, and CI/CD setup  
