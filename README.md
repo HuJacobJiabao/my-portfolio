@@ -210,15 +210,3 @@ If TypeScript compilation fails:
 ## 📄 License
 
 This project is open source and available under the MIT License.
-
----
-
-## Recent Updates
-
-### June 4, 2025
-- ✅ Fixed code block interactive functionality
-- ✅ Implemented robust event handling system
-- ✅ Added comprehensive documentation
-- ✅ Optimized performance and memory usage
-
-See [CHANGELOG.md](./CHANGELOG.md) for complete update history.
